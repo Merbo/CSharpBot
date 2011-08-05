@@ -23,8 +23,12 @@ class Program
         int PORT;
         string SERVER;
         string USER;
+        Console.WriteLine("Copyright (c) Merbo August 3, 2011-Present");
+        Console.WriteLine("Copyright (c) IceDream2k9 August 5, 2011-Present");
         if (!System.IO.File.Exists("Options.txt"))
         {
+            Console.WriteLine("===First Use Configuration===");
+            Console.WriteLine("");
             Console.Write("Server: ");
             SERVER = Console.ReadLine();
             Console.Write("Port: ");
