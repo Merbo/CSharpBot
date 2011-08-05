@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.Threading;
+using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using System.IO;
 
 class Program
 {
+    // Our RegEx'es
+    static Regex HostmaskRegex;
+
     public static StreamWriter writer;               
     static void Main(string[] args)
     {
@@ -18,7 +22,7 @@ class Program
 
         string inputline;
         string prefix = "";
-        string ownerhost;
+        string ownerhost = "";
         string CHANNEL = "";
         string NICK;
         string SERVER;
@@ -85,10 +89,21 @@ class Program
             }
 
             // The ownerhost
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Host (after the @) of owner: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            ownerhost = Console.ReadLine();
+            while (HostmaskRegex == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Hostmask of owner (Nickname!Username@Host, can be wildcarded): ");
+                Console.ForegroundColor = ConsoleColor.White;
+                ownerhost = Console.ReadLine();
+                try
+                {
+                    HostmaskRegex = new Regex(ownerhost);
+                }
+                catch (Exception n)
+                {
+                    Console.WriteLine("Something went wrong: " + n.Message);
+                }
+            }
 
             // The prefix
             while (prefix.Length < 1)
@@ -133,6 +148,7 @@ class Program
                 NICK = options[2];
                 CHANNEL = options[3];
                 ownerhost = options[4];
+                HostmaskRegex = new Regex(options[4]);
                 prefix = options[5];
                 USER = options[6];
             }
@@ -206,11 +222,16 @@ class Program
                     string ident = preident[0];
                     string host = preident[1];
                     string chan = cmd[2];
+                    cmd[3] = cmd[3].ToLower(); // So that you can also write !AmIOwner instead of !amiowner ^^
 
                     // Execute commands
                     if (cmd[3] == ":" + prefix + "test")
                     {
                         writer.WriteLine("PRIVMSG " + chan + " :I think your test works ;-)");
+                    }
+                    else if (cmd[3] == ":" + prefix + "amiowner")
+                    {
+                        writer.WriteLine("PRIVMSG " + chan + " :The answer is: " + (IsOwner(prenick1[1]) ? "Yes!" : "No!"));
                     }
                     else if (cmd[3] == ":" + prefix + "time")
                     {
@@ -223,8 +244,8 @@ class Program
                             adds = add.ToString();
                         if (add > 0)
                             adds = "+" + adds;
-                        else 
-                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
+                        else
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
                     }
                     else if (cmd[3] == ":" + prefix + "mynick")
                     {
@@ -244,7 +265,7 @@ class Program
                     }
                     else if (cmd[3] == ":" + prefix + "die")
                     {
-                        if (host == ownerhost)
+                        if (IsOwner(prenick1[1]))
                         {
                             writer.WriteLine("QUIT :" + nick + " just fired me >:(");
                         }
@@ -255,7 +276,7 @@ class Program
                     }
                     else if (cmd[3] == ":GTFO")
                     {
-                        if (host == ownerhost)
+                        if (IsOwner(prenick1[1]))
                         {
                             writer.WriteLine("KICK " + chan + " " + cmd[4] + " :GTFO!");
                         }
@@ -266,7 +287,7 @@ class Program
                     }
                     else if (cmd[3] == ":" + prefix + "kick")
                     {
-                        if (host == ownerhost)
+                        if (IsOwner(prenick1[1]))
                         {
                             writer.WriteLine("KICK " + chan + " " + cmd[4] + " Goodbye! You just got kicked by " + nick + ".");
                             //  writer.WriteLine("KICK " + chan + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
@@ -278,11 +299,11 @@ class Program
                     }
                     else if (cmd[3] == ":" + prefix + "join")
                     {
-                        if (host == ownerhost && cmd[4] != null)
+                        if (IsOwner(prenick1[1]) && cmd[4] != null)
                         {
                             writer.WriteLine("JOIN " + cmd[4]);
                         }
-                        else if (host != ownerhost)
+                        else if (!IsOwner(prenick1[1]))
                         {
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
@@ -293,14 +314,14 @@ class Program
                         {
                             writer.WriteLine("PART " + cmd[4]);
                         }
-                        else if (host != ownerhost)
+                        else if (!IsOwner(prenick1[1]))
                         {
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
                     else if (cmd[3] == ":" + prefix + "reset")
                     {
-                        if (host == ownerhost)
+                        if (IsOwner(prenick1[1]))
                         {
                             System.IO.FileInfo fi = new System.IO.FileInfo("options.txt");
                             fi.Delete();
@@ -338,5 +359,10 @@ class Program
             goto start; // restart
             //Environment.Exit(0); // you might also use return
         }
+    }
+
+    public static bool IsOwner(string inputmask)
+    {
+        return HostmaskRegex.Match(inputmask) != null;
     }
 }
