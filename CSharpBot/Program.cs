@@ -136,7 +136,7 @@ class Program
                         }
                         else
                         {
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": NO U");
+                            writer.WriteLine("KICK " + chan + " " + nick + " :NO U");
                         }
                     }
                     else if (cmd[3] == ":" + prefix + "kick")
