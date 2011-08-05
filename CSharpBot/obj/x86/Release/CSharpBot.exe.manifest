@@ -3,7 +3,7 @@
   <asmv1:assemblyIdentity name="CSharpBot.exe" version="4.1.1.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="CSharpBot" version="1.0.4234.29675" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="CSharpBot" version="1.0.4234.29943" language="neutral" processorArchitecture="x86" />
     <commandLine file="CSharpBot.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,13 +43,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="CSharpBot.exe" size="12800">
-      <assemblyIdentity name="CSharpBot" version="1.0.4234.29675" language="neutral" processorArchitecture="x86" />
+      <assemblyIdentity name="CSharpBot" version="1.0.4234.29943" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>3QsV0JbQHK8EKDSacPVoa1t+bFo=</dsig:DigestValue>
+        <dsig:DigestValue>lSKw+TYh55QJmO5xKi419A07H+Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

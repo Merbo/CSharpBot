@@ -103,6 +103,8 @@ class Program
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Something went wrong: " + n.Message);
+                    Console.WriteLine("Exception: " + n.ToString());
+                    Console.WriteLine("StackTrace: " + n.StackTrace);
                 }
             }
 
