@@ -124,6 +124,7 @@ class Program
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Loading configuration...");
             try
             {
@@ -173,10 +174,11 @@ class Program
             string whoischan = null; 
             while ((inputline = reader.ReadLine()) != null)
             {
-                Console.WriteLine("<= " + inputline);
                 string[] cmd = inputline.Split(' ');
+                if (!cmd[0].Equals("PING"))
+                    Console.WriteLine("<= " + inputline);
                 if (cmd[0].Equals("PING")) {
-                    //Console.WriteLine("=> Sent PONG back"); // it might go on the console's nerves
+                    Console.WriteLine("Ping? Pong!"); // it might go on the console's nerves
                     writer.WriteLine("PONG " + cmd[1]);
                 }
                 else if (cmd[1].Equals("376"))
