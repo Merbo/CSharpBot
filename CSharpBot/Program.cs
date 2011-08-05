@@ -252,8 +252,8 @@ class Program
                             adds = add.ToString();
                         if (add > 0)
                             adds = "+" + adds;
-                        else
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
+
+                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
                     }
                     else if (cmd[3] == ":" + prefix + "mynick")
                     {
