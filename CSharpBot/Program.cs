@@ -97,7 +97,8 @@ class Program
                 ownerhost = Console.ReadLine();
                 try
                 {
-                    HostmaskRegex = new Regex(ownerhost);
+                    HostmaskRegex = new Regex(ownerhost = "^" + ownerhost.Replace(".", "\\.").Replace("*", "(.+)") + "$");
+                    Console.WriteLine("Parsed: " + ownerhost);
                 }
                 catch (Exception n)
                 {
