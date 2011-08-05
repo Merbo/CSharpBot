@@ -97,7 +97,10 @@ class Program
                 ownerhost = Console.ReadLine();
                 try
                 {
-                    HostmaskRegex = new Regex(ownerhost);
+                    HostmaskRegex = new Regex(ownerhost = "^" + ownerhost.Replace(".", "\\.").Replace("*", ".+") + "$");
+#if DEBUG
+                    Console.WriteLine("(debug) Parsed Regex: " + ownerhost);
+#endif
                 }
                 catch (Exception n)
                 {
@@ -368,6 +371,6 @@ class Program
 
     public static bool IsOwner(string inputmask)
     {
-        return HostmaskRegex.Match(inputmask) != null;
+        return HostmaskRegex.Match(inputmask).Success;
     }
 }
