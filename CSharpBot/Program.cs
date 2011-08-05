@@ -92,7 +92,7 @@ class Program
             while (HostmaskRegex == null)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Hostmask of owner (Nickname!Username@Host, can be wildcarded): ");
+                Console.Write("Hostmask of owner (Nickname!Username@Host, can be a regex globmask (wildcards like * and ?)): ");
                 Console.ForegroundColor = ConsoleColor.White;
                 ownerhost = Console.ReadLine();
                 try
@@ -102,6 +102,7 @@ class Program
                 }
                 catch (Exception n)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Something went wrong: " + n.Message);
                 }
             }
@@ -140,6 +141,7 @@ class Program
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Loading configuration...");
             try
             {
@@ -190,10 +192,11 @@ class Program
             string whoischan = null; 
             while ((inputline = reader.ReadLine()) != null)
             {
-                Console.WriteLine("<= " + inputline);
                 string[] cmd = inputline.Split(' ');
+                if (!cmd[0].Equals("PING"))
+                    Console.WriteLine("<= " + inputline);
                 if (cmd[0].Equals("PING")) {
-                    //Console.WriteLine("=> Sent PONG back"); // it might go on the console's nerves
+                    Console.WriteLine("Ping? Pong!"); // it might go on the console's nerves
                     writer.WriteLine("PONG " + cmd[1]);
                 }
                 else if (cmd[1].Equals("376"))
@@ -223,7 +226,7 @@ class Program
                     string ident = preident[0];
                     string host = preident[1];
                     string chan = cmd[2];
-                    cmd[3] = cmd[3].ToLower(); // So that you can also write !AmIOwner instead of !amiowner ^^
+                    //cmd[3] = cmd[3].ToLower(); // So that you can also write !AmIOwner instead of !amiowner ^^ // POINTLESS :T
 
                     // Execute commands
                     if (cmd[3] == ":" + prefix + "test")
