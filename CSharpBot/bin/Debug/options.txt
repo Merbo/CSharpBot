@@ -1,7 +1,0 @@
-irc.merbosmagic.co.cc
-6667
-csharpbot
-#csharpbot
-^.+!.+@icedream-online\.tk$
-#
-USER csharpbot 8 * :MerbosMagic C# IRC Bot
