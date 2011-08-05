@@ -22,7 +22,7 @@ class Program
         string NICK;
         int PORT;
         string SERVER;
-        string USER = "USER " + NICK + " 8 * :Merbo's C# Bot";
+        string USER;
         if (!System.IO.File.Exists("Options.txt"))
         {
             Console.Write("Server: ");
@@ -37,10 +37,11 @@ class Program
             ownerhost = Console.ReadLine();
             Console.Write("Command Prefix (e.g. in '!kick' it is '!'): ");
             prefix = Console.ReadLine();
-            string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix };
+            USER = "USER " + NICK + " 8 * :Merbo's C# Bot";
+            string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix, USER };
             System.IO.File.WriteAllLines("options.txt", options);
         }
-        else 
+        else
         {
             string[] options = System.IO.File.ReadAllLines("options.txt");
             SERVER = options[0];
@@ -49,6 +50,7 @@ class Program
             CHANNEL = options[3];
             ownerhost = options[4];
             prefix = options[5];
+            USER = options[6];
         }
         try
         {
