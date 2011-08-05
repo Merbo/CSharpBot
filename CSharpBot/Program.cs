@@ -16,13 +16,13 @@ class Program
         TcpClient irc;
         string inputline;
         StreamReader reader;
-        string USER = "USER CSharpBot 8 * :Merbo's C# Bot";
         string prefix;
         string ownerhost;
         string CHANNEL;
         string NICK;
         int PORT;
         string SERVER;
+        string USER = "USER " + NICK + " 8 * :Merbo's C# Bot";
         if (!System.IO.File.Exists("Options.txt"))
         {
             Console.Write("Server: ");
