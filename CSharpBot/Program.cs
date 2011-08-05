@@ -146,6 +146,28 @@ class Program
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
+                    else if (cmd[3] == ":" + prefix + "join")
+                    {
+                        if (host == ownerhost && cmd[4] != null)
+                        {
+                            writer.WriteLine("JOIN " + cmd[4]);
+                        }
+                        else if (host != ownerhost)
+                        {
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                        }
+                    }
+                    else if (cmd[3] == ":" + prefix + "part")
+                    {
+                        if (cmd.Length > 4)
+                        {
+                            writer.WriteLine("PART " + cmd[4]);
+                        }
+                        else if (host != ownerhost)
+                        {
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                        }
+                    }
                     else if (cmd[3] == ":" + prefix + "reset")
                     {
                         if (host == ownerhost)
