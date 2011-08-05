@@ -175,8 +175,6 @@ class Program
             writer.WriteLine("QUIT :Exception: " + e.ToString());
             Thread.Sleep(5000);
             Environment.Exit(0);
-            //string[] argv = { };
-            //Main(argv);
         }
     }
 }
