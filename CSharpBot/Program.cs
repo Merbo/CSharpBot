@@ -124,15 +124,15 @@ class Program
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + prefix + "mode")
+                    else if (cmd[3] == ":GTFO")
                     {
                         if (host == ownerhost)
                         {
-                            writer.WriteLine("MODE " + chan + " " + cmd[4]);
+                            writer.WriteLine("KICK " + chan + " " + cmd[4] + " :GTFO!");
                         }
                         else
                         {
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": NO U");
                         }
                     }
                     else if (cmd[3] == ":" + prefix + "kick")
