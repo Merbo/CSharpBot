@@ -105,13 +105,13 @@ class Program
             // Finishing configuration...
             Console.ResetColor();
             Console.WriteLine();
-            USER = "USER " + NICK + " 8 * :Merbo's and Icedream's C# Bot";
+            USER = "USER " + NICK + " 8 * :MerbosMagic C# IRC Bot";
             string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix, USER };
             try
             {
                 System.IO.File.WriteAllLines("options.txt", options);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Configuration has been saved successfully. You might now start using the bot!");
+                Console.WriteLine("Configuration has been saved successfully. The bot will now start!");
             }
             catch (Exception)
             {
@@ -304,7 +304,7 @@ class Program
                         {
                             System.IO.FileInfo fi = new System.IO.FileInfo("options.txt");
                             fi.Delete();
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration resetted. You might start at the beginning.");
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will ask for first time configuration again.");
                         }
                         else
                         {
