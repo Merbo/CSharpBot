@@ -230,7 +230,6 @@ class Program
                     string ident = preident[0];
                     string host = preident[1];
                     string chan = cmd[2];
-                    //cmd[3] = cmd[3].ToLower(); // So that you can also write !AmIOwner instead of !amiowner ^^ // POINTLESS :T
 
                     // Execute commands
                     if (cmd[3] == ":" + prefix + "test")
@@ -275,7 +274,7 @@ class Program
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            writer.WriteLine("QUIT :" + nick + " just fired me >:(");
+                            writer.WriteLine("QUIT :I shot myself because " + nick + " told me to.");
                         }
                         else
                         {
