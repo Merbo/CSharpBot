@@ -350,8 +350,16 @@ class Program
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            Log(nick + " issued " + prefix + "die");
-                            writer.WriteLine("QUIT :I shot myself because " + nick + " told me to.");
+                            if (cmd.Length > 4)
+                            {
+                                Log(nick + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                writer.WriteLine("QUIT :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                            }
+                            else
+                            {
+                                Log(nick + " issued " + prefix + "die");
+                                writer.WriteLine("QUIT :I shot myself because " + nick + " told me to.");
+                            }
                         }
                         else
                         {
@@ -668,13 +676,134 @@ class Program
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Port: " + options[1]);
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Nick: " + options[2]);
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": AutoJoinChannel: " + options[3]);
-                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Owner host: " + options[4].Replace(".+", "*").Replace("^", "").Replace("$", ""));
-                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Command Prefix: " + options[5]);
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Ownerhost: " + options[4].Replace(".+", "*").Replace("^", "").Replace("$", ""));
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": CommandPrefix: " + options[5]);
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Logging: " + options[7]);
                                     }
                                     else
                                     {
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": I'd love to tell you, but there isn't a configuration file :|");
+                                    }
+                                }
+                                else if (cmd[4].Equals("edit"))
+                                {
+                                    if (cmd.Length > 6)
+                                    {
+                                        if (File.Exists("options.txt"))
+                                        {
+                                            string[] options = File.ReadAllLines("options.txt");
+                                            System.IO.File.Delete("options.txt");
+                                            if (cmd[5].Equals("Server") || cmd[5].Equals("server"))
+                                            {
+                                                WriteToFile("options.txt", cmd[6]);
+                                                WriteToFile("options.txt", options[1]);
+                                                WriteToFile("options.txt", options[2]);
+                                                WriteToFile("options.txt", options[3]);
+                                                WriteToFile("options.txt", options[4]);
+                                                WriteToFile("options.txt", options[5]);
+                                                WriteToFile("options.txt", options[6]);
+                                                WriteToFile("options.txt", options[7]);
+                                                Say(chan, "Done. Server is now set to '" + cmd[6] + "'.");
+                                            }
+                                            else if (cmd[5].Equals("Port") || cmd[5].Equals("port"))
+                                            {
+                                                int setport;
+                                                if (int.TryParse(cmd[6], out setport))
+                                                {
+                                                    if (setport <= 0xffff && setport >= 0)
+                                                    {
+                                                        WriteToFile("options.txt", options[0]);
+                                                        WriteToFile("options.txt", setport.ToString());
+                                                        WriteToFile("options.txt", options[2]);
+                                                        WriteToFile("options.txt", options[3]);
+                                                        WriteToFile("options.txt", options[4]);
+                                                        WriteToFile("options.txt", options[5]);
+                                                        WriteToFile("options.txt", options[6]);
+                                                        WriteToFile("options.txt", options[7]);
+                                                        Say(chan, "Done. port is now set to " + setport + ".");
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Say(chan, "Invalid port number!");
+                                                }
+                                            }
+                                            else if (cmd[5].Equals("Nick") || cmd[5].Equals("nick"))
+                                            {
+                                                WriteToFile("options.txt", options[0]);
+                                                WriteToFile("options.txt", options[1]);
+                                                WriteToFile("options.txt", cmd[6]);
+                                                WriteToFile("options.txt", options[3]);
+                                                WriteToFile("options.txt", options[4]);
+                                                WriteToFile("options.txt", options[5]);
+                                                WriteToFile("options.txt", options[6]);
+                                                WriteToFile("options.txt", options[7]);
+                                                Say(chan, "Done. Nickname is now set to " + cmd[6]);
+                                            }
+                                            else if (cmd[5].Equals("AutoJoinChannel") || cmd[5].Equals("autojoinchannel"))
+                                            {
+                                                if (cmd[6].StartsWith("#"))
+                                                {
+                                                    WriteToFile("options.txt", options[0]);
+                                                    WriteToFile("options.txt", options[1]);
+                                                    WriteToFile("options.txt", options[2]);
+                                                    WriteToFile("options.txt", cmd[6]);
+                                                    WriteToFile("options.txt", options[4]);
+                                                    WriteToFile("options.txt", options[5]);
+                                                    WriteToFile("options.txt", options[6]);
+                                                    WriteToFile("options.txt", options[7]);
+                                                    Say(chan, "Done. AutoJoin channel is now set to " + cmd[6]);
+                                                }
+                                                else
+                                                {
+                                                    Say(chan, "Invalid channel name! Channel names always start with '#'");
+                                                }
+                                            }
+                                            else if (cmd[5].Equals("OwnerHost") || cmd[5].Equals("ownerhost"))
+                                            {
+                                                WriteToFile("options.txt", options[0]);
+                                                WriteToFile("options.txt", options[1]);
+                                                WriteToFile("options.txt", options[2]);
+                                                WriteToFile("options.txt", options[3]);
+                                                WriteToFile("options.txt", "^" + cmd[6].Replace(".", "\\.").Replace("*", ".+") + "$");
+                                                WriteToFile("options.txt", options[5]);
+                                                WriteToFile("options.txt", options[6]);
+                                                WriteToFile("options.txt", options[7]);
+                                                Say(chan, "Done. My ownerhost is set to " + cmd[6] + " now.");
+                                            }
+                                            else if (cmd[5].Equals("CommandPrefix") || cmd[5].Equals("commandprefix"))
+                                            {
+                                                WriteToFile("options.txt", options[0]);
+                                                WriteToFile("options.txt", options[1]);
+                                                WriteToFile("options.txt", options[2]);
+                                                WriteToFile("options.txt", options[3]);
+                                                WriteToFile("options.txt", options[4]);
+                                                WriteToFile("options.txt", cmd[6]);
+                                                WriteToFile("options.txt", options[6]);
+                                                WriteToFile("options.txt", options[7]);
+                                                Say(chan, "Done. Command prefix is now '" + cmd[6] + "'");
+                                            }
+                                            else if (cmd[5].Equals("Logging") || cmd[5].Equals("logging"))
+                                            {
+                                                if (cmd[6].Equals("True") || cmd[6].Equals("False"))
+                                                {
+                                                    WriteToFile("options.txt", options[0]);
+                                                    WriteToFile("options.txt", options[1]);
+                                                    WriteToFile("options.txt", options[2]);
+                                                    WriteToFile("options.txt", options[3]);
+                                                    WriteToFile("options.txt", options[4]);
+                                                    WriteToFile("options.txt", options[5]);
+                                                    WriteToFile("options.txt", options[6]);
+                                                    WriteToFile("options.txt", cmd[6]);
+                                                    Say(chan, "Done. Logging is now " + (cmd[6].Equals("True") ? "On" : "Off"));
+                                                }
+                                                else
+                                                {
+                                                    Say(chan, "You must specify 'True' or 'False'!");
+                                                }
+                                            }
+                                            Say(chan, "These will count on next restart.");
+                                        }
                                     }
                                 }
                                 string[] command = cmd[3].Split(':');
@@ -801,6 +930,51 @@ class Program
             Console.WriteLine(input);
         }
     }
+    public static void WriteToFile(string file, string input)
+    {
+        if (logging == true)
+        {
+            if (File.Exists(file))
+            {
+                List<string> lines = new List<string>();
+                using (StreamReader r = new StreamReader(file))
+                {
+                    string line;
+                    while ((line = r.ReadLine()) != null)
+                    {
+                        lines.Add(line);
+                    }
+                }
+                using (StreamWriter w = new StreamWriter(file))
+                {
+                    lines.Add(input);
+                    foreach (string s in lines)
+                    {
+                        w.WriteLine(s);
+                    }
+                }
+            }
+            else
+            {
+                using (StreamWriter w = new StreamWriter(file))
+                {
+                    w.WriteLine(input);
+                }
+            }
+            Console.WriteLine(input);
+        }
+        else
+        {
+            Console.WriteLine(input);
+        }
+    }
+    public static void Say(string channel, string text)
+    {
+        if (channel.StartsWith("#"))
+        {
+            writer.WriteLine("PRIVMSG " + channel + " :" + text);
+        }
+    }
     static void SendHelp(object o)
     {
         string[] param = (string[])o;
@@ -812,18 +986,18 @@ class Program
         Thread.Sleep(1000);
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "mode <mode>-- Sets a mode the current channel.");
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "topic [topic] -- Tells the current topic OR sets the channel's topic to [topic]");
-        writer.WriteLine("NOTICE " + nick + " :" + prefix + "config <list> -- Tells current config.");
+        writer.WriteLine("NOTICE " + nick + " :" + prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
         Thread.Sleep(1000);
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "join <chan> -- Joins the bot to a channel");
-        writer.WriteLine("NOTICE " + nick + " :" + prefix + "part <chan> -- Parts the bot from a channel");
-        writer.WriteLine("NOTICE " + nick + " :" + prefix + "kick <nick> -- Kicks <nick> from the current channel");
+        writer.WriteLine("NOTICE " + nick + " :" + prefix + "part <chan> [reason] -- Parts the bot from a channel");
+        writer.WriteLine("NOTICE " + nick + " :" + prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
         Thread.Sleep(1000);
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "reset -- Clears the config and restarts the bot");
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "restart -- Restarts the bot");
         Thread.Sleep(1000);
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "clean -- Clears the config and kills the bot");
-        writer.WriteLine("NOTICE " + nick + " :" + prefix + "die -- Kills the bot");
+        writer.WriteLine("NOTICE " + nick + " :" + prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
         writer.WriteLine("NOTICE " + nick + " :" + prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
     }
 }
