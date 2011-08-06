@@ -300,12 +300,14 @@ class Program
                             {
                                 string[] text = { cmd.Skip(5).ToString() };
                                 System.IO.File.WriteAllLines("Kicks.txt", text);
+                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Added line " + cmd.Skip(5).ToString() + " to kicks database.");
                             }
                             else if (cmd[4].Equals("clear"))
                             {
                                 System.IO.File.Delete("Kicks.txt");
+                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Deleted kicks database.");
                             }
-                            else if (cmd[4].Equals("total"))
+                            else if (cmd[4].Equals("total") && System.IO.File.Exists("Kicks.txt"))
                             {
                                 int i = 0;
                                 string line;
@@ -317,7 +319,7 @@ class Program
                                 file.Close();
                                 writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
                             }
-                            else if (cmd[4].Equals("Read"))
+                            else if (cmd[4].Equals("Read") && System.IO.File.Exists("Kicks.txt"))
                             {
                                 int i = 0;
                                 string line;
