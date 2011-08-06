@@ -544,7 +544,12 @@ class Program
                         {
                             if (IsOwner(prenick1[1]))
                             {
-                                if (File.Exists("Kicks.txt"))
+                                if (cmd.Length > 5)
+                                {
+                                    writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                                    Log(nick + " issued " + prefix + "kick " + cmd[4] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                }
+                                else if (File.Exists("Kicks.txt"))
                                 {
                                     string[] lines = File.ReadAllLines("Kicks.txt");
                                     Random rand = new Random();
@@ -619,12 +624,14 @@ class Program
                     {
                         if (IsOwner(prenick1[1]) && cmd.Length > 4)
                         {
-                            Log(nick + " issued " + prefix + "part " + cmd[4]);
-                            writer.WriteLine("PART " + cmd[4]);
+                            Log(nick + " issued " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
+                            if (cmd.Length > 5)
+                                cmd[5] = ":" + cmd[5];
+                            writer.WriteLine("PART " + string.Join(" ", cmd.Skip(4).ToArray()));                            
                         }
                         else if (!IsOwner(prenick1[1]))
                         {
-                            Log(nick + " attempted to use " + prefix + "join " + cmd[4]);
+                            Log(nick + " attempted to use " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
