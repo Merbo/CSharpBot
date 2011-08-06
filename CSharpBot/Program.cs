@@ -39,6 +39,7 @@ class Program
         int PORT = -1; // set to -1 for later validation of input
 
         // Head-lines
+        Console.ForegroundColor = ConsoleColor.Gray;
         Console.WriteLine("CSharpBot v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
         Console.WriteLine("\t(c) Merbo August 3, 2011-Present");
         Console.WriteLine("\t(c) Icedream August 5, 2011-Present");
@@ -221,10 +222,14 @@ class Program
                     Console.WriteLine("Joining " + CHANNEL + "...");
                     writer.WriteLine("JOIN " + CHANNEL);
                 }
-                else if (cmd[1].Equals("311") && currentcmd.Equals("Whois") && cmd.Length > 6)
+                else if (cmd[1].Equals("311"))
                 {
-                    Console.WriteLine("Reading WHOIS...");
-                    writer.WriteLine("PRIVMSG " + whoischan + " :" + whoiscaller + ": " + whoistarget + "'s hostmask is " + cmd[5]);
+                    if (currentcmd.Equals("Whois") && cmd.Length > 6)
+                    {
+                        Console.WriteLine("Reading WHOIS to get hostmask of " + whoistarget + " for " + whoiscaller + "...");
+                        writer.WriteLine("PRIVMSG " + whoischan + " :" + whoiscaller + ": " + whoistarget + "'s hostmask is " + cmd[5]);
+                        Console.WriteLine("Found the hostmask that " + whoiscaller + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
+                    }
                 }
                 else if (cmd[1].Equals("KICK") && cmd[3] == NICK)
                 {
@@ -420,7 +425,7 @@ class Program
                     }
                     else if (cmd[3] == ":" + prefix + "join")
                     {
-                        if (IsOwner(prenick1[1]) && cmd.Length > 5)
+                        if (IsOwner(prenick1[1]) && cmd.Length > 4)
                         {
                             Console.WriteLine(nick + " issued " + prefix + "join " + cmd[4]);
                             writer.WriteLine("JOIN " + cmd[4]);
@@ -433,7 +438,7 @@ class Program
                     }
                     else if (cmd[3] == ":" + prefix + "part")
                     {
-                        if (cmd.Length > 5)
+                        if (IsOwner(prenick1[1]) && cmd.Length > 4)
                         {
                             Console.WriteLine(nick + " issued " + prefix + "part " + cmd[4]);
                             writer.WriteLine("PART " + cmd[4]);
@@ -477,7 +482,7 @@ class Program
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 5)
+                    else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 4)
                     {
                         whoiscaller = nick;
                         whoistarget = cmd[4];
