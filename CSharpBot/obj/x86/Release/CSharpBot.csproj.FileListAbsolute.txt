@@ -1,9 +1,0 @@
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\bin\Release\CSharpBot.exe.manifest
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\bin\Release\CSharpBot.application
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\bin\Release\CSharpBot.exe
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\bin\Release\CSharpBot.pdb
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\obj\x86\Release\ResolveAssemblyReference.cache
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\obj\x86\Release\CSharpBot.exe.manifest
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\obj\x86\Release\CSharpBot.application
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\obj\x86\Release\CSharpBot.exe
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot\obj\x86\Release\CSharpBot.pdb

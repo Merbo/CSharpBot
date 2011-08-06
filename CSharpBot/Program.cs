@@ -10,11 +10,11 @@ using System.IO;
 
 class Program
 {
-
     // Our RegEx'es
     public static Regex HostmaskRegex;
 
-    public static StreamWriter writer;               
+    public static StreamWriter writer;
+
     static void Main(string[] args)
     {
         bool wentto = false;
@@ -36,7 +36,7 @@ class Program
         string NICK;
         string SERVER;
         string USER;
-        int PORT = -1; // set to -1 for later validation of input
+        int PORT = -1;
 
         // Head-lines
         Console.ForegroundColor = ConsoleColor.Gray;
@@ -219,12 +219,17 @@ class Program
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("Ping? Pong!");
                         Console.ResetColor();
+#else
+                    Console.Write("[ping] ");
                     #endif
                     writer.WriteLine("PONG " + cmd[1]);
                 }
 
                 if (cmd[1].Equals("376"))
                 {
+#if !DEBUG
+                    Console.Write("[motd received] ");
+#endif
                     Console.WriteLine("Joining " + CHANNEL + "...");
                     writer.WriteLine("JOIN " + CHANNEL);
                 }
@@ -329,6 +334,54 @@ class Program
                         {
                             Console.WriteLine(nick + " attempted to use " + prefix + "clean");
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                        }
+                    }
+                    
+                    else if (cmd[3] == ":" + prefix + "topic")
+                    {
+                        if (cmd.Length > 4)
+                        {
+                            cmd[4] = cmd[4] == "reset" ? "" : cmd[4]; // !topic reset = set topic to ""
+
+                            // Set topic if is owner
+                            if (IsOwner(prenick1[1]))
+                            {
+                                Console.WriteLine(nick + " issued " + prefix + "topic (set topic)");
+                                writer.WriteLine("TOPIC " + chan + " :" + ArrayToString(cmd.Skip(4).ToArray(), " "));
+                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Topic has been set.");
+                            }
+                            else
+                            {
+                                Console.WriteLine(nick + " attempted to use " + prefix + "topic (set topic).");
+                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                            }
+                        }
+                        else
+                        {
+                            writer.WriteLine("TOPIC " + chan);
+
+                            bool foundTopic = false;
+                            string topic = "";
+                            while (!foundTopic)
+                            {
+                                topic = reader.ReadLine();
+#if DEBUG
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine(topic);
+#endif
+                                if (topic.Contains("331"))
+                                {
+                                    topic = "No topic is set for this channel.";
+                                    foundTopic = true;
+                                }
+                                else if (topic.Contains("332"))
+                                {
+                                    topic = "The topic is: " + ArrayToString(topic.Split(':').Skip(2).ToArray(), ":");
+                                    foundTopic = true;
+                                }
+                            }
+                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": " + topic);
+                            Console.WriteLine(nick + " issued " + prefix + "topic (read topic).");
                         }
                     }
                     else if (cmd[3] == ":GTFO")
@@ -448,8 +501,8 @@ class Program
                         {
                             if (cmd.Length > 5)
                             {
-                               Console.WriteLine(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
-                               writer.WriteLine("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                Console.WriteLine(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                                writer.WriteLine("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                             }
                             else if (cmd.Length > 4)
                             {
@@ -549,6 +602,29 @@ class Program
         }
     }
 
+    /// <summary>
+    /// Converts a string array into a string.
+    /// </summary>
+    /// <param name="strArray">The string array</param>
+    /// <param name="delimiter">The delimiter which should be placed between the array entries</param>
+    /// <returns>A single string containing all entries delimited by a delimiter</returns>
+    public static string ArrayToString(string[] strArray, string delimiter = " ")
+    {
+        string a = "";
+        for (int b = 0; b < strArray.Length; b++)
+        {
+            if (b > 0)
+                a += delimiter;
+            a += strArray[b];
+        }
+        return a;
+    }
+
+    /// <summary>
+    /// Checks if a hostmask fits to the owner's hostmask regex.
+    /// </summary>
+    /// <param name="inputmask"></param>
+    /// <returns></returns>
     public static bool IsOwner(string inputmask)
     {
         return HostmaskRegex.Match(inputmask).Success;
