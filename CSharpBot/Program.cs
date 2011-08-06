@@ -224,7 +224,7 @@ class Program
                 #if DEBUG
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     if (!cmd[0].Equals("PING"))
-                    Console.WriteLine("<= " + inputline);
+                        Console.WriteLine("<= " + inputline);
                     Console.ResetColor();
                 #endif
                 if (cmd[0].Equals("PING")) {
