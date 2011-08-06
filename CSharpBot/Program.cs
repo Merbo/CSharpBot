@@ -252,23 +252,23 @@ class Program
                         if (add > 0)
                             adds = "+" + adds;
 
-                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
+                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
                     }
                     else if (cmd[3] == ":" + prefix + "mynick")
                     {
-                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Your nick is " + nick);
+                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your nick is " + nick);
                     }
                     else if (cmd[3] == ":" + prefix + "myident")
                     {
-                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Your ident is " + ident);
+                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your ident is " + ident);
                     }
                     else if (cmd[3] == ":" + prefix + "myhost")
                     {
-                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Your host is " + host);
+                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your host is " + host);
                     }
                     else if (cmd[3] == ":" + prefix + "myfullmask")
                     {
-                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Your full mask is " + cmd[0]);
+                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your full mask is " + cmd[0]);
                     }
                     else if (cmd[3] == ":" + prefix + "die")
                     {
@@ -278,7 +278,7 @@ class Program
                         }
                         else
                         {
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
                     else if (cmd[3] == ":GTFO")
@@ -292,11 +292,59 @@ class Program
                             writer.WriteLine("KICK " + chan + " " + nick + " :NO U");
                         }
                     }
+                    else if (cmd[3] == ":" + prefix + "kicklines" && cmd.Length >= 6)
+                    {
+                        if (cmd[4].Equals("add"))
+                        {
+                            string[] text = {cmd.Skip(5).ToString()};
+                            System.IO.File.WriteAllLines("Kicks.txt", text);
+                        }
+                        else if (cmd[4].Equals("clear"))
+                        {
+                            System.IO.File.Delete("Kicks.txt");
+                        }
+                        else if (cmd[4].Equals("total"))
+                        {
+                            int i = 0;
+                            string line;
+                            System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                            while((line = file.ReadLine()) != null)
+                            {
+                                  i++;
+                            }
+                            file.Close();
+                            writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
+                        }
+                        else if (cmd[4].Equals("Read"))
+                        {
+                            int i = 0;
+                            string line;
+                            System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                            while ((line = file.ReadLine()) != null && i != int.Parse(cmd[5]))
+                            {
+                                i++;
+                            }
+                            if (i == int.Parse(cmd[5]))
+                            {
+                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                            }
+                            file.Close();
+                        }
+                    }
                     else if (cmd[3] == ":" + prefix + "kick")
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            writer.WriteLine("KICK " + chan + " " + cmd[4] + " Goodbye! You just got kicked by " + nick + ".");
+                            if (System.IO.File.Exists("Kicks.txt"))
+                            {
+                                string[] lines = System.IO.File.ReadAllLines("Kicks.txt");
+                                Random rand = new Random();
+                                writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
+                            }
+                            else
+                            {
+                                writer.WriteLine("KICK " + chan + " " + cmd[4] + " :Goodbye! You just got kicked by " + nick + ".");
+                            }
                             //  writer.WriteLine("KICK " + chan + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
                         }
                         else
