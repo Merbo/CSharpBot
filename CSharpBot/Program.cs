@@ -460,7 +460,7 @@ class Program
                                     file.Close();
                                     writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
                                 }
-                                if (cmd[4].Equals("read") && cmd.Length == 6)
+                                if (cmd[4].Equals("read") && cmd.Length > 5)
                                 {
                                     if (File.Exists("Kicks.txt"))
                                     {
@@ -473,8 +473,8 @@ class Program
                                         }
                                         else
                                         {
-                                            i--;
-                                            if (i < 0)
+                                            x--;
+                                            if (x < 0)
                                             {
                                                 writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
                                             }
@@ -487,7 +487,7 @@ class Program
                                                 }
                                                 if (i == x)
                                                 {
-                                                    if (line != "")
+                                                    if (line != null)
                                                     {
                                                         writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
                                                     }
