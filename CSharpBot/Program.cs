@@ -333,7 +333,7 @@ class Program
                     }
                     else if (cmd[3] == ":GTFO")
                     {
-                        if (cmd.Length > 5)
+                        if (cmd.Length > 4)
                         {
                             if (IsOwner(prenick1[1]))
                             {
