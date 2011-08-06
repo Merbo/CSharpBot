@@ -442,6 +442,35 @@ class Program
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
+                    else if (cmd[3] == ":" + prefix + "mode")
+                    {
+                        if (IsOwner(prenick1[1]))
+                        {
+                            if (cmd.Length > 5)
+                            {
+                               Console.WriteLine(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                               writer.WriteLine("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
+                            }
+                            else if (cmd.Length > 4)
+                            {
+                                Console.WriteLine(nick + " issued " + prefix + "mode " + cmd[4] + " on " + chan);
+                                writer.WriteLine("MODE " + chan + " " + cmd[4]);
+                            }
+                        }
+                        else if (!IsOwner(prenick1[1]))
+                        {
+                            if (cmd.Length > 5)
+                            {
+                                Console.WriteLine(nick + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                                writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                            }
+                            else if (cmd.Length > 4)
+                            {
+                                Console.WriteLine(nick + " attempted to use " + prefix + "mode " + cmd[4] + " on " + chan);
+                                writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                            }
+                        }
+                    }
                     else if (cmd[3] == ":" + prefix + "part")
                     {
                         if (IsOwner(prenick1[1]) && cmd.Length > 4)
