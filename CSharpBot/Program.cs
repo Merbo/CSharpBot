@@ -15,6 +15,18 @@ class Program
 
     public static StreamWriter writer;
 
+    const string IRCBold = "\x02"; // \x02[text]\x02
+    const string IRCColor = "\x03"; // \x03[xx[,xx]]
+    const string IRCItalic = "\u0016"; // Mibbit has a bug on this
+    const string IRCReset = "\u000F"; // Resets text formatting
+
+    public string BoldText(string text) { return IRCBold + text + IRCBold; }
+    public string ItalicText(string text) { return IRCItalic + text + IRCItalic; }
+    public string ColorText(string text, int foreground, int background = -1)
+    {
+        return IRCColor + (foreground < 10 ? "0" : "") + foreground.ToString() + (background > -1 ? (background < 10 ? "0" : "") + background.ToString() : "") + text + IRCColor + "99";
+    }
+
     static void Main(string[] args)
     {
         bool wentto = false;
@@ -46,7 +58,7 @@ class Program
         Console.WriteLine();
 
         // First setup
-        if (!System.IO.File.Exists("Options.txt"))
+        if (!File.Exists("Options.txt"))
         {
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = ConsoleColor.White;
@@ -140,7 +152,7 @@ class Program
             string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix, USER };
             try
             {
-                System.IO.File.WriteAllLines("options.txt", options);
+                File.WriteAllLines("options.txt", options);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Configuration has been saved successfully. The bot will now start!");
             }
@@ -159,7 +171,7 @@ class Program
             Console.WriteLine("Loading configuration...");
             try
             {
-                string[] options = System.IO.File.ReadAllLines("options.txt");
+                string[] options = File.ReadAllLines("options.txt");
                 SERVER = options[0];
                 PORT = int.Parse(options[1]);
                 NICK = options[2];
@@ -329,7 +341,7 @@ class Program
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            System.IO.FileInfo fi = new System.IO.FileInfo("options.txt");
+                            FileInfo fi = new FileInfo("options.txt");
                             fi.Delete();
                             Console.WriteLine(nick + " issued " + prefix + "clean");
                             writer.WriteLine("QUIT :Cleaned!");
@@ -413,25 +425,30 @@ class Program
                             {
                                 if (cmd[4].Equals("add") && cmd.Length > 5)
                                 {
-                                    if (System.IO.File.Exists("Kicks.txt"))
+                                    string theline = string.Join(" ", cmd.Skip(5).ToArray());
+                                    if (File.Exists("Kicks.txt"))
                                     {
-                                        string[] pretext = System.IO.File.ReadAllLines("Kicks.txt");
-                                        string[] text = { string.Join(" ", cmd.Skip(5).ToArray() + "\r\n") + " " + string.Join(" ", pretext.Skip(0).ToArray()) + "\r\n" };
-                                        System.IO.File.WriteAllLines("Kicks.txt", text);
+                                        List<string> kicklist = new List<string>();
+                                        kicklist.Add(theline);
+                                        kicklist.AddRange(File.ReadAllLines("Kicks.txt"));
+                                        //string[] text = { string.Join(" ", cmd.Skip(5).ToArray() + "\r\n") + " " + string.Join(" ", pretext.Skip(0).ToArray()) + "\r\n" };
+                                        File.WriteAllLines("Kicks.txt", kicklist.ToArray());
+                                        kicklist = null;
                                     }
                                     else
-                                    {
-                                        string[] text = { string.Join(" ", cmd.Skip(5).ToArray()) };
-                                        System.IO.File.WriteAllLines("Kicks.txt", text);
-                                    }
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Added line '" + string.Join(" ", cmd.Skip(5).ToArray()) + "' to kicks database.");
+                                        File.WriteAllText("Kicks.txt", theline); // could it be more simple?
+                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Added line " + IRCBold + string.Join(" ", cmd.Skip(5).ToArray()) + IRCBold + " to kicks database.");
                                 }
                                 if (cmd[4].Equals("clear"))
                                 {
-                                    System.IO.File.Delete("Kicks.txt");
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Deleted kicks database.");
+                                    if (File.Exists("Kicks.txt"))
+                                    {
+                                        File.Delete("Kicks.txt");
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Deleted kicks database.");
+                                    }
+                                    else writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Kicks database already deleted.");
                                 }
-                                if (cmd[4].Equals("total") && System.IO.File.Exists("Kicks.txt"))
+                                if (cmd[4].Equals("total") && File.Exists("Kicks.txt"))
                                 {
                                     int i = 0;
                                     string line;
@@ -445,7 +462,7 @@ class Program
                                 }
                                 if (cmd[4].Equals("Read") && cmd.Length == 6)
                                 {
-                                    if (System.IO.File.Exists("Kicks.txt"))
+                                    if (File.Exists("Kicks.txt"))
                                     {
                                         int i = 0;
                                         int x;
@@ -484,9 +501,9 @@ class Program
                         {
                             if (IsOwner(prenick1[1]))
                             {
-                                if (System.IO.File.Exists("Kicks.txt"))
+                                if (File.Exists("Kicks.txt"))
                                 {
-                                    string[] lines = System.IO.File.ReadAllLines("Kicks.txt");
+                                    string[] lines = File.ReadAllLines("Kicks.txt");
                                     Random rand = new Random();
                                     writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
                                     Console.WriteLine(nick + " issued " + prefix + "kick " + cmd[4]);
@@ -564,7 +581,7 @@ class Program
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            System.IO.FileInfo fi = new System.IO.FileInfo("options.txt");
+                            FileInfo fi = new FileInfo("options.txt");
                             fi.Delete();
                             Console.WriteLine(nick + " issued " + prefix + "reset");
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
