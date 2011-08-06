@@ -413,9 +413,18 @@ class Program
                             {
                                 if (cmd[4].Equals("add") && cmd.Length > 5)
                                 {
-                                    string[] text = { cmd.Skip(5).ToString() };
-                                    System.IO.File.WriteAllLines("Kicks.txt", text);
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Added line " + string.Join(" ", cmd.Skip(5).ToArray()) + " to kicks database.");
+                                    if (System.IO.File.Exists("Kicks.txt"))
+                                    {
+                                        string[] pretext = System.IO.File.ReadAllLines("Kicks.txt");
+                                        string[] text = { string.Join(" ", cmd.Skip(5).ToArray() + "\r\n") + " " + string.Join(" ", pretext.Skip(0).ToArray()) + "\r\n" };
+                                        System.IO.File.WriteAllLines("Kicks.txt", text);
+                                    }
+                                    else
+                                    {
+                                        string[] text = { string.Join(" ", cmd.Skip(5).ToArray()) };
+                                        System.IO.File.WriteAllLines("Kicks.txt", text);
+                                    }
+                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Added line '" + string.Join(" ", cmd.Skip(5).ToArray()) + "' to kicks database.");
                                 }
                                 if (cmd[4].Equals("clear"))
                                 {
@@ -434,22 +443,29 @@ class Program
                                     file.Close();
                                     writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
                                 }
-                                if (cmd[4].Equals("Read") && System.IO.File.Exists("Kicks.txt") && cmd.Length > 5)
+                                if (cmd[4].Equals("Read") && cmd.Length == 6)
                                 {
-                                    int i = 0;
-                                    int x = 0;
-                                    string line;
-                                    int.TryParse(cmd[5], out x);
-                                    System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                                    while ((line = file.ReadLine()) != null && i != x)
+                                    if (System.IO.File.Exists("Kicks.txt"))
                                     {
-                                        i++;
+                                        int i = 0;
+                                        int x;
+                                        string line;
+                                        int.TryParse(cmd[5], out x);
+                                        System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                                        while ((line = file.ReadLine()) != null && i != x)
+                                        {
+                                            i++;
+                                        }
+                                        if (i == x)
+                                        {
+                                            writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                                        }
+                                        file.Close();
                                     }
-                                    if (i == x)
+                                    else
                                     {
-                                        writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                                        writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": There is no kicks database!");
                                     }
-                                    file.Close();
                                 }
                                 string[] command = cmd[3].Split(':');
                                 Console.WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
@@ -459,12 +475,12 @@ class Program
                         {
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                             string[] command = cmd[3].Split(':');
-                            Console.WriteLine(nick + " attempted to use " + prefix + " " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                            Console.WriteLine(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                         }
                     }
                     else if (cmd[3] == ":" + prefix + "kick")
                     {
-                        if (cmd.Length > 5)
+                        if (cmd.Length > 4)
                         {
                             if (IsOwner(prenick1[1]))
                             {
