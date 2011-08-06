@@ -26,8 +26,15 @@ class Program
     public static string Channel = "#csharpbot";
     public static string Nickname = "CSharpBot";
     public static string Server = "irc.merbosmagic.co.cc";
-    public static string Username = "CSharpBot";
+    public static string Username = "CSharpBot"; // Planned to use with an Ident daemon
     public static string Realname = "MerbosMagic C# Bot";
+    public static string FullUserLine
+    {
+        get
+        {
+            return "USER " + Nickname + " 8 * :" + Realname;
+        }
+    }
     public static int Port = 6667;
 
     #region IRC formatting implementation
@@ -272,7 +279,6 @@ class Program
         // Finishing configuration...
         Console.ResetColor();
         WriteLine();
-        Username = "USER " + Nickname + " 8 * :" + Realname;
         string[] options = { Server, Port.ToString(), Nickname, Channel, OwnerHostPattern, Prefix, Username, string.Join(",", LogType) };
         try
         {
@@ -383,7 +389,7 @@ class Program
             writer = new StreamWriter(stream);
             writer.AutoFlush = true;
             Write("Logging in... ");
-            writer.WriteLine(Username);
+            writer.WriteLine(FullUserLine);
             writer.WriteLine("NICK " + Nickname);
             string currentcmd = null;
             string whoiscaller = null;
