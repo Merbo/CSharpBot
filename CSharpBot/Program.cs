@@ -219,17 +219,17 @@ class Program
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("Ping? Pong!");
                         Console.ResetColor();
-#else
-                    Console.Write("[ping] ");
                     #endif
                     writer.WriteLine("PONG " + cmd[1]);
                 }
 
                 if (cmd[1].Equals("376"))
                 {
-#if !DEBUG
-                    Console.Write("[motd received] ");
-#endif
+                    #if DEBUG
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("[motd received] ");
+                        Console.ResetColor();
+                    #endif
                     Console.WriteLine("Applying optimal flags...");
                     writer.WriteLine("MODE " + NICK + " +B"); // We are a bot
                     writer.WriteLine("MODE " + NICK + " +w"); // We want to get wallops, if any
@@ -369,10 +369,11 @@ class Program
                             while (!foundTopic)
                             {
                                 topic = reader.ReadLine();
-#if DEBUG
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine(topic);
-#endif
+                                #if DEBUG
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine(topic);
+                                    Console.ResetColor();
+                                #endif
                                 if (topic.Contains("331"))
                                 {
                                     topic = "No topic is set for this channel.";
@@ -404,13 +405,13 @@ class Program
                             }
                         }
                     }
-                    else if (cmd[3] == ":" + prefix + "kicklines" && cmd.Length >= 6)
+                    else if (cmd[3] == ":" + prefix + "kicklines")
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            if (cmd.Length > 5)
+                            if (cmd.Length > 4)
                             {
-                                if (cmd[4].Equals("add"))
+                                if (cmd[4].Equals("add") && cmd.Length > 5)
                                 {
                                     string[] text = { cmd.Skip(5).ToString() };
                                     System.IO.File.WriteAllLines("Kicks.txt", text);
@@ -433,23 +434,25 @@ class Program
                                     file.Close();
                                     writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
                                 }
-                                if (cmd[4].Equals("Read") && System.IO.File.Exists("Kicks.txt"))
+                                if (cmd[4].Equals("Read") && System.IO.File.Exists("Kicks.txt") && cmd.Length > 5)
                                 {
                                     int i = 0;
+                                    int x = 0;
                                     string line;
+                                    int.TryParse(cmd[5], out x);
                                     System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                                    while ((line = file.ReadLine()) != null && i != int.Parse(cmd[5]))
+                                    while ((line = file.ReadLine()) != null && i != x)
                                     {
                                         i++;
                                     }
-                                    if (i == int.Parse(cmd[5]))
+                                    if (i == x)
                                     {
                                         writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
                                     }
                                     file.Close();
                                 }
                                 string[] command = cmd[3].Split(':');
-                                Console.WriteLine(nick + " issued " + prefix + " " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                Console.WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                             }
                         }
                         else
