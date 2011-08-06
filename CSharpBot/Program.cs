@@ -10,404 +10,227 @@ using System.IO;
 
 class Program
 {
-    // RegEx'es
-    static Regex HostmaskRegex;
+    // Our RegEx'es
+    public static Regex HostmaskRegex;
 
-    // Streams
-    static NetworkStream stream;
-    static TcpClient irc;
-    static StreamWriter writer;
-    static StreamReader reader;
+    public static StreamWriter writer;
 
-    // Configuration
-    public static string CurrentLine; // Current IRC line, sometimes used as temporary string memory
-    public static string Prefix = ".";
-    public static string OwnerHostPattern = "*!*@localhost";
-    public static string Channel = "#csharpbot";
-    public static string Nickname = "CSharpBot";
-    public static string Server = "irc.merbosmagic.co.cc";
-    public static string Username = "CSharpBot"; // Planned to use with an Ident daemon
-    public static string Realname = "MerbosMagic C# Bot";
-    public static string FullUserLine
-    {
-        get
-        {
-            return "USER " + Nickname + " 8 * :" + Realname;
-        }
-    }
-    public static int Port = 6667;
-
-    #region IRC formatting implementation
     const string IRCBold = "\x02"; // \x02[text]\x02
     const string IRCColor = "\x03"; // \x03[xx[,xx]]
     const string IRCItalic = "\u0016"; // Mibbit has a bug on this
     const string IRCReset = "\u000F"; // Resets text formatting
 
-    public static string BoldText(string text) { return IRCBold + text + IRCBold; }
-    public static string ItalicText(string text) { return IRCItalic + text + IRCItalic; }
-    public static string ColorText(string text, int foreground, int background = -1)
+    public string BoldText(string text) { return IRCBold + text + IRCBold; }
+    public string ItalicText(string text) { return IRCItalic + text + IRCItalic; }
+    public string ColorText(string text, int foreground, int background = -1)
     {
         return IRCColor + (foreground < 10 ? "0" : "") + foreground.ToString() + (background > -1 ? (background < 10 ? "0" : "") + background.ToString() : "") + text + IRCColor + "99";
-    }
-    #endregion
-
-    #region Logging implementation by Icedream
-    public static List<TextWriter> LoggingOutputs;
-    public static void InitializeOutputs(IEnumerable<string> types)
-    {
-        LoggingOutputs = new List<TextWriter>();
-        foreach (string t in types)
-        {
-            switch (t.Substring(0, 1))
-            {
-                case "f":
-                    string filename = t.Substring(2);
-                    LoggingOutputs.Add(new StreamWriter(filename));
-                    break;
-                case "s":
-                    LoggingOutputs.Add(Console.Out);
-                    break;
-            }
-        }
-    }
-    public static void DeinitializeOutputs()
-    {
-        foreach (TextWriter tw in LoggingOutputs)
-            tw.Close();
-    }
-    public static void WriteLine(object value = null)
-    {
-        if (LoggingOutputs != null)
-        {
-            foreach (TextWriter tw in LoggingOutputs)
-            {
-                tw.WriteLine(/*"[{0}] {1}", DateTime.Now, */value);
-                tw.Flush();
-            }
-        }
-        else Console.WriteLine(value);
-    }
-    public static void Write(object value)
-    {
-        if (LoggingOutputs != null)
-        {
-        foreach (TextWriter tw in LoggingOutputs)
-            tw.Write(value);
-        }
-        else Console.Write(value);
-    }
-    static List<string> LogType = new List<string>();
-    static List<StreamWriter> LogOutputs = new List<StreamWriter>();
-#endregion
-
-    public static bool FirstUseSetup()
-    {
-
-        Console.BackgroundColor = ConsoleColor.DarkBlue;
-        Console.ForegroundColor = ConsoleColor.White;
-        WriteLine("=== First Use Configuration ===");
-        WriteLine("");
-        Console.ResetColor();
-
-        // The SERVER
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Write("Server [Default: " + Server + "]: ");
-        Console.ForegroundColor = ConsoleColor.White;
-        CurrentLine = Console.ReadLine();
-        if (CurrentLine != "") Server = CurrentLine;
-
-        // The PORT
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        bool portOK = false;
-        while (!portOK)
-        {
-            Write("Port [Default: " + Port.ToString() + "]: ");
-
-            // Errors?
-            Console.ForegroundColor = ConsoleColor.White;
-            int num;
-            bool validNumber = int.TryParse(CurrentLine = Console.ReadLine(), out num);
-            if (CurrentLine == "")
-            {
-                num = Port;
-                validNumber = true;
-            }
-            Console.ForegroundColor = ConsoleColor.Red;
-            if (!validNumber)
-                WriteLine("Sorry, but this is an invalid port number!");
-            else if (Port > 0xffff)
-                WriteLine("Sorry, but this is a too big number.");
-            else if (Port < 0)
-                WriteLine("Sorry, but this is a too small number.");
-            else
-            {
-                Port = num;
-                portOK = true;
-            }
-        }
-
-        // The NICKname
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Write("Nickname [Default: " + Nickname + "]: ");
-        Console.ForegroundColor = ConsoleColor.White;
-        CurrentLine = Console.ReadLine();
-        if (CurrentLine != "") Nickname = CurrentLine;
-
-        // The Username
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Write("Username [Default: " + Username + "]: ");
-        Console.ForegroundColor = ConsoleColor.White;
-        CurrentLine = Console.ReadLine();
-        if (CurrentLine != "") Username = CurrentLine;
-
-        // The Realname
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Write("Realname [Default: " + Realname + "]: ");
-        Console.ForegroundColor = ConsoleColor.White;
-        CurrentLine = Console.ReadLine();
-        if (CurrentLine != "") Realname = CurrentLine;
-
-        // The CHANNEL
-        while (!Channel.StartsWith("#"))
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Write("Channel [Default: " + Channel + "]: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            CurrentLine = Console.ReadLine();
-            if (CurrentLine != "") Channel = CurrentLine;
-            Console.ForegroundColor = ConsoleColor.Red;
-            if (!Channel.StartsWith("#"))
-                WriteLine("Sorry, but channel names always begin with #!");
-        }
-
-        // The ownerhost
-        while (HostmaskRegex == null)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Write("Hostmask of owner (Nickname!Username@Host, can be a regex globmask (wildcards like * and ?)) [Default: " + OwnerHostPattern + "]: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            CurrentLine = Console.ReadLine();
-            if (CurrentLine != "") OwnerHostPattern = CurrentLine;
-            try
-            {
-                HostmaskRegex = new Regex(OwnerHostPattern = "^" + OwnerHostPattern.Replace(".", "\\.").Replace("*", ".+") + "$");
-#if DEBUG
-                         Console.ForegroundColor = ConsoleColor.Yellow;
-                         WriteLine("(debug) Parsed Regex: " + ownerhost);
-                         Console.ResetColor();
-#endif
-            }
-            catch (Exception n)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                WriteLine("Something went wrong: " + n.Message);
-                WriteLine("Exception: " + n.ToString());
-                WriteLine("StackTrace: " + n.StackTrace);
-            }
-        }
-
-        // The prefix
-        while (Prefix.Length < 1)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Write("Command Prefix (e.g. in '!kick' it is '!') [Default: " + Prefix + "]: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            CurrentLine = Console.ReadLine();
-            if (CurrentLine != "") Prefix = CurrentLine;
-            Console.ForegroundColor = ConsoleColor.Red;
-            if (Prefix.Length < 1)
-                WriteLine("You must set a prefix!");
-        }
-
-        // Our logging options
-        LogType = new List<string>();
-        bool logtypesel = false;
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        WriteLine("Please select logging types. To finish press [Enter]. You may choose between:");
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        WriteLine(" [s] Screen logging");
-        WriteLine(" [f] File logging");
-        //WriteLine(" [l] System logging"); // to be implemented
-        while (!logtypesel)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Write("Please type:");
-            Console.ForegroundColor = ConsoleColor.White;
-            ConsoleKey n = Console.ReadKey().Key;
-            if (n == ConsoleKey.F)
-            {
-                bool yes = true;
-                foreach (string y in LogType)
-                    if (y.StartsWith("f"))
-                    {
-                        yes = false;
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        WriteLine("Already activated file logging.");
-                        break;
-                    }
-                if (yes)
-                {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    WriteLine();
-                    Write("Log file name? ");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    LogType.Add("f:" + Console.ReadLine()); // example: f:screen.log => Type: [F]ile, Filename: screen.log
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    WriteLine("Enabled file logging");
-                }
-            }
-            else if (n == ConsoleKey.S)
-            {
-                if (LogType.Contains("s"))
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    WriteLine();
-                    WriteLine("Already activated screen logging.");
-                }
-                else
-                {
-                    LogType.Add("s");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    WriteLine();
-                    WriteLine("Enabled screen logging");
-                }
-            }
-            else if (n == ConsoleKey.Enter)
-                logtypesel = true;
-        }
-
-        // Finishing configuration...
-        Console.ResetColor();
-        WriteLine();
-        string[] options = { Server, Port.ToString(), Nickname, Channel, OwnerHostPattern, Prefix, Username, string.Join(",", LogType) };
-        try
-        {
-            File.WriteAllLines("options.txt", options);
-            Console.ForegroundColor = ConsoleColor.Green;
-            WriteLine("Configuration has been saved successfully. The bot will now start!");
-        }
-        catch (Exception)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            WriteLine("Configuration has NOT been saved. Please check if the directory is writeable for the bot.");
-            WriteLine("Enter something to exit.");
-            Console.ReadKey();
-            return false;
-        }
-        return true;
-    }
-
-    public static void ShowVersion()
-    {
-        WriteLine("CSharpBot v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-        WriteLine("\t(c) Merbo August 3, 2011-Present");
-        WriteLine("\t(c) Icedream August 5, 2011-Present");
-        WriteLine();
     }
 
     static void Main(string[] args)
     {
         bool wentto = false;
-
         start: // This is the point at which the bot restarts on errors
-
-        Program.LoggingOutputs = null;
-        Program.LogOutputs = null;
-        Program.LogType = null;
-
         if (wentto == true)
         {
-            WriteLine("");
+            Console.WriteLine("");
             HostmaskRegex = null;
             wentto = false;
         }
-        Console.ResetColor();
 
-        ShowVersion();
+        NetworkStream stream;
+        TcpClient irc;
+        StreamReader reader;
+
+        string inputline;
+        string prefix = "";
+        string ownerhost = "";
+        string CHANNEL = "";
+        string NICK;
+        string SERVER;
+        string USER;
+        int PORT = -1;
+
+        // Head-lines
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine("CSharpBot v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        Console.WriteLine("\t(c) Merbo August 3, 2011-Present");
+        Console.WriteLine("\t(c) Icedream August 5, 2011-Present");
+        Console.WriteLine();
 
         // First setup
         if (!File.Exists("Options.txt"))
-            if (!FirstUseSetup())
-                // fail
-                return;
-
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        WriteLine("Loading configuration...");
-        try
         {
-            string[] options = File.ReadAllLines("options.txt");
-            Server = options[0];
-            Port = int.Parse(options[1]);
-            Nickname = options[2];
-            Channel = options[3];
-            OwnerHostPattern = options[4];
-            HostmaskRegex = new Regex(options[4]);
-            Prefix = options[5];
-            Username = options[6];
-            LogType = new List<string>();
-            LogType.AddRange(options[7].Split(','));
-            InitializeOutputs(LogType);
-        }
-        catch (
-            Exception
-#if DEBUG
-            e
-#endif
-        )
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-#if DEBUG
-            WriteLine(e);
-#endif
-            WriteLine("Configuration has NOT been loaded. Please check if the configuration is valid and try again.");
-            WriteLine("Enter something to exit.");
-            Console.ReadKey();
-            return;
-        }
-
-        try
-        {
-            WriteLine();
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = ConsoleColor.White;
-            Write("Connecting to " + Server + "... ");
+            Console.WriteLine("=== First Use Configuration ===");
+            Console.WriteLine("");
+            Console.ResetColor();
+
+            // The SERVER
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Server: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            SERVER = Console.ReadLine();
+
+            // The PORT
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            while (PORT < 0 || PORT > 0xffff)
+            {
+                Console.Write("Port: ");
+
+                // Errors?
+                Console.ForegroundColor = ConsoleColor.White;
+                bool validNumber = int.TryParse(Console.ReadLine(), out PORT);
+                Console.ForegroundColor = ConsoleColor.Red;
+                if (!validNumber)
+                    Console.WriteLine("Sorry, but this is an invalid port number!");
+                if (PORT > 0xffff)
+                    Console.WriteLine("Sorry, but this is a too big number.");
+                if (PORT < 0)
+                    Console.WriteLine("Sorry, but this is a too small number.");
+            }
+
+            // The NICKname
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Nick: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            NICK = Console.ReadLine();
+
+            // The CHANNEL
+            while (!CHANNEL.StartsWith("#"))
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Channel: ");
+                Console.ForegroundColor = ConsoleColor.White;
+                CHANNEL = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.Red;
+                if (!CHANNEL.StartsWith("#"))
+                    Console.WriteLine("Sorry, but channel names always begin with #!");
+            }
+
+            // The ownerhost
+            while (HostmaskRegex == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Hostmask of owner (Nickname!Username@Host, can be a regex globmask (wildcards like * and ?)): ");
+                Console.ForegroundColor = ConsoleColor.White;
+                ownerhost = Console.ReadLine();
+                try
+                {
+                    HostmaskRegex = new Regex(ownerhost = "^" + ownerhost.Replace(".", "\\.").Replace("*", ".+") + "$");
+                    #if DEBUG
+                         Console.ForegroundColor = ConsoleColor.Yellow;
+                         Console.WriteLine("(debug) Parsed Regex: " + ownerhost);
+                         Console.ResetColor();
+                    #endif
+                }
+                catch (Exception n)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Something went wrong: " + n.Message);
+                    Console.WriteLine("Exception: " + n.ToString());
+                    Console.WriteLine("StackTrace: " + n.StackTrace);
+                }
+            }
+
+            // The prefix
+            while (prefix.Length < 1)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Command Prefix (e.g. in '!kick' it is '!'): ");
+                Console.ForegroundColor = ConsoleColor.White;
+                prefix = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.Red;
+                if (prefix.Length < 1)
+                    Console.WriteLine("You must set a prefix!");
+            }
+
+            // Finishing configuration...
+            Console.ResetColor();
+            Console.WriteLine();
+            USER = "USER " + NICK + " 8 * :MerbosMagic C# IRC Bot";
+            string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix, USER };
+            try
+            {
+                File.WriteAllLines("options.txt", options);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Configuration has been saved successfully. The bot will now start!");
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Configuration has NOT been saved. Please check if the directory is writeable for the bot.");
+                Console.WriteLine("Enter something to exit.");
+                Console.ReadKey();
+                return;
+            }
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Loading configuration...");
+            try
+            {
+                string[] options = File.ReadAllLines("options.txt");
+                SERVER = options[0];
+                PORT = int.Parse(options[1]);
+                NICK = options[2];
+                CHANNEL = options[3];
+                ownerhost = options[4];
+                HostmaskRegex = new Regex(options[4]);
+                prefix = options[5];
+                USER = options[6];
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Configuration has NOT been loaded. Please check if the configuration is valid and try again.");
+                Console.WriteLine("Enter something to exit.");
+                Console.ReadKey();
+                return;
+            }
+        }
+        try
+        {
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Connecting to " + SERVER);
             
-            irc = new TcpClient(Server, Port);
+            irc = new TcpClient(SERVER, PORT);
             if (!irc.Connected)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                WriteLine("failed! Bot is restarting in 5 seconds...");
+                Console.WriteLine("Connection failed. Bot is restarting in 5 seconds...");
                 System.Threading.Thread.Sleep(5000);
                 wentto = true;
                 goto start;
             }
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            WriteLine("ok!");
-            Console.ForegroundColor = ConsoleColor.White;
             stream = irc.GetStream();
             reader = new StreamReader(stream);
             writer = new StreamWriter(stream);
             writer.AutoFlush = true;
-            Write("Logging in... ");
-            writer.WriteLine(FullUserLine);
-            writer.WriteLine("NICK " + Nickname);
+            Console.WriteLine("Logging in...");
+            writer.WriteLine(USER);
+            writer.WriteLine("NICK " + NICK);
             string currentcmd = null;
             string whoiscaller = null;
             string whoistarget = null;
             string whoischan = null; 
-            while ((CurrentLine = reader.ReadLine()) != null)
+            while ((inputline = reader.ReadLine()) != null)
             {
-                string[] cmd = CurrentLine.Split(' ');
+                string[] cmd = inputline.Split(' ');
                 #if DEBUG
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     if (!cmd[0].Equals("PING"))
-                    WriteLine("<= " + inputline);
+                        Console.WriteLine("<= " + inputline);
                     Console.ResetColor();
                 #endif
                 if (cmd[0].Equals("PING")) {
                     #if DEBUG
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        WriteLine("Ping? Pong!");
+                        Console.WriteLine("Ping? Pong!");
                         Console.ResetColor();
                     #endif
                     writer.WriteLine("PONG " + cmd[1]);
@@ -417,38 +240,28 @@ class Program
                 {
                     #if DEBUG
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        WriteLine("[motd received] ");
+                        Console.WriteLine("[motd received] ");
                         Console.ResetColor();
                     #endif
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    WriteLine("ok!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Write("Applying optimal flags... ");
-                    writer.WriteLine("MODE " + Nickname + " +B"); // We are a bot
-                    writer.WriteLine("MODE " + Nickname + " +w"); // We want to get wallops, if any
-                    writer.WriteLine("MODE " + Nickname + " -i"); // We don't want to be invisible
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    WriteLine("ok!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Write("Joining " + Channel + "... ");
-                    writer.WriteLine("JOIN " + Channel);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    WriteLine("ok!");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    WriteLine("Now ready for use.");
+                    Console.WriteLine("Applying optimal flags...");
+                    writer.WriteLine("MODE " + NICK + " +B"); // We are a bot
+                    writer.WriteLine("MODE " + NICK + " +w"); // We want to get wallops, if any
+                    writer.WriteLine("MODE " + NICK + " -i"); // We don't want to be invisible
+                    Console.WriteLine("Joining " + CHANNEL + "...");
+                    writer.WriteLine("JOIN " + CHANNEL);
                 }
                 else if (cmd[1].Equals("311"))
                 {
                     if (currentcmd.Equals("Whois") && cmd.Length > 6)
                     {
-                        WriteLine("Reading WHOIS to get hostmask of " + whoistarget + " for " + whoiscaller + "...");
+                        Console.WriteLine("Reading WHOIS to get hostmask of " + whoistarget + " for " + whoiscaller + "...");
                         writer.WriteLine("PRIVMSG " + whoischan + " :" + whoiscaller + ": " + whoistarget + "'s hostmask is " + cmd[5]);
-                        WriteLine("Found the hostmask that " + whoiscaller + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
+                        Console.WriteLine("Found the hostmask that " + whoiscaller + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
                     }
                 }
-                else if (cmd[1].Equals("KICK") && cmd[3] == Nickname)
+                else if (cmd[1].Equals("KICK") && cmd[3] == NICK)
                 {
-                    WriteLine("Rejoining " + cmd[2]);
+                    Console.WriteLine("Rejoining " + cmd[2]);
                     writer.WriteLine("JOIN " + cmd[2]);
                 }
 
@@ -465,17 +278,17 @@ class Program
                     string chan = cmd[2];
 
                     // Execute commands
-                    if (cmd[3] == ":" + Prefix + "test")
+                    if (cmd[3] == ":" + prefix + "test")
                     {
-                        WriteLine(nick + " issued " + Prefix + "test");
+                        Console.WriteLine(nick + " issued " + prefix + "test");
                         writer.WriteLine("PRIVMSG " + chan + " :I think your test works ;-)");
                     }
-                    else if (cmd[3] == ":" + Prefix + "amiowner")
+                    else if (cmd[3] == ":" + prefix + "amiowner")
                     {
-                        WriteLine(nick + " issued " + Prefix + "amiowner");
+                        Console.WriteLine(nick + " issued " + prefix + "amiowner");
                         writer.WriteLine("PRIVMSG " + chan + " :The answer is: " + (IsOwner(prenick1[1]) ? "Yes!" : "No!"));
                     }
-                    else if (cmd[3] == ":" + Prefix + "time")
+                    else if (cmd[3] == ":" + prefix + "time")
                     {
                         // UTC hours addition (#time +1 makes UTC+1 for example)
                         double add = 0;
@@ -488,61 +301,60 @@ class Program
                             adds = "+" + adds;
 
                         if(cmd.Length > 4)
-                            WriteLine(nick + " issued " + Prefix + "time " + cmd[4]);
+                            Console.WriteLine(nick + " issued " + prefix + "time " + cmd[4]);
                         else
-                            WriteLine(nick + " issued " + Prefix + "time");
+                            Console.WriteLine(nick + " issued " + prefix + "time");
                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
                     }
-                    else if (cmd[3] == ":" + Prefix + "mynick")
+                    else if (cmd[3] == ":" + prefix + "mynick")
                     {
-                        WriteLine(nick + " issued " + Prefix + "mynick");
+                        Console.WriteLine(nick + " issued " + prefix + "mynick");
                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your nick is " + nick);
                     }
-                    else if (cmd[3] == ":" + Prefix + "myident")
+                    else if (cmd[3] == ":" + prefix + "myident")
                     {
-                        WriteLine(nick + " issued " + Prefix + "myident");
+                        Console.WriteLine(nick + " issued " + prefix + "myident");
                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your ident is " + ident);
                     }
-                    else if (cmd[3] == ":" + Prefix + "myhost")
+                    else if (cmd[3] == ":" + prefix + "myhost")
                     {
-                        WriteLine(nick + " issued " + Prefix + "myhost");
+                        Console.WriteLine(nick + " issued " + prefix + "myhost");
                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your host is " + host);
                     }
-                    else if (cmd[3] == ":" + Prefix + "myfullmask")
+                    else if (cmd[3] == ":" + prefix + "myfullmask")
                     {
                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your full mask is " + cmd[0]);
                     }
-                    else if (cmd[3] == ":" + Prefix + "die")
+                    else if (cmd[3] == ":" + prefix + "die")
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            WriteLine(nick + " issued " + Prefix + "die");
+                            Console.WriteLine(nick + " issued " + prefix + "die");
                             writer.WriteLine("QUIT :I shot myself because " + nick + " told me to.");
-                            DeinitializeOutputs();
                         }
                         else
                         {
-                            WriteLine(nick + " attempted to use " + Prefix + "die");
+                            Console.WriteLine(nick + " attempted to use " + prefix + "die");
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "clean")
+                    else if (cmd[3] == ":" + prefix + "clean")
                     {
                         if (IsOwner(prenick1[1]))
                         {
                             FileInfo fi = new FileInfo("options.txt");
                             fi.Delete();
-                            WriteLine(nick + " issued " + Prefix + "clean");
+                            Console.WriteLine(nick + " issued " + prefix + "clean");
                             writer.WriteLine("QUIT :Cleaned!");
                         }
                         else
                         {
-                            WriteLine(nick + " attempted to use " + Prefix + "clean");
+                            Console.WriteLine(nick + " attempted to use " + prefix + "clean");
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
                     
-                    else if (cmd[3] == ":" + Prefix + "topic")
+                    else if (cmd[3] == ":" + prefix + "topic")
                     {
                         if (cmd.Length > 4)
                         {
@@ -551,13 +363,13 @@ class Program
                             // Set topic if is owner
                             if (IsOwner(prenick1[1]))
                             {
-                                WriteLine(nick + " issued " + Prefix + "topic (set topic)");
+                                Console.WriteLine(nick + " issued " + prefix + "topic (set topic)");
                                 writer.WriteLine("TOPIC " + chan + " :" + ArrayToString(cmd.Skip(4).ToArray(), " "));
                                 writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Topic has been set.");
                             }
                             else
                             {
-                                WriteLine(nick + " attempted to use " + Prefix + "topic (set topic).");
+                                Console.WriteLine(nick + " attempted to use " + prefix + "topic (set topic).");
                                 writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                             }
                         }
@@ -572,7 +384,7 @@ class Program
                                 topic = reader.ReadLine();
                                 #if DEBUG
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    WriteLine(topic);
+                                    Console.WriteLine(topic);
                                     Console.ResetColor();
                                 #endif
                                 if (topic.Contains("331"))
@@ -587,7 +399,7 @@ class Program
                                 }
                             }
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": " + topic);
-                            WriteLine(nick + " issued " + Prefix + "topic (read topic).");
+                            Console.WriteLine(nick + " issued " + prefix + "topic (read topic).");
                         }
                     }
                     else if (cmd[3] == ":GTFO")
@@ -596,17 +408,17 @@ class Program
                         {
                             if (IsOwner(prenick1[1]))
                             {
-                                WriteLine(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + cmd[4]);
+                                Console.WriteLine(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + cmd[4]);
                                 writer.WriteLine("KICK " + chan + " " + cmd[4] + " :GTFO!");
                             }
                             else
                             {
-                                WriteLine(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + nick + " for being mean.");
+                                Console.WriteLine(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + nick + " for being mean.");
                                 writer.WriteLine("KICK " + chan + " " + nick + " :NO U");
                             }
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "kicklines")
+                    else if (cmd[3] == ":" + prefix + "kicklines")
                     {
                         if (IsOwner(prenick1[1]))
                         {
@@ -695,17 +507,17 @@ class Program
                                     }
                                 }
                                 string[] command = cmd[3].Split(':');
-                                WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                Console.WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                             }
                         }
                         else
                         {
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                             string[] command = cmd[3].Split(':');
-                            WriteLine(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                            Console.WriteLine(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "kick")
+                    else if (cmd[3] == ":" + prefix + "kick")
                     {
                         if (cmd.Length > 4)
                         {
@@ -716,47 +528,47 @@ class Program
                                     string[] lines = File.ReadAllLines("Kicks.txt");
                                     Random rand = new Random();
                                     writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
-                                    WriteLine(nick + " issued " + Prefix + "kick " + cmd[4]);
+                                    Console.WriteLine(nick + " issued " + prefix + "kick " + cmd[4]);
                                 }
                                 else
                                 {
                                     writer.WriteLine("KICK " + chan + " " + cmd[4] + " :Goodbye! You just got kicked by " + nick + ".");
-                                    WriteLine(nick + " issued " + Prefix + "kick " + cmd[4]);
+                                    Console.WriteLine(nick + " issued " + prefix + "kick " + cmd[4]);
                                 }
                                 //  writer.WriteLine("KICK " + chan + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
                             }
                             else
                             {
                                 writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
-                                WriteLine(nick + " attempted to use " + Prefix + "kick " + cmd[4]);
+                                Console.WriteLine(nick + " attempted to use " + prefix + "kick " + cmd[4]);
                             }
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "join")
+                    else if (cmd[3] == ":" + prefix + "join")
                     {
                         if (IsOwner(prenick1[1]) && cmd.Length > 4)
                         {
-                            WriteLine(nick + " issued " + Prefix + "join " + cmd[4]);
+                            Console.WriteLine(nick + " issued " + prefix + "join " + cmd[4]);
                             writer.WriteLine("JOIN " + cmd[4]);
                         }
                         else if (!IsOwner(prenick1[1]))
                         {
-                            WriteLine(nick + " attempted to use " + Prefix + "join " + cmd[4]);
+                            Console.WriteLine(nick + " attempted to use " + prefix + "join " + cmd[4]);
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "mode")
+                    else if (cmd[3] == ":" + prefix + "mode")
                     {
                         if (IsOwner(prenick1[1]))
                         {
                             if (cmd.Length > 5)
                             {
-                                WriteLine(nick + " issued " + Prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                                Console.WriteLine(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
                                 writer.WriteLine("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                             }
                             else if (cmd.Length > 4)
                             {
-                                WriteLine(nick + " issued " + Prefix + "mode " + cmd[4] + " on " + chan);
+                                Console.WriteLine(nick + " issued " + prefix + "mode " + cmd[4] + " on " + chan);
                                 writer.WriteLine("MODE " + chan + " " + cmd[4]);
                             }
                         }
@@ -764,36 +576,36 @@ class Program
                         {
                             if (cmd.Length > 5)
                             {
-                                WriteLine(nick + " attempted to use " + Prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                                Console.WriteLine(nick + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
                                 writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                             }
                             else if (cmd.Length > 4)
                             {
-                                WriteLine(nick + " attempted to use " + Prefix + "mode " + cmd[4] + " on " + chan);
+                                Console.WriteLine(nick + " attempted to use " + prefix + "mode " + cmd[4] + " on " + chan);
                                 writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                             }
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "part")
+                    else if (cmd[3] == ":" + prefix + "part")
                     {
                         if (IsOwner(prenick1[1]) && cmd.Length > 4)
                         {
-                            WriteLine(nick + " issued " + Prefix + "part " + cmd[4]);
+                            Console.WriteLine(nick + " issued " + prefix + "part " + cmd[4]);
                             writer.WriteLine("PART " + cmd[4]);
                         }
                         else if (!IsOwner(prenick1[1]))
                         {
-                            WriteLine(nick + " attempted to use " + Prefix + "join " + cmd[4]);
+                            Console.WriteLine(nick + " attempted to use " + prefix + "join " + cmd[4]);
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "reset")
+                    else if (cmd[3] == ":" + prefix + "reset")
                     {
                         if (IsOwner(prenick1[1]))
                         {
                             FileInfo fi = new FileInfo("options.txt");
                             fi.Delete();
-                            WriteLine(nick + " issued " + Prefix + "reset");
+                            Console.WriteLine(nick + " issued " + prefix + "reset");
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
                             writer.WriteLine("QUIT :Resetting!");
                             wentto = true;
@@ -801,11 +613,11 @@ class Program
                         }
                         else
                         {
-                            WriteLine(nick + " attempted to use " + Prefix + "reset");
+                            Console.WriteLine(nick + " attempted to use " + prefix + "reset");
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "config")
+                    else if (cmd[3] == ":" + prefix + "config")
                     {
                         if (IsOwner(prenick1[1]))
                         {
@@ -829,57 +641,53 @@ class Program
                                     }
                                 }
                                 string[] command = cmd[3].Split(':');
-                                WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                Console.WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                             }
                         }
                         else
                         {
                             string[] command = cmd[3].Split(':');
-                            WriteLine(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(4).ToArray()));
+                            Console.WriteLine(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "restart")
+                    else if (cmd[3] == ":" + prefix + "restart")
                     {
                         if (IsOwner(prenick1[1]))
                         {
-                            WriteLine(nick + " issued " + Prefix + "restart");
+                            Console.WriteLine(nick + " issued " + prefix + "restart");
                             writer.WriteLine("QUIT :Restarting!");
                             wentto = true;
                             goto start;
                         }
                         else
                         {
-                            WriteLine(nick + " attempted to use " + Prefix + "restart");
+                            Console.WriteLine(nick + " attempted to use " + prefix + "restart");
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
-                    else if (cmd[3] == ":" + Prefix + "hostmask" && cmd.Length > 4)
+                    else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 4)
                     {
                         whoiscaller = nick;
                         whoistarget = cmd[4];
                         whoischan = cmd[2];
                         currentcmd = "Whois";
                         writer.WriteLine("WHOIS " + cmd[4]);
-                        WriteLine(nick + " issued " + Prefix + "hostmask " + cmd[4]);
+                        Console.WriteLine(nick + " issued " + prefix + "hostmask " + cmd[4]);
                     }
                 }
             }
         }
         catch (Exception e)
         {
-            if (writer != null)
-            {
-                writer.WriteLine("PRIVMSG " + Channel + " : Error! Error: " + e.ToString());
-                writer.WriteLine("PRIVMSG " + Channel + " : Error! StackTrace: " + e.StackTrace);
-                writer.WriteLine("QUIT :Exception: " + e.ToString());
-                writer.Close();
-            }
+            writer.WriteLine("PRIVMSG " + CHANNEL + " : Error! Error: " + e.ToString());
+            writer.WriteLine("PRIVMSG " + CHANNEL + " : Error! StackTrace: " + e.StackTrace);
+            writer.WriteLine("QUIT :Exception: " + e.ToString());
 
             Console.ForegroundColor = ConsoleColor.Red;
-            WriteLine("The bot generated an error:");
-            WriteLine(e);
-            WriteLine("Restarting in 5 seconds...");
+            Console.WriteLine("The bot generated an error:");
+            Console.WriteLine(e);
+            Console.WriteLine("Restarting in 5 seconds...");
             Console.ResetColor();
 
             Thread.Sleep(5000);
