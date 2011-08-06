@@ -33,6 +33,7 @@ class Program
         start: // This is the point at which the bot restarts on errors
         if (wentto == true)
         {
+            Console.WriteLine("");
             HostmaskRegex = null;
             wentto = false;
         }
@@ -613,7 +614,38 @@ class Program
                         else
                         {
                             Console.WriteLine(nick + " attempted to use " + prefix + "reset");
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                        }
+                    }
+                    else if (cmd[3] == ":" + prefix + "config")
+                    {
+                        if (IsOwner(prenick1[1]))
+                        {
+                            if (cmd.Length > 4)
+                            {
+                                if (cmd[4].Equals("list"))
+                                {
+                                    if (File.Exists("options.txt"))
+                                    {
+                                        string[] options = File.ReadAllLines("options.txt");
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Server: " + options[0]);
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Port: " + options[1]);
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Nick: " + options[2]);
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": AutoJoinChannel: " + options[3]);
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Owner host: " + options[4].Replace(".+", "*").Replace("^", "").Replace("$", ""));
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Command Prefix: " + options[5]);
+                                    }
+                                    else
+                                    {
+                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": I'd love to tell you, but there isn't a configuration file :|");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(nick + " attempted to use " + prefix + "config");
+                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
                     else if (cmd[3] == ":" + prefix + "restart")
