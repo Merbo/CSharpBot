@@ -230,6 +230,10 @@ class Program
 #if !DEBUG
                     Console.Write("[motd received] ");
 #endif
+                    Console.WriteLine("Applying optimal flags...");
+                    writer.WriteLine("MODE " + NICK + " +B"); // We are a bot
+                    writer.WriteLine("MODE " + NICK + " +w"); // We want to get wallops, if any
+                    writer.WriteLine("MODE " + NICK + " -i"); // We don't want to be invisible
                     Console.WriteLine("Joining " + CHANNEL + "...");
                     writer.WriteLine("JOIN " + CHANNEL);
                 }
