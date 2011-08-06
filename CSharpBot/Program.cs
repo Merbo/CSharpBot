@@ -599,6 +599,7 @@ class Program
                         Thread.Sleep(1000);
                         writer.WriteLine("NOTICE " + nick + " :" + prefix + "clean -- Clears the config and kills the bot");
                         writer.WriteLine("NOTICE " + nick + " :" + prefix + "die -- Kills the bot");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
                     }
                     else if (cmd[3] == ":" + prefix + "mode")
                     {
