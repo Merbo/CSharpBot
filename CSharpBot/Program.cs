@@ -462,6 +462,21 @@ class Program
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
+                    else if (cmd[3] == ":" + prefix + "restart")
+                    {
+                        if (IsOwner(prenick1[1]))
+                        {
+                            Console.WriteLine(nick + " issued " + prefix + "restart");
+                            writer.WriteLine("QUIT :Restarting!");
+                            wentto = true;
+                            goto start;
+                        }
+                        else
+                        {
+                            Console.WriteLine(nick + " attempted to use " + prefix + "restart");
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                        }
+                    }
                     else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 5)
                     {
                         whoiscaller = nick;
