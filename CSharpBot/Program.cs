@@ -200,11 +200,14 @@ class Program
                 #if DEBUG
                     if (!cmd[0].Equals("PING"))
                     Console.WriteLine("<= " + inputline);
+                #endif
                 if (cmd[0].Equals("PING")) {
-                    Console.WriteLine("Ping? Pong!"); // it might go on the console's nerves
+                    #if DEBUG
+                        Console.WriteLine("Ping? Pong!");
+                    #endif
                     writer.WriteLine("PONG " + cmd[1]);
                 }
-                #endif
+
                 if (cmd[1].Equals("376"))
                 {
                     Console.WriteLine("Joining " + CHANNEL + "...");
