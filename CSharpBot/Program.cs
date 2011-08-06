@@ -640,11 +640,14 @@ class Program
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": I'd love to tell you, but there isn't a configuration file :|");
                                     }
                                 }
+                                string[] command = cmd[3].Split(':');
+                                Console.WriteLine(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                             }
                         }
                         else
                         {
-                            Console.WriteLine(nick + " attempted to use " + prefix + "config");
+                            string[] command = cmd[3].Split(':');
+                            Console.WriteLine(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
