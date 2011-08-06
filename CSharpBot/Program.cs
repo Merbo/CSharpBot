@@ -294,41 +294,48 @@ class Program
                     }
                     else if (cmd[3] == ":" + prefix + "kicklines" && cmd.Length >= 6)
                     {
-                        if (cmd[4].Equals("add"))
+                        if (IsOwner(prenick1[1]))
                         {
-                            string[] text = {cmd.Skip(5).ToString()};
-                            System.IO.File.WriteAllLines("Kicks.txt", text);
-                        }
-                        else if (cmd[4].Equals("clear"))
-                        {
-                            System.IO.File.Delete("Kicks.txt");
-                        }
-                        else if (cmd[4].Equals("total"))
-                        {
-                            int i = 0;
-                            string line;
-                            System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                            while((line = file.ReadLine()) != null)
+                            if (cmd[4].Equals("add"))
                             {
-                                  i++;
+                                string[] text = { cmd.Skip(5).ToString() };
+                                System.IO.File.WriteAllLines("Kicks.txt", text);
                             }
-                            file.Close();
-                            writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
+                            else if (cmd[4].Equals("clear"))
+                            {
+                                System.IO.File.Delete("Kicks.txt");
+                            }
+                            else if (cmd[4].Equals("total"))
+                            {
+                                int i = 0;
+                                string line;
+                                System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                                while ((line = file.ReadLine()) != null)
+                                {
+                                    i++;
+                                }
+                                file.Close();
+                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
+                            }
+                            else if (cmd[4].Equals("Read"))
+                            {
+                                int i = 0;
+                                string line;
+                                System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                                while ((line = file.ReadLine()) != null && i != int.Parse(cmd[5]))
+                                {
+                                    i++;
+                                }
+                                if (i == int.Parse(cmd[5]))
+                                {
+                                    writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                                }
+                                file.Close();
+                            }
                         }
-                        else if (cmd[4].Equals("Read"))
+                        else
                         {
-                            int i = 0;
-                            string line;
-                            System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                            while ((line = file.ReadLine()) != null && i != int.Parse(cmd[5]))
-                            {
-                                i++;
-                            }
-                            if (i == int.Parse(cmd[5]))
-                            {
-                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
-                            }
-                            file.Close();
+                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
                     else if (cmd[3] == ":" + prefix + "kick")
