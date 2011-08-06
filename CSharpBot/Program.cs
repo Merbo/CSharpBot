@@ -107,7 +107,9 @@ class Program
                 {
                     HostmaskRegex = new Regex(ownerhost = "^" + ownerhost.Replace(".", "\\.").Replace("*", ".+") + "$");
                     #if DEBUG
+                         Console.ForegroundColor = ConsoleColor.Yellow;
                          Console.WriteLine("(debug) Parsed Regex: " + ownerhost);
+                         Console.ResetColor();
                     #endif
                 }
                 catch (Exception n)
@@ -207,12 +209,16 @@ class Program
             {
                 string[] cmd = inputline.Split(' ');
                 #if DEBUG
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     if (!cmd[0].Equals("PING"))
                     Console.WriteLine("<= " + inputline);
+                    Console.ResetColor();
                 #endif
                 if (cmd[0].Equals("PING")) {
                     #if DEBUG
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("Ping? Pong!");
+                        Console.ResetColor();
                     #endif
                     writer.WriteLine("PONG " + cmd[1]);
                 }
