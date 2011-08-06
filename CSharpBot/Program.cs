@@ -460,24 +460,45 @@ class Program
                                     file.Close();
                                     writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
                                 }
-                                if (cmd[4].Equals("Read") && cmd.Length == 6)
+                                if (cmd[4].Equals("read") && cmd.Length == 6)
                                 {
                                     if (File.Exists("Kicks.txt"))
                                     {
                                         int i = 0;
                                         int x;
                                         string line;
-                                        int.TryParse(cmd[5], out x);
-                                        System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                                        while ((line = file.ReadLine()) != null && i != x)
+                                        if (!int.TryParse(cmd[5], out x))
                                         {
-                                            i++;
+                                            writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
                                         }
-                                        if (i == x)
+                                        else
                                         {
-                                            writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                                            i--;
+                                            if (i < 0)
+                                            {
+                                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
+                                            }
+                                            else
+                                            {
+                                                System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                                                while ((line = file.ReadLine()) != null && i != x)
+                                                {
+                                                    i++;
+                                                }
+                                                if (i == x)
+                                                {
+                                                    if (line != "")
+                                                    {
+                                                        writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                                                    }
+                                                    else
+                                                    {
+                                                        writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": No kickline for this number.");
+                                                    }
+                                                }
+                                                file.Close();
+                                            }
                                         }
-                                        file.Close();
                                     }
                                     else
                                     {
