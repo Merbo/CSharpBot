@@ -21,7 +21,7 @@ class Program
     const string IRCItalic = "\u0016"; // Mibbit has a bug on this
     const string IRCReset = "\u000F"; // Resets text formatting
 
-    public static bool logging; 
+    public static bool logging;
 
     public string BoldText(string text) { return IRCBold + text + IRCBold; }
     public string ItalicText(string text) { return IRCItalic + text + IRCItalic; }
