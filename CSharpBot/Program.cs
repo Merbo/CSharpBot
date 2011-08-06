@@ -10,12 +10,21 @@ using System.IO;
 
 class Program
 {
+
     // Our RegEx'es
-    static Regex HostmaskRegex;
+    public static Regex HostmaskRegex;
 
     public static StreamWriter writer;               
     static void Main(string[] args)
     {
+        bool wentto = false;
+        start: // This is the point at which the bot restarts on errors
+        if (wentto == true)
+        {
+            HostmaskRegex = null;
+            wentto = false;
+        }
+
         NetworkStream stream;
         TcpClient irc;
         StreamReader reader;
@@ -34,8 +43,6 @@ class Program
         Console.WriteLine("\t(c) Merbo August 3, 2011-Present");
         Console.WriteLine("\t(c) Icedream August 5, 2011-Present");
         Console.WriteLine();
-
-        start: // This is the point at which the bot restarts on errors
 
         // First setup
         if (!System.IO.File.Exists("Options.txt"))
@@ -180,6 +187,7 @@ class Program
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Connection failed. Bot is restarting in 5 seconds...");
                 System.Threading.Thread.Sleep(5000);
+                wentto = true;
                 goto start;
             }
 
@@ -294,6 +302,21 @@ class Program
                         else
                         {
                             Console.WriteLine(nick + " attempted to use " + prefix + "die");
+                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                        }
+                    }
+                    else if (cmd[3] == ":" + prefix + "clean")
+                    {
+                        if (IsOwner(prenick1[1]))
+                        {
+                            System.IO.FileInfo fi = new System.IO.FileInfo("options.txt");
+                            fi.Delete();
+                            Console.WriteLine(nick + " issued " + prefix + "clean");
+                            writer.WriteLine("QUIT :Cleaned!");
+                        }
+                        else
+                        {
+                            Console.WriteLine(nick + " attempted to use " + prefix + "clean");
                             writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                         }
                     }
@@ -428,7 +451,10 @@ class Program
                             System.IO.FileInfo fi = new System.IO.FileInfo("options.txt");
                             fi.Delete();
                             Console.WriteLine(nick + " issued " + prefix + "reset");
-                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will ask for first time configuration again.");
+                            writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
+                            writer.WriteLine("QUIT :Resetting!");
+                            wentto = true;
+                            goto start;
                         }
                         else
                         {
@@ -461,6 +487,8 @@ class Program
             Console.ResetColor();
 
             Thread.Sleep(5000);
+
+            wentto = true;
             goto start; // restart
             //Environment.Exit(0); // you might also use return
         }
