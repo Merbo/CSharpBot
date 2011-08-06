@@ -802,7 +802,7 @@ class Program
                                                     Say(chan, "You must specify 'True' or 'False'!");
                                                 }
                                             }
-                                            Say(chan, "These will count on next restart.");
+                                            Say(chan, "This will count on next restart.");
                                         }
                                     }
                                 }
