@@ -578,6 +578,28 @@ class Program
                             writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                         }
                     }
+                    else if (cmd[3] == ":" + prefix + "help")
+                    {
+                        Log(nick + " issued " + prefix + "help");
+                        writer.WriteLine("NOTICE " + nick + " :Bot commands:");
+                        writer.WriteLine("NOTICE " + nick + " :Everything in <> is necessary and everything in [] are optional.");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "help -- This command.");
+                        Thread.Sleep(1000);
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "mode <mode>-- Sets a mode the current channel.");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "topic [topic] -- Tells the current topic OR sets the channel's topic to [topic]");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "config <list> -- Tells current config.");
+                        Thread.Sleep(1000);
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "join <chan> -- Joins the bot to a channel");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "part <chan> -- Parts the bot from a channel");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "kick <nick> -- Kicks <nick> from the current channel");
+                        Thread.Sleep(1000);
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "reset -- Clears the config and restarts the bot");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "restart -- Restarts the bot");
+                        Thread.Sleep(1000);
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "clean -- Clears the config and kills the bot");
+                        writer.WriteLine("NOTICE " + nick + " :" + prefix + "die -- Kills the bot");
+                    }
                     else if (cmd[3] == ":" + prefix + "mode")
                     {
                         if (IsOwner(prenick1[1]))
