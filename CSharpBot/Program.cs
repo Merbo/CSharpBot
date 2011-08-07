@@ -94,7 +94,7 @@ namespace CSharpBot
                     case "-d":
                     case "--debug":
                         DEBUG = true;
-                        return;
+                        break;
                     case "-f":
                     case "--config-file":
                         XmlFileName = value;
