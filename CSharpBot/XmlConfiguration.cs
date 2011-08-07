@@ -198,7 +198,15 @@ namespace CSharpBot
 
         public void Load(string file = null)
         {
-            Configuration.LoadXml(OriginalFilePath = file != null ? file : OriginalFilePath);
+            try
+            {
+                Configuration.Load(OriginalFilePath = file != null ? file : OriginalFilePath);
+            }
+            catch (Exception n)
+            {
+                Console.WriteLine("[xml] " + n.ToString());
+                throw n;
+            }
         }
 
         public void Save(string file = null)
