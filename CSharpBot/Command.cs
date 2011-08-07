@@ -10,14 +10,12 @@ namespace CSharpBot
     /// <summary>
     /// Defines a command, or any response from an IRC server, sent to the bot. 
     /// </summary>
-    class Command
+    public class Command
     {
         #region Private Fields
 
-        private static string _lastCmd;
         private string[] _cmd;
-
-        private string _pf = ":" + Properties.Settings.Default.Prefix;
+        private string _pf = ":";
 
         #endregion
 
@@ -108,7 +106,9 @@ namespace CSharpBot
 
         #region Methods
         public Command(string[] cmd) {
-            this._cmd = cmd;
+            _cmd = cmd;
+            if (_pf.Equals(":"))
+                _pf += Program.config.Prefix;
             #if DEBUG
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("<= : Command, " + HostMask + ", " + CommandString +
