@@ -74,7 +74,7 @@ namespace CSharpBot
         public string CommandString {
             get {
                 if (_cmd[1] != null)
-                     return _cmd[1];
+                    return _cmd[1];
                 return null;
             }
         }
@@ -93,10 +93,8 @@ namespace CSharpBot
         /// <summary>
         /// The message of this IRC command, if present. 
         /// </summary>
-        public string Message
-        {
-            get
-            {
+        public string Message {
+            get {
                 if (_cmd[3] != null)
                     return _cmd[3];
                 return null;
@@ -109,12 +107,12 @@ namespace CSharpBot
             _cmd = cmd;
             if (_pf.Equals(":"))
                 _pf += Program.config.Prefix;
-            #if DEBUG
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("<= : Command, " + HostMask + ", " + CommandString +
-                 ", " + Target + ", " + Message + ".");
-            Console.ResetColor();
-            #endif
+            if (Program.DEBUG) {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("<= : Command, " + HostMask + ", " + CommandString +
+                                  ", " + Target + ", " + Message + ".");
+                Console.ResetColor();
+            }
         }
         #endregion
     }
