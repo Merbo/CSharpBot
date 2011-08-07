@@ -838,6 +838,10 @@ namespace CSharpBot
                                 Functions.WriteData("WHOIS " + cmd[4]);
                                 Functions.Log(nick + " issued " + prefix + "hostmask " + cmd[4]);
                             }
+                            else if (cmd[3].StartsWith(":" + prefix + "math"))
+                            {
+                                
+                            }
                         }
                         else
                         {
