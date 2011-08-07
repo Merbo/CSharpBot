@@ -203,7 +203,7 @@ namespace CSharpBot
                         HostmaskRegex = new Regex(config.OwnerHostMask = "^" + config.OwnerHostMask.Replace(".", "\\.").Replace("*", ".+") + "$");
 #if DEBUG
                          Console.ForegroundColor = ConsoleColor.Yellow;
-                         Console.WriteLine("(debug) Parsed Regex: " + ownerhost);
+                         Console.WriteLine("(debug) Parsed Regex: " + HostmaskRegex);
                          Console.ResetColor();
 #endif
                     }
@@ -277,16 +277,23 @@ namespace CSharpBot
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("Loading configuration...");
                 try
                 {
                     config.Load(XmlFileName);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Configuration has NOT been loaded. Please check if the configuration is valid and try again.");
+#if DEBUG
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine(e.ToString());
+                    Console.WriteLine(e.StackTrace);
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine(e.Message);
+#endif
                     Console.WriteLine("Enter something to exit.");
                     Console.ReadKey();
                     return;
