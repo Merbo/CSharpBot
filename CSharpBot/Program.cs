@@ -54,6 +54,7 @@ class Program
         // For identification (NickServ...)
         string serverpassword = "";
         string nickservpassword = "";
+        string nickservaccount = "";
         int PORT = -1;
 
         // Head-lines
@@ -114,6 +115,12 @@ class Program
             Console.Write("NickServ password (optional): ");
             Console.ForegroundColor = ConsoleColor.White;
             nickservpassword = Console.ReadLine();
+
+            // The nickserv account
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("NickServ account (If different than nick): ");
+            Console.ForegroundColor = ConsoleColor.White;
+            nickservaccount = Console.ReadLine();
 
             // The CHANNEL
             while (!CHANNEL.StartsWith("#"))
@@ -188,7 +195,7 @@ class Program
             Console.ResetColor();
             Console.WriteLine();
             USER = "USER " + NICK + " 8 * :MerbosMagic C# IRC Bot";
-            string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix, USER, logging.ToString(), serverpassword, nickservpassword };
+            string[] options = { SERVER, PORT.ToString(), NICK, CHANNEL, ownerhost, prefix, USER, logging.ToString(), serverpassword, nickservpassword, nickservaccount };
             try
             {
                 File.WriteAllLines("options.txt", options);
@@ -225,7 +232,14 @@ class Program
                 {
                     // Options file layout 1.1
                     serverpassword = options[8];
-                    nickservpassword = options[9];
+                    if (options.Length > 9)
+                    {
+                        nickservpassword = options[9];
+                        if (options.Length > 10)
+                        {
+                            nickservaccount = options[10];
+                        }
+                    }
                 }
                 else
                 {
@@ -269,11 +283,15 @@ class Program
                 writer.WriteLine("PASS " + serverpassword);
             if (nickservpassword != "")
             {
-#if DEBUG
-                Console.ForegroundColor = ConsoleColor.Yellow;
                 Log("Identifying through NickServ...");
-#endif
-                writer.WriteLine("PRIVMSG NickServ :IDENTIFY " + nickservpassword);
+                if (nickservaccount != "")
+                {
+                    writer.WriteLine("PRIVMSG NickServ :IDENTIFY " + nickservpassword);
+                }
+                else
+                {
+                    writer.WriteLine("PRIVMSG NickServ :IDENTIFY " + nickservaccount + " " + nickservpassword);
+                }
             }
             string currentcmd = null;
             string whoiscaller = null;
