@@ -328,20 +328,20 @@ namespace CSharpBot
                 writer = new StreamWriter(stream);
                 writer.AutoFlush = true;
                 Functions.Log("Logging in...");
-                writer.WriteLine(config.Userline);
-                writer.WriteLine("NICK " + config.Nickname);
+                Functions.WriteData(config.Userline);
+                Functions.WriteData("NICK " + config.Nickname);
                 if (config.ServerPassword != "")
-                    writer.WriteLine("PASS " + config.ServerPassword);
+                    Functions.WriteData("PASS " + config.ServerPassword);
                 if (config.NickServPassword != "")
                 {
                     Functions.Log("Identifying through NickServ...");
                     if (config.NickServAccount == "")
                     {
-                        writer.WriteLine("PRIVMSG NickServ :IDENTIFY " + config.NickServPassword);
+                        Functions.WriteData("PRIVMSG NickServ :IDENTIFY " + config.NickServPassword);
                     }
                     else
                     {
-                        writer.WriteLine("PRIVMSG NickServ :IDENTIFY " + config.NickServAccount + " " + config.NickServPassword);
+                        Functions.WriteData("PRIVMSG NickServ :IDENTIFY " + config.NickServAccount + " " + config.NickServPassword);
                     }
                 }
                 string currentcmd = null;
@@ -367,7 +367,7 @@ namespace CSharpBot
                             Console.ResetColor();
                         }
 
-                        writer.WriteLine("PONG " + cmd[1]);
+                        Functions.WriteData("PONG " + cmd[1]);
                     }
                     if (cmd[1].Equals("486")) // Error code from GeekShed IRC Network
                     {
@@ -384,25 +384,25 @@ namespace CSharpBot
                             Console.ResetColor();
                         }
                         Functions.Log("Applying optimal flags...");
-                        writer.WriteLine("MODE " + NICK + " +B"); // We are a bot
-                        writer.WriteLine("MODE " + NICK + " +w"); // We want to get wallops, if any
-                        writer.WriteLine("MODE " + NICK + " -i"); // We don't want to be invisible
+                        Functions.WriteData("MODE " + NICK + " +B"); // We are a bot
+                        Functions.WriteData("MODE " + NICK + " +w"); // We want to get wallops, if any
+                        Functions.WriteData("MODE " + NICK + " -i"); // We don't want to be invisible
                         Functions.Log("Joining " + CHANNEL + "...");
-                        writer.WriteLine("JOIN " + CHANNEL);
+                        Functions.WriteData("JOIN " + CHANNEL);
                     }
                     else if (cmd[1].Equals("311"))
                     {
                         if (currentcmd.Equals("Whois") && cmd.Length > 6)
                         {
                             Functions.Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + whoiscaller + "...");
-                            writer.WriteLine("PRIVMSG " + whoischan + " :" + whoiscaller + ": " + whoistarget + "'s hostmask is " + cmd[5]);
+                            Functions.WriteData("PRIVMSG " + whoischan + " :" + whoiscaller + ": " + whoistarget + "'s hostmask is " + cmd[5]);
                             Functions.Log("Found the hostmask that " + whoiscaller + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
                         }
                     }
                     else if (cmd[1].Equals("KICK") && cmd[3] == NICK)
                     {
                         Functions.Log("Rejoining " + cmd[2]);
-                        writer.WriteLine("JOIN " + cmd[2]);
+                        Functions.WriteData("JOIN " + cmd[2]);
                     }
 
                     else if (cmd[1].Equals("NOTICE"))
@@ -454,12 +454,12 @@ namespace CSharpBot
                             if (cmd[3] == ":" + prefix + "test")
                             {
                                 Functions.Log(nick + " issued " + prefix + "test");
-                                writer.WriteLine("PRIVMSG " + chan + " :I think your test works ;-)");
+                                Functions.WriteData("PRIVMSG " + chan + " :I think your test works ;-)");
                             }
                             else if (cmd[3] == ":" + prefix + "amiowner")
                             {
                                 Functions.Log(nick + " issued " + prefix + "amiowner");
-                                writer.WriteLine("PRIVMSG " + chan + " :The answer is: " + (Functions.IsOwner(prenick1[1]) ? "Yes!" : "No!"));
+                                Functions.WriteData("PRIVMSG " + chan + " :The answer is: " + (Functions.IsOwner(prenick1[1]) ? "Yes!" : "No!"));
                             }
                             else if (cmd[3] == ":" + prefix + "time")
                             {
@@ -477,26 +477,26 @@ namespace CSharpBot
                                     Functions.Log(nick + " issued " + prefix + "time " + cmd[4]);
                                 else
                                     Functions.Log(nick + " issued " + prefix + "time");
-                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
+                                Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
                             }
                             else if (cmd[3] == ":" + prefix + "mynick")
                             {
                                 Functions.Log(nick + " issued " + prefix + "mynick");
-                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your nick is " + nick);
+                                Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Your nick is " + nick);
                             }
                             else if (cmd[3] == ":" + prefix + "myident")
                             {
                                 Functions.Log(nick + " issued " + prefix + "myident");
-                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your ident is " + ident);
+                                Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Your ident is " + ident);
                             }
                             else if (cmd[3] == ":" + prefix + "myhost")
                             {
                                 Functions.Log(nick + " issued " + prefix + "myhost");
-                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your host is " + host);
+                                Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Your host is " + host);
                             }
                             else if (cmd[3] == ":" + prefix + "myfullmask")
                             {
-                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your full mask is " + cmd[0]);
+                                Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Your full mask is " + cmd[0]);
                             }
                             else if (cmd[3] == ":" + prefix + "die")
                             {
@@ -505,18 +505,18 @@ namespace CSharpBot
                                     if (cmd.Length > 4)
                                     {
                                         Functions.Log(nick + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                        writer.WriteLine("QUIT :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                                        Functions.WriteData("QUIT :" + string.Join(" ", cmd.Skip(5).ToArray()));
                                     }
                                     else
                                     {
                                         Functions.Log(nick + " issued " + prefix + "die");
-                                        writer.WriteLine("QUIT :I shot myself because " + nick + " told me to.");
+                                        Functions.WriteData("QUIT :I shot myself because " + nick + " told me to.");
                                     }
                                 }
                                 else
                                 {
                                     Functions.Log(nick + " attempted to use " + prefix + "die");
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "clean")
@@ -526,12 +526,12 @@ namespace CSharpBot
                                     FileInfo fi = new FileInfo("options.txt");
                                     fi.Delete();
                                     Functions.Log(nick + " issued " + prefix + "clean");
-                                    writer.WriteLine("QUIT :Cleaned!");
+                                    Functions.WriteData("QUIT :Cleaned!");
                                 }
                                 else
                                 {
                                     Functions.Log(nick + " attempted to use " + prefix + "clean");
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                 }
                             }
 
@@ -545,18 +545,18 @@ namespace CSharpBot
                                     if (Functions.IsOwner(prenick1[1]))
                                     {
                                         Functions.Log(nick + " issued " + prefix + "topic (set topic)");
-                                        writer.WriteLine("TOPIC " + chan + " :" + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Topic has been set.");
+                                        Functions.WriteData("TOPIC " + chan + " :" + string.Join(" ", cmd.Skip(4).ToArray()));
+                                        Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Topic has been set.");
                                     }
                                     else
                                     {
                                         Functions.Log(nick + " attempted to use " + prefix + "topic (set topic).");
-                                        writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                                        Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                     }
                                 }
                                 else
                                 {
-                                    writer.WriteLine("TOPIC " + chan);
+                                    Functions.WriteData("TOPIC " + chan);
 
                                     bool foundTopic = false;
                                     string topic = "";
@@ -580,7 +580,7 @@ namespace CSharpBot
                                             foundTopic = true;
                                         }
                                     }
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": " + topic);
+                                    Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": " + topic);
                                     Functions.Log(nick + " issued " + prefix + "topic (read topic).");
                                 }
                             }
@@ -591,12 +591,12 @@ namespace CSharpBot
                                     if (Functions.IsOwner(prenick1[1]))
                                     {
                                         Functions.Log(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + cmd[4]);
-                                        writer.WriteLine("KICK " + chan + " " + cmd[4] + " :GTFO!");
+                                        Functions.WriteData("KICK " + chan + " " + cmd[4] + " :GTFO!");
                                     }
                                     else
                                     {
                                         Functions.Log(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + nick + " for being mean.");
-                                        writer.WriteLine("KICK " + chan + " " + nick + " :NO U");
+                                        Functions.WriteData("KICK " + chan + " " + nick + " :NO U");
                                     }
                                 }
                             }
@@ -620,16 +620,16 @@ namespace CSharpBot
                                             }
                                             else
                                                 File.WriteAllText("Kicks.txt", theline); // could it be more simple?
-                                            writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Added line " + IRCBold + string.Join(" ", cmd.Skip(5).ToArray()) + IRCBold + " to kicks database.");
+                                            Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Done. Added line " + IRCBold + string.Join(" ", cmd.Skip(5).ToArray()) + IRCBold + " to kicks database.");
                                         }
                                         if (cmd[4].Equals("clear"))
                                         {
                                             if (File.Exists("Kicks.txt"))
                                             {
                                                 File.Delete("Kicks.txt");
-                                                writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Done. Deleted kicks database.");
+                                                Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Done. Deleted kicks database.");
                                             }
-                                            else writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Kicks database already deleted.");
+                                            else Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": Kicks database already deleted.");
                                         }
                                         if (cmd[4].Equals("total") && File.Exists("Kicks.txt"))
                                         {
@@ -641,7 +641,7 @@ namespace CSharpBot
                                                 i++;
                                             }
                                             file.Close();
-                                            writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
+                                            Functions.WriteData("PRIVMSG " + cmd[2] + " :" + nick + ": " + i + " lines.");
                                         }
                                         if (cmd[4].Equals("read") && cmd.Length > 5)
                                         {
@@ -652,14 +652,14 @@ namespace CSharpBot
                                                 string line;
                                                 if (!int.TryParse(cmd[5], out x))
                                                 {
-                                                    writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
+                                                    Functions.WriteData("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
                                                 }
                                                 else
                                                 {
                                                     x--;
                                                     if (x < 0)
                                                     {
-                                                        writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
+                                                        Functions.WriteData("PRIVMSG " + cmd[2] + " :" + nick + ": This isn't a valid number.");
                                                     }
                                                     else
                                                     {
@@ -672,11 +672,11 @@ namespace CSharpBot
                                                         {
                                                             if (line != null)
                                                             {
-                                                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
+                                                                Functions.WriteData("PRIVMSG " + cmd[2] + " :" + nick + ": " + line);
                                                             }
                                                             else
                                                             {
-                                                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": No kickline for this number.");
+                                                                Functions.WriteData("PRIVMSG " + cmd[2] + " :" + nick + ": No kickline for this number.");
                                                             }
                                                         }
                                                         file.Close();
@@ -685,7 +685,7 @@ namespace CSharpBot
                                             }
                                             else
                                             {
-                                                writer.WriteLine("PRIVMSG " + cmd[2] + " :" + nick + ": There is no kicks database!");
+                                                Functions.WriteData("PRIVMSG " + cmd[2] + " :" + nick + ": There is no kicks database!");
                                             }
                                         }
                                         string[] command = cmd[3].Split(':');
@@ -694,7 +694,7 @@ namespace CSharpBot
                                 }
                                 else
                                 {
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                     string[] command = cmd[3].Split(':');
                                     Functions.Log(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                                 }
@@ -707,26 +707,26 @@ namespace CSharpBot
                                     {
                                         if (cmd.Length > 5)
                                         {
-                                            writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                                            Functions.WriteData("KICK " + chan + " " + cmd[4] + " :" + string.Join(" ", cmd.Skip(5).ToArray()));
                                             Functions.Log(nick + " issued " + prefix + "kick " + cmd[4] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                                         }
                                         else if (File.Exists("Kicks.txt"))
                                         {
                                             string[] lines = File.ReadAllLines("Kicks.txt");
                                             Random rand = new Random();
-                                            writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
+                                            Functions.WriteData("KICK " + chan + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
                                             Functions.Log(nick + " issued " + prefix + "kick " + cmd[4]);
                                         }
                                         else
                                         {
-                                            writer.WriteLine("KICK " + chan + " " + cmd[4] + " :Goodbye! You just got kicked by " + nick + ".");
+                                            Functions.WriteData("KICK " + chan + " " + cmd[4] + " :Goodbye! You just got kicked by " + nick + ".");
                                             Functions.Log(nick + " issued " + prefix + "kick " + cmd[4]);
                                         }
-                                        //  writer.WriteLine("KICK " + chan + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
+                                        //  Functions.WriteData("KICK " + chan + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
                                     }
                                     else
                                     {
-                                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                                        Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                         Functions.Log(nick + " attempted to use " + prefix + "kick " + cmd[4]);
                                     }
                                 }
@@ -736,12 +736,12 @@ namespace CSharpBot
                                 if (Functions.IsOwner(prenick1[1]) && cmd.Length > 4)
                                 {
                                     Functions.Log(nick + " issued " + prefix + "join " + cmd[4]);
-                                    writer.WriteLine("JOIN " + cmd[4]);
+                                    Functions.WriteData("JOIN " + cmd[4]);
                                 }
                                 else if (!Functions.IsOwner(prenick1[1]))
                                 {
                                     Functions.Log(nick + " attempted to use " + prefix + "join " + cmd[4]);
-                                    writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "help")
@@ -759,12 +759,12 @@ namespace CSharpBot
                                     if (cmd.Length > 5)
                                     {
                                         Functions.Log(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
-                                        writer.WriteLine("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                        Functions.WriteData("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                                     }
                                     else if (cmd.Length > 4)
                                     {
                                         Functions.Log(nick + " issued " + prefix + "mode " + cmd[4] + " on " + chan);
-                                        writer.WriteLine("MODE " + chan + " " + cmd[4]);
+                                        Functions.WriteData("MODE " + chan + " " + cmd[4]);
                                     }
                                 }
                                 else if (!Functions.IsOwner(prenick1[1]))
@@ -772,12 +772,12 @@ namespace CSharpBot
                                     if (cmd.Length > 5)
                                     {
                                         Functions.Log(nick + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
-                                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                                        Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                     }
                                     else if (cmd.Length > 4)
                                     {
                                         Functions.Log(nick + " attempted to use " + prefix + "mode " + cmd[4] + " on " + chan);
-                                        writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                                        Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                     }
                                 }
                             }
@@ -788,12 +788,12 @@ namespace CSharpBot
                                     Functions.Log(nick + " issued " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
                                     if (cmd.Length > 5)
                                         cmd[5] = ":" + cmd[5];
-                                    writer.WriteLine("PART " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                    Functions.WriteData("PART " + string.Join(" ", cmd.Skip(4).ToArray()));
                                 }
                                 else if (!Functions.IsOwner(prenick1[1]))
                                 {
                                     Functions.Log(nick + " attempted to use " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                    writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "reset")
@@ -803,15 +803,15 @@ namespace CSharpBot
                                     FileInfo fi = new FileInfo("options.txt");
                                     fi.Delete();
                                     Functions.Log(nick + " issued " + prefix + "reset");
-                                    writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
-                                    writer.WriteLine("QUIT :Resetting!");
+                                    Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
+                                    Functions.WriteData("QUIT :Resetting!");
                                     wentto = true;
                                     goto start;
                                 }
                                 else
                                 {
                                     Functions.Log(nick + " attempted to use " + prefix + "reset");
-                                    writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "restart")
@@ -819,14 +819,14 @@ namespace CSharpBot
                                 if (Functions.IsOwner(prenick1[1]))
                                 {
                                     Functions.Log(nick + " issued " + prefix + "restart");
-                                    writer.WriteLine("QUIT :Restarting!");
+                                    Functions.WriteData("QUIT :Restarting!");
                                     wentto = true;
                                     goto start;
                                 }
                                 else
                                 {
                                     Functions.Log(nick + " attempted to use " + prefix + "restart");
-                                    writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
+                                    Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 4)
@@ -835,7 +835,7 @@ namespace CSharpBot
                                 whoistarget = cmd[4];
                                 whoischan = cmd[2];
                                 currentcmd = "Whois";
-                                writer.WriteLine("WHOIS " + cmd[4]);
+                                Functions.WriteData("WHOIS " + cmd[4]);
                                 Functions.Log(nick + " issued " + prefix + "hostmask " + cmd[4]);
                             }
                         }
@@ -859,7 +859,7 @@ namespace CSharpBot
                                         Console.ForegroundColor = ConsoleColor.Yellow;
                                         Functions.Log("Sent CTCP VERSION reply to " + nick + ".");
                                     }
-                                    writer.WriteLine("NOTICE " + nick + " :\x01VERSION MerbosMagic CSharpBot " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\x01");
+                                    Functions.WriteData("NOTICE " + nick + " :\x01VERSION MerbosMagic CSharpBot " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\x01");
                                 }
                                 else if (ctcpCmd == "PING")
                                 {
@@ -871,7 +871,7 @@ namespace CSharpBot
                                     if (ctcpParams.Length == 0) ctcpParams = new string[] {
                                     Convert.ToString(DateTime.UtcNow.ToBinary(), 16)
                                 };
-                                    writer.WriteLine("NOTICE " + nick + " :\x01PING " + string.Join(" ", ctcpParams) + "\x01");
+                                    Functions.WriteData("NOTICE " + nick + " :\x01PING " + string.Join(" ", ctcpParams) + "\x01");
                                 }
                             }
                             else
@@ -880,7 +880,7 @@ namespace CSharpBot
                                 if (nick == "NickServ")
                                     Functions.Log("NickServ identification: " + string.Join(" ", cmd.Skip(3)).Substring(1));
                                 else
-                                    writer.WriteLine("NOTICE " + nick + " :Sorry, but you need to contact me over a channel.");
+                                    Functions.WriteData("NOTICE " + nick + " :Sorry, but you need to contact me over a channel.");
                             }
                         }
                     }
@@ -888,9 +888,9 @@ namespace CSharpBot
             }
             catch (Exception e)
             {
-                writer.WriteLine("PRIVMSG " + CHANNEL + " : Error! Error: " + e.ToString());
-                writer.WriteLine("PRIVMSG " + CHANNEL + " : Error! StackTrace: " + e.StackTrace);
-                writer.WriteLine("QUIT :Exception: " + e.ToString());
+                Functions.WriteData("PRIVMSG " + CHANNEL + " : Error! Error: " + e.ToString());
+                Functions.WriteData("PRIVMSG " + CHANNEL + " : Error! StackTrace: " + e.StackTrace);
+                Functions.WriteData("QUIT :Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Functions.Log("The bot generated an error:");

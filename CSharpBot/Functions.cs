@@ -127,5 +127,15 @@ namespace CSharpBot
             Program.writer.WriteLine("NOTICE " + nick + " :" + prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
             Program.writer.WriteLine("NOTICE " + nick + " :" + prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
         }
+        public static void WriteData(string data)
+        {
+            Program.writer.WriteLine(data);
+            if (Program.DEBUG == true)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("SEND: " + data);
+                Console.ResetColor();
+            }
+        }
     }
 }
