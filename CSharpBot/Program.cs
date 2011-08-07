@@ -17,6 +17,8 @@ namespace CSharpBot
 
         public static StreamWriter writer;
 
+        public static bool DEBUG = false;
+
         #region XML implementation
         public static XmlConfiguration config;
         public static string XmlFileName = "CSharpBot.xml";
@@ -43,7 +45,7 @@ namespace CSharpBot
             get { return config.Server; }
             set { config.Server = value; }
         }
-        static bool logging
+        public static bool logging
         {
             get { return config.EnableFileLogging; }
             set { config.EnableFileLogging = value; }
@@ -88,6 +90,10 @@ namespace CSharpBot
                     case "-h":
                     case "--help":
                         Usage();
+                        return;
+                    case "-d":
+                    case "--debug":
+                        DEBUG = true;
                         return;
                     case "-f":
                     case "--config-file":
@@ -201,17 +207,18 @@ namespace CSharpBot
                     try
                     {
                         HostmaskRegex = new Regex(config.OwnerHostMask = "^" + config.OwnerHostMask.Replace(".", "\\.").Replace("*", ".+") + "$");
-#if DEBUG
-                         Console.ForegroundColor = ConsoleColor.Yellow;
-                         Console.WriteLine("(debug) Parsed Regex: " + HostmaskRegex);
-                         Console.ResetColor();
-#endif
+                        if (DEBUG == true) 
+                        {
+                             Console.ForegroundColor = ConsoleColor.Yellow;
+                             Console.WriteLine("(debug) Parsed Regex: " + HostmaskRegex);
+                             Console.ResetColor();
+                        }
                     }
                     catch (Exception n)
                     {
-                        Log("Something went wrong: " + n.Message);
-                        Log("Exception: " + n.ToString());
-                        Log("StackTrace: " + n.StackTrace);
+                        Functions.Log("Something went wrong: " + n.Message);
+                        Functions.Log("Exception: " + n.ToString());
+                        Functions.Log("StackTrace: " + n.StackTrace);
                     }
                 }
 
@@ -287,13 +294,14 @@ namespace CSharpBot
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Configuration has NOT been loaded. Please check if the configuration is valid and try again.");
-#if DEBUG
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine(e.ToString());
-                    Console.WriteLine(e.StackTrace);
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.WriteLine(e.Message);
-#endif
+                    if (DEBUG == true)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine(e.ToString());
+                        Console.WriteLine(e.StackTrace);
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.WriteLine(e.Message);
+                    }
                     Console.WriteLine("Enter something to exit.");
                     Console.ReadKey();
                     return;
@@ -303,13 +311,13 @@ namespace CSharpBot
             {
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.White;
-                Log("Connecting to " + config.Server + "...");
+                Functions.Log("Connecting to " + config.Server + "...");
 
                 irc = new TcpClient(config.Server, config.Port);
                 if (!irc.Connected)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Log("Connection failed. Bot is restarting in 5 seconds...");
+                    Functions.Log("Connection failed. Bot is restarting in 5 seconds...");
                     System.Threading.Thread.Sleep(5000);
                     wentto = true;
                     goto start;
@@ -319,14 +327,14 @@ namespace CSharpBot
                 reader = new StreamReader(stream);
                 writer = new StreamWriter(stream);
                 writer.AutoFlush = true;
-                Log("Logging in...");
+                Functions.Log("Logging in...");
                 writer.WriteLine(config.Userline);
                 writer.WriteLine("NICK " + config.Nickname);
                 if (config.ServerPassword != "")
                     writer.WriteLine("PASS " + config.ServerPassword);
                 if (config.NickServPassword != "")
                 {
-                    Log("Identifying through NickServ...");
+                    Functions.Log("Identifying through NickServ...");
                     if (config.NickServAccount == "")
                     {
                         writer.WriteLine("PRIVMSG NickServ :IDENTIFY " + config.NickServPassword);
@@ -343,53 +351,57 @@ namespace CSharpBot
                 while ((inputline = reader.ReadLine()) != null)
                 {
                     string[] cmd = inputline.Split(' ');
-#if DEBUG
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    if (!cmd[0].Equals("PING"))
-                        Log("<= " + inputline);
-                    Console.ResetColor();
-#endif
+                    if (DEBUG == true)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        if (!cmd[0].Equals("PING"))
+                            Functions.Log("RECV: " + inputline);
+                        Console.ResetColor();
+                    }
                     if (cmd[0].Equals("PING"))
                     {
-#if DEBUG
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Log("Ping? Pong!");
-                        Console.ResetColor();
-#endif
+                        if (DEBUG == true)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Functions.Log("Ping? Pong!");
+                            Console.ResetColor();
+                        }
+
                         writer.WriteLine("PONG " + cmd[1]);
                     }
                     if (cmd[1].Equals("486")) // Error code from GeekShed IRC Network
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Log("Private messaging is not available, since we need to identify ourself successfully.");
+                        Functions.Log("Private messaging is not available, since we need to identify ourself successfully.");
                         Console.ForegroundColor = ConsoleColor.Yellow;
                     }
                     else if (cmd[1].Equals("376"))
                     {
-#if DEBUG
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Log("MOTD received.");
-                        Console.ResetColor();
-#endif
-                        Log("Applying optimal flags...");
+                        if (DEBUG == true)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Functions.Log("MOTD received.");
+                            Console.ResetColor();
+                        }
+                        Functions.Log("Applying optimal flags...");
                         writer.WriteLine("MODE " + NICK + " +B"); // We are a bot
                         writer.WriteLine("MODE " + NICK + " +w"); // We want to get wallops, if any
                         writer.WriteLine("MODE " + NICK + " -i"); // We don't want to be invisible
-                        Log("Joining " + CHANNEL + "...");
+                        Functions.Log("Joining " + CHANNEL + "...");
                         writer.WriteLine("JOIN " + CHANNEL);
                     }
                     else if (cmd[1].Equals("311"))
                     {
                         if (currentcmd.Equals("Whois") && cmd.Length > 6)
                         {
-                            Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + whoiscaller + "...");
+                            Functions.Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + whoiscaller + "...");
                             writer.WriteLine("PRIVMSG " + whoischan + " :" + whoiscaller + ": " + whoistarget + "'s hostmask is " + cmd[5]);
-                            Log("Found the hostmask that " + whoiscaller + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
+                            Functions.Log("Found the hostmask that " + whoiscaller + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
                         }
                     }
                     else if (cmd[1].Equals("KICK") && cmd[3] == NICK)
                     {
-                        Log("Rejoining " + cmd[2]);
+                        Functions.Log("Rejoining " + cmd[2]);
                         writer.WriteLine("JOIN " + cmd[2]);
                     }
 
@@ -419,7 +431,7 @@ namespace CSharpBot
                         finally
                         {
                             if (nick == "NickServ")
-                                Log("NickServ info: " + message);
+                                Functions.Log("NickServ info: " + message);
                         }
                     }
 
@@ -441,13 +453,13 @@ namespace CSharpBot
                             // Execute commands
                             if (cmd[3] == ":" + prefix + "test")
                             {
-                                Log(nick + " issued " + prefix + "test");
+                                Functions.Log(nick + " issued " + prefix + "test");
                                 writer.WriteLine("PRIVMSG " + chan + " :I think your test works ;-)");
                             }
                             else if (cmd[3] == ":" + prefix + "amiowner")
                             {
-                                Log(nick + " issued " + prefix + "amiowner");
-                                writer.WriteLine("PRIVMSG " + chan + " :The answer is: " + (IsOwner(prenick1[1]) ? "Yes!" : "No!"));
+                                Functions.Log(nick + " issued " + prefix + "amiowner");
+                                writer.WriteLine("PRIVMSG " + chan + " :The answer is: " + (Functions.IsOwner(prenick1[1]) ? "Yes!" : "No!"));
                             }
                             else if (cmd[3] == ":" + prefix + "time")
                             {
@@ -462,24 +474,24 @@ namespace CSharpBot
                                     adds = "+" + adds;
 
                                 if (cmd.Length > 4)
-                                    Log(nick + " issued " + prefix + "time " + cmd[4]);
+                                    Functions.Log(nick + " issued " + prefix + "time " + cmd[4]);
                                 else
-                                    Log(nick + " issued " + prefix + "time");
+                                    Functions.Log(nick + " issued " + prefix + "time");
                                 writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
                             }
                             else if (cmd[3] == ":" + prefix + "mynick")
                             {
-                                Log(nick + " issued " + prefix + "mynick");
+                                Functions.Log(nick + " issued " + prefix + "mynick");
                                 writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your nick is " + nick);
                             }
                             else if (cmd[3] == ":" + prefix + "myident")
                             {
-                                Log(nick + " issued " + prefix + "myident");
+                                Functions.Log(nick + " issued " + prefix + "myident");
                                 writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your ident is " + ident);
                             }
                             else if (cmd[3] == ":" + prefix + "myhost")
                             {
-                                Log(nick + " issued " + prefix + "myhost");
+                                Functions.Log(nick + " issued " + prefix + "myhost");
                                 writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Your host is " + host);
                             }
                             else if (cmd[3] == ":" + prefix + "myfullmask")
@@ -488,37 +500,37 @@ namespace CSharpBot
                             }
                             else if (cmd[3] == ":" + prefix + "die")
                             {
-                                if (IsOwner(prenick1[1]))
+                                if (Functions.IsOwner(prenick1[1]))
                                 {
                                     if (cmd.Length > 4)
                                     {
-                                        Log(nick + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                        Functions.Log(nick + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
                                         writer.WriteLine("QUIT :" + string.Join(" ", cmd.Skip(5).ToArray()));
                                     }
                                     else
                                     {
-                                        Log(nick + " issued " + prefix + "die");
+                                        Functions.Log(nick + " issued " + prefix + "die");
                                         writer.WriteLine("QUIT :I shot myself because " + nick + " told me to.");
                                     }
                                 }
                                 else
                                 {
-                                    Log(nick + " attempted to use " + prefix + "die");
+                                    Functions.Log(nick + " attempted to use " + prefix + "die");
                                     writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "clean")
                             {
-                                if (IsOwner(prenick1[1]))
+                                if (Functions.IsOwner(prenick1[1]))
                                 {
                                     FileInfo fi = new FileInfo("options.txt");
                                     fi.Delete();
-                                    Log(nick + " issued " + prefix + "clean");
+                                    Functions.Log(nick + " issued " + prefix + "clean");
                                     writer.WriteLine("QUIT :Cleaned!");
                                 }
                                 else
                                 {
-                                    Log(nick + " attempted to use " + prefix + "clean");
+                                    Functions.Log(nick + " attempted to use " + prefix + "clean");
                                     writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                 }
                             }
@@ -530,15 +542,15 @@ namespace CSharpBot
                                     cmd[4] = cmd[4] == "reset" ? "" : cmd[4]; // !topic reset = set topic to ""
 
                                     // Set topic if is owner
-                                    if (IsOwner(prenick1[1]))
+                                    if (Functions.IsOwner(prenick1[1]))
                                     {
-                                        Log(nick + " issued " + prefix + "topic (set topic)");
+                                        Functions.Log(nick + " issued " + prefix + "topic (set topic)");
                                         writer.WriteLine("TOPIC " + chan + " :" + string.Join(" ", cmd.Skip(4).ToArray()));
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": Topic has been set.");
                                     }
                                     else
                                     {
-                                        Log(nick + " attempted to use " + prefix + "topic (set topic).");
+                                        Functions.Log(nick + " attempted to use " + prefix + "topic (set topic).");
                                         writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                     }
                                 }
@@ -551,11 +563,12 @@ namespace CSharpBot
                                     while (!foundTopic)
                                     {
                                         topic = reader.ReadLine();
-#if DEBUG
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Log(topic);
-                                    Console.ResetColor();
-#endif
+                                        if (DEBUG == true)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Functions.Log(topic);
+                                            Console.ResetColor();
+                                        }
                                         if (topic.Contains("331"))
                                         {
                                             topic = "No topic is set for this channel.";
@@ -568,28 +581,28 @@ namespace CSharpBot
                                         }
                                     }
                                     writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": " + topic);
-                                    Log(nick + " issued " + prefix + "topic (read topic).");
+                                    Functions.Log(nick + " issued " + prefix + "topic (read topic).");
                                 }
                             }
                             else if (cmd[3] == ":GTFO")
                             {
                                 if (cmd.Length > 4)
                                 {
-                                    if (IsOwner(prenick1[1]))
+                                    if (Functions.IsOwner(prenick1[1]))
                                     {
-                                        Log(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + cmd[4]);
+                                        Functions.Log(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + cmd[4]);
                                         writer.WriteLine("KICK " + chan + " " + cmd[4] + " :GTFO!");
                                     }
                                     else
                                     {
-                                        Log(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + nick + " for being mean.");
+                                        Functions.Log(nick + " told " + cmd[4] + " to GTFO of " + chan + ", so I kicked " + nick + " for being mean.");
                                         writer.WriteLine("KICK " + chan + " " + nick + " :NO U");
                                     }
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "kicklines")
                             {
-                                if (IsOwner(prenick1[1]))
+                                if (Functions.IsOwner(prenick1[1]))
                                 {
                                     if (cmd.Length > 4)
                                     {
@@ -676,120 +689,120 @@ namespace CSharpBot
                                             }
                                         }
                                         string[] command = cmd[3].Split(':');
-                                        Log(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                        Functions.Log(nick + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                                     }
                                 }
                                 else
                                 {
                                     writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                     string[] command = cmd[3].Split(':');
-                                    Log(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                    Functions.Log(nick + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "kick")
                             {
                                 if (cmd.Length > 4)
                                 {
-                                    if (IsOwner(prenick1[1]))
+                                    if (Functions.IsOwner(prenick1[1]))
                                     {
                                         if (cmd.Length > 5)
                                         {
                                             writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + string.Join(" ", cmd.Skip(5).ToArray()));
-                                            Log(nick + " issued " + prefix + "kick " + cmd[4] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                            Functions.Log(nick + " issued " + prefix + "kick " + cmd[4] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                                         }
                                         else if (File.Exists("Kicks.txt"))
                                         {
                                             string[] lines = File.ReadAllLines("Kicks.txt");
                                             Random rand = new Random();
                                             writer.WriteLine("KICK " + chan + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
-                                            Log(nick + " issued " + prefix + "kick " + cmd[4]);
+                                            Functions.Log(nick + " issued " + prefix + "kick " + cmd[4]);
                                         }
                                         else
                                         {
                                             writer.WriteLine("KICK " + chan + " " + cmd[4] + " :Goodbye! You just got kicked by " + nick + ".");
-                                            Log(nick + " issued " + prefix + "kick " + cmd[4]);
+                                            Functions.Log(nick + " issued " + prefix + "kick " + cmd[4]);
                                         }
                                         //  writer.WriteLine("KICK " + chan + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
                                     }
                                     else
                                     {
                                         writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
-                                        Log(nick + " attempted to use " + prefix + "kick " + cmd[4]);
+                                        Functions.Log(nick + " attempted to use " + prefix + "kick " + cmd[4]);
                                     }
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "join")
                             {
-                                if (IsOwner(prenick1[1]) && cmd.Length > 4)
+                                if (Functions.IsOwner(prenick1[1]) && cmd.Length > 4)
                                 {
-                                    Log(nick + " issued " + prefix + "join " + cmd[4]);
+                                    Functions.Log(nick + " issued " + prefix + "join " + cmd[4]);
                                     writer.WriteLine("JOIN " + cmd[4]);
                                 }
-                                else if (!IsOwner(prenick1[1]))
+                                else if (!Functions.IsOwner(prenick1[1]))
                                 {
-                                    Log(nick + " attempted to use " + prefix + "join " + cmd[4]);
+                                    Functions.Log(nick + " attempted to use " + prefix + "join " + cmd[4]);
                                     writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "help")
                             {
-                                Log(nick + " issued " + prefix + "help");
-                                Thread HelpThread = new Thread(new ParameterizedThreadStart(SendHelp));
+                                Functions.Log(nick + " issued " + prefix + "help");
+                                Thread HelpThread = new Thread(new ParameterizedThreadStart(Functions.SendHelp));
                                 HelpThread.IsBackground = true;
                                 string[] param = { nick, prefix };
                                 HelpThread.Start(param);
                             }
                             else if (cmd[3] == ":" + prefix + "mode")
                             {
-                                if (IsOwner(prenick1[1]))
+                                if (Functions.IsOwner(prenick1[1]))
                                 {
                                     if (cmd.Length > 5)
                                     {
-                                        Log(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                                        Functions.Log(nick + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
                                         writer.WriteLine("MODE " + chan + " " + string.Join(" ", cmd.Skip(4).ToArray()));
                                     }
                                     else if (cmd.Length > 4)
                                     {
-                                        Log(nick + " issued " + prefix + "mode " + cmd[4] + " on " + chan);
+                                        Functions.Log(nick + " issued " + prefix + "mode " + cmd[4] + " on " + chan);
                                         writer.WriteLine("MODE " + chan + " " + cmd[4]);
                                     }
                                 }
-                                else if (!IsOwner(prenick1[1]))
+                                else if (!Functions.IsOwner(prenick1[1]))
                                 {
                                     if (cmd.Length > 5)
                                     {
-                                        Log(nick + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
+                                        Functions.Log(nick + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + chan);
                                         writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                     }
                                     else if (cmd.Length > 4)
                                     {
-                                        Log(nick + " attempted to use " + prefix + "mode " + cmd[4] + " on " + chan);
+                                        Functions.Log(nick + " attempted to use " + prefix + "mode " + cmd[4] + " on " + chan);
                                         writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                     }
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "part")
                             {
-                                if (IsOwner(prenick1[1]) && cmd.Length > 4)
+                                if (Functions.IsOwner(prenick1[1]) && cmd.Length > 4)
                                 {
-                                    Log(nick + " issued " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                    Functions.Log(nick + " issued " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
                                     if (cmd.Length > 5)
                                         cmd[5] = ":" + cmd[5];
                                     writer.WriteLine("PART " + string.Join(" ", cmd.Skip(4).ToArray()));
                                 }
-                                else if (!IsOwner(prenick1[1]))
+                                else if (!Functions.IsOwner(prenick1[1]))
                                 {
-                                    Log(nick + " attempted to use " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                    Functions.Log(nick + " attempted to use " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
                                     writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "reset")
                             {
-                                if (IsOwner(prenick1[1]))
+                                if (Functions.IsOwner(prenick1[1]))
                                 {
                                     FileInfo fi = new FileInfo("options.txt");
                                     fi.Delete();
-                                    Log(nick + " issued " + prefix + "reset");
+                                    Functions.Log(nick + " issued " + prefix + "reset");
                                     writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
                                     writer.WriteLine("QUIT :Resetting!");
                                     wentto = true;
@@ -797,22 +810,22 @@ namespace CSharpBot
                                 }
                                 else
                                 {
-                                    Log(nick + " attempted to use " + prefix + "reset");
+                                    Functions.Log(nick + " attempted to use " + prefix + "reset");
                                     writer.WriteLine("PRIVMSG " + chan + " :" + nick + ": You are not my owner!");
                                 }
                             }
                             else if (cmd[3] == ":" + prefix + "restart")
                             {
-                                if (IsOwner(prenick1[1]))
+                                if (Functions.IsOwner(prenick1[1]))
                                 {
-                                    Log(nick + " issued " + prefix + "restart");
+                                    Functions.Log(nick + " issued " + prefix + "restart");
                                     writer.WriteLine("QUIT :Restarting!");
                                     wentto = true;
                                     goto start;
                                 }
                                 else
                                 {
-                                    Log(nick + " attempted to use " + prefix + "restart");
+                                    Functions.Log(nick + " attempted to use " + prefix + "restart");
                                     writer.WriteLine("PRIVMSG " + chan + " : " + nick + ": You are not my owner!");
                                 }
                             }
@@ -823,7 +836,7 @@ namespace CSharpBot
                                 whoischan = cmd[2];
                                 currentcmd = "Whois";
                                 writer.WriteLine("WHOIS " + cmd[4]);
-                                Log(nick + " issued " + prefix + "hostmask " + cmd[4]);
+                                Functions.Log(nick + " issued " + prefix + "hostmask " + cmd[4]);
                             }
                         }
                         else
@@ -831,7 +844,7 @@ namespace CSharpBot
                             string message = string.Join(" ", cmd.Skip(3)).Substring(1);
                             if (message.StartsWith("\x01") && message.EndsWith("\x01"))
                             {
-                                Log("CTCP by " + nick + ".");
+                                Functions.Log("CTCP by " + nick + ".");
                                 // CTCP request
                                 message = message.Trim('\x01');
 
@@ -841,18 +854,20 @@ namespace CSharpBot
 
                                 if (ctcpCmd == "VERSION")
                                 {
-#if DEBUG
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Log("Sent CTCP VERSION reply to " + nick + ".");
-#endif
-                                    writer.WriteLine("NOTICE " + nick + " :\x01VERSION CSharpBot " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\x01");
+                                    if (DEBUG == true)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                        Functions.Log("Sent CTCP VERSION reply to " + nick + ".");
+                                    }
+                                    writer.WriteLine("NOTICE " + nick + " :\x01VERSION MerbosMagic CSharpBot " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "\x01");
                                 }
                                 else if (ctcpCmd == "PING")
                                 {
-#if DEBUG
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Log("Sent CTCP PING reply to " + nick + ".");
-#endif
+                                    if (DEBUG == true)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                        Functions.Log("Sent CTCP PING reply to " + nick + ".");
+                                    }
                                     if (ctcpParams.Length == 0) ctcpParams = new string[] {
                                     Convert.ToString(DateTime.UtcNow.ToBinary(), 16)
                                 };
@@ -861,9 +876,9 @@ namespace CSharpBot
                             }
                             else
                             {
-                                Log("Private message by " + nick + ": " + message);
+                                Functions.Log("Private message by " + nick + ": " + message);
                                 if (nick == "NickServ")
-                                    Log("NickServ identification: " + string.Join(" ", cmd.Skip(3)).Substring(1));
+                                    Functions.Log("NickServ identification: " + string.Join(" ", cmd.Skip(3)).Substring(1));
                                 else
                                     writer.WriteLine("NOTICE " + nick + " :Sorry, but you need to contact me over a channel.");
                             }
@@ -878,9 +893,9 @@ namespace CSharpBot
                 writer.WriteLine("QUIT :Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Log("The bot generated an error:");
-                Log(e.ToString());
-                Log("Restarting in 5 seconds...");
+                Functions.Log("The bot generated an error:");
+                Functions.Log(e.ToString());
+                Functions.Log("Restarting in 5 seconds...");
                 Console.ResetColor();
 
                 Thread.Sleep(5000);
@@ -889,125 +904,6 @@ namespace CSharpBot
                 goto start; // restart
                 //Environment.Exit(0); // you might also use return
             }
-        }
-
-        /// <summary>
-        /// Checks if a hostmask fits to the owner's hostmask regex.
-        /// </summary>
-        /// <param name="inputmask"></param>
-        /// <returns></returns>
-        public static bool IsOwner(string inputmask)
-        {
-            return HostmaskRegex.Match(inputmask).Success;
-        }
-        public static void Log(string input)
-        {
-            if (logging == true)
-            {
-                string f = "Bot.log";
-                if (File.Exists("Bot.log"))
-                {
-                    List<string> lines = new List<string>();
-                    using (StreamReader r = new StreamReader(f))
-                    {
-                        string line;
-                        while ((line = r.ReadLine()) != null)
-                        {
-                            lines.Add(line);
-                        }
-                    }
-                    using (StreamWriter w = new StreamWriter(f))
-                    {
-                        lines.Add(input);
-                        foreach (string s in lines)
-                        {
-                            w.WriteLine(s);
-                        }
-                    }
-                }
-                else
-                {
-                    using (StreamWriter w = new StreamWriter(f))
-                    {
-                        w.WriteLine(input);
-                    }
-                }
-                Console.WriteLine(input);
-            }
-            else
-            {
-                Console.WriteLine(input);
-            }
-        }
-        public static void WriteToFile(string file, string input)
-        {
-            if (logging == true)
-            {
-                if (File.Exists(file))
-                {
-                    List<string> lines = new List<string>();
-                    using (StreamReader r = new StreamReader(file))
-                    {
-                        string line;
-                        while ((line = r.ReadLine()) != null)
-                        {
-                            lines.Add(line);
-                        }
-                    }
-                    using (StreamWriter w = new StreamWriter(file))
-                    {
-                        lines.Add(input);
-                        foreach (string s in lines)
-                        {
-                            w.WriteLine(s);
-                        }
-                    }
-                }
-                else
-                {
-                    using (StreamWriter w = new StreamWriter(file))
-                    {
-                        w.WriteLine(input);
-                    }
-                }
-                Console.WriteLine(input);
-            }
-            else
-            {
-                Console.WriteLine(input);
-            }
-        }
-        public static void Say(string channel, string text)
-        {
-            if (channel.StartsWith("#"))
-            {
-                writer.WriteLine("PRIVMSG " + channel + " :" + text);
-            }
-        }
-        static void SendHelp(object o)
-        {
-            string[] param = (string[])o;
-            string nick = param[0];
-            string prefix = param[1];
-            writer.WriteLine("NOTICE " + nick + " :Bot commands:");
-            writer.WriteLine("NOTICE " + nick + " :Everything in <> is necessary and everything in [] are optional.");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "help -- This command.");
-            Thread.Sleep(1000);
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "mode <mode>-- Sets a mode the current channel.");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "topic [topic] -- Tells the current topic OR sets the channel's topic to [topic]");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
-            Thread.Sleep(1000);
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "join <chan> -- Joins the bot to a channel");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "part <chan> [reason] -- Parts the bot from a channel");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
-            Thread.Sleep(1000);
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "reset -- Clears the config and restarts the bot");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "restart -- Restarts the bot");
-            Thread.Sleep(1000);
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "clean -- Clears the config and kills the bot");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
-            writer.WriteLine("NOTICE " + nick + " :" + prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
         }
     }
 }
