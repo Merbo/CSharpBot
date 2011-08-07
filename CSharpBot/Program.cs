@@ -556,7 +556,7 @@ namespace CSharpBot
                                         }
                                         else if (topic.Contains("332"))
                                         {
-                                            topic = "The topic is: " + string.Join(":", topic.Split(':').Skip(2).ToArray()));
+                                            topic = "The topic is: " + string.Join(":", topic.Split(':').Skip(2).ToArray());
                                             foundTopic = true;
                                         }
                                     }
