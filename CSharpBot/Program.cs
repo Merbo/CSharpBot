@@ -50,7 +50,7 @@ namespace CSharpBot
             get { return config.EnableFileLogging; }
             set { config.EnableFileLogging = value; }
         }
-        #endregion
+        #endregion   
 
         #region IRC formatting
 
