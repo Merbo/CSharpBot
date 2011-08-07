@@ -58,6 +58,7 @@ class Program
         Console.WriteLine("CSharpBot v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
         Console.WriteLine("\t(c) Merbo August 3, 2011-Present");
         Console.WriteLine("\t(c) Icedream August 5, 2011-Present");
+        Console.WriteLine("\t(c) peapodamus August 7 2011-Present");
         Console.WriteLine();
 
         // First setup
