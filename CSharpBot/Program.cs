@@ -67,6 +67,7 @@ namespace CSharpBot
         }
         #endregion
 
+        public static DateTime startupTime = DateTime.Now;
         static void Usage()
         {
             Console.WriteLine("Usage: CSharpBot.exe [options]");
@@ -460,6 +461,13 @@ namespace CSharpBot
                             {
                                 Functions.Log(nick + " issued " + prefix + "amiowner");
                                 Functions.WriteData("PRIVMSG " + chan + " :The answer is: " + (Functions.IsOwner(prenick1[1]) ? "Yes!" : "No!"));
+                            }
+                            else if (cmd[3] == ":" + prefix + "uptime")
+                            {
+                                TimeSpan ts = DateTime.Now - startupTime;
+                                //   string ut = "I have been running for " + ts.TotalMinutes + " Minutes";
+                                string ut = ts.ToString();
+                                Functions.Say(chan, ut);
                             }
                             else if (cmd[3] == ":" + prefix + "time")
                             {
