@@ -184,6 +184,18 @@ namespace CSharpBot
             PrivateMessage(target, "\u0001" + "ACTION " + text + "\u0001");
         }
 
+
+        /// <summary>
+        /// Sends a MODE command to server.
+        /// </summary>
+        /// <param name="channel">The channel to set the mode in</param>
+        /// <param name="command">The mode command(as in +o newop or +v newvoiceduser)</param>
+        public void mode(string channel,string command)
+        {
+            string execCommand = "MODE " + channel + " " + command;
+            Raw(execCommand);
+
+        }
         /// <summary>
         /// Outputs help to an IRC user (should be used threaded).
         /// </summary>
