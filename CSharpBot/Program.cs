@@ -846,10 +846,9 @@ namespace CSharpBot
                                 Functions.WriteData("WHOIS " + cmd[4]);
                                 Functions.Log(nick + " issued " + prefix + "hostmask " + cmd[4]);
                             }
-                            else if (cmd[3].StartsWith(":" + prefix + "math "))
+                            else if (cmd[3] == ":" + prefix + "math" && cmd.Length == 5)
                             {
-                                string mathToParse = cmd[3].Substring(cmd[3].IndexOf(prefix));
-                                Functions.WriteData("PRIVMSG " + chan + " : " + Math.Math.Parse(mathToParse));
+                                Functions.WriteData("PRIVMSG " + chan + " : " + Math.Math.Parse(cmd[4]));
                             }
                         }
                         else
