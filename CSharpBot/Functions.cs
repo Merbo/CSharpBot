@@ -129,6 +129,8 @@ namespace CSharpBot
             Program.writer.WriteLine("NOTICE " + nick + " :" + prefix + "clean -- Clears the config and kills the bot");
             Program.writer.WriteLine("NOTICE " + nick + " :" + prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
             Program.writer.WriteLine("NOTICE " + nick + " :" + prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
+            Thread.Sleep(1000);
+            Program.writer.WriteLine("NOTICE " + nick + " :" + prefix + "uptime -- Displays the uptime in hh:mm:ss.xxxx format");
         }
         public static void WriteData(string data)
         {

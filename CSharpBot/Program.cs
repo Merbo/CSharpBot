@@ -464,6 +464,8 @@ namespace CSharpBot
                             }
                             else if (cmd[3] == ":" + prefix + "uptime")
                             {
+
+                                Functions.Log(nick + " issued " + prefix + "uptime");
                                 TimeSpan ts = DateTime.Now - startupTime;
                                 //   string ut = "I have been running for " + ts.TotalMinutes + " Minutes";
                                 string ut = ts.ToString();
