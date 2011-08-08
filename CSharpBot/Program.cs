@@ -472,6 +472,54 @@ namespace CSharpBot
                                     Functions.Log(msg.SourceNickname + " issued " + prefix + "amiowner");
                                     Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
                                 }
+                                else if (cmd[3] == ":" + prefix + "addbotop")
+                                {
+                                    if (Functions.IsOwner(msg.SourceHostmask))
+                                    {
+
+                                        Botop add = new Botop();
+                                        if (cmd.Length > 4)
+                                        {
+                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "addbotop");
+                                            add.AddBotOp(cmd[4]);
+                                            Functions.PrivateMessage(msg.Target, "Done!");
+                                        }
+                                        
+                                    }
+                                    else
+                                    {
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                    }
+                                }
+
+                                else if (cmd[3] == ":" + prefix + "delbotop")
+                                {
+                                    if (Functions.IsOwner(msg.SourceHostmask))
+                                    {
+
+                                        Botop del = new Botop();
+                                        if (cmd.Length > 4)
+                                        {
+                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "delbotop");
+                                            del.DelBotOp(cmd[4]);
+                                            Functions.PrivateMessage(msg.Target, "Done!");
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                    }
+                                }
+
+
+                                else if (cmd[3] == ":" + prefix + "amibotop")
+                                {
+                                    
+                                    Botop test = new Botop();
+                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "amibotop");
+                                    Functions.PrivateMessage(msg.Target, "The answer is: " + (test.isBotOp(msg.SourceNickname) ? "Yes!" : "No!"));
+                                }
                                 else if (cmd[3] == ":" + prefix + "uptime")
                                 {
                                     TimeSpan ts = DateTime.Now - startupTime;
@@ -521,18 +569,18 @@ namespace CSharpBot
                                         if (cmd.Length > 4)
                                         {
                                             Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                            Functions.WriteData("QUIT :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                                            Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
                                         }
                                         else
                                         {
                                             Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
-                                            Functions.WriteData("QUIT :I shot myself because " + msg.SourceNickname + " told me to.");
+                                            Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
                                         }
                                     }
                                     else
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "die");
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
                                 }
                                 else if (cmd[3] == ":" + prefix + "clean")
@@ -542,12 +590,12 @@ namespace CSharpBot
                                         FileInfo fi = new FileInfo("CSharpBot.xml");
                                         fi.Delete();
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "clean");
-                                        Functions.WriteData("QUIT :Cleaned!");
+                                        Functions.Quit("Cleaned!");
                                     }
                                     else
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "clean");
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
                                 }
                                 else if (cmd[3] == ":" + prefix + "raw")
@@ -555,13 +603,13 @@ namespace CSharpBot
                                     if (Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         if (cmd.Length > 4)
-                                            Functions.RAW(string.Join(" ", cmd.Skip(4).ToArray()));
+                                            Functions.Raw(string.Join(" ", cmd.Skip(4).ToArray()));
                                     }
                                     else
                                     {
                                         if (cmd.Length > 4)
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + " RAW " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
                                 }
                                 else if (cmd[3] == ":" + prefix + "config")
@@ -569,7 +617,7 @@ namespace CSharpBot
                                     if (!Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "config");
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     } else if (cmd[4] == "list")
                                     {
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "config list");
@@ -613,12 +661,12 @@ namespace CSharpBot
                                         {
                                             Functions.Log(msg.SourceNickname + " issued " + prefix + "topic (set topic)");
                                             Functions.WriteData("TOPIC " + msg.Target + " :" + string.Join(" ", cmd.Skip(4).ToArray()));
-                                            Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": Topic has been set.");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Topic has been set.");
                                         }
                                         else
                                         {
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "topic (set topic).");
-                                            Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         }
                                     }
                                     else
@@ -647,7 +695,7 @@ namespace CSharpBot
                                                 foundTopic = true;
                                             }
                                         }
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": " + topic);
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + topic);
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "topic (read topic).");
                                     }
                                 }
@@ -687,16 +735,16 @@ namespace CSharpBot
                                                 }
                                                 else
                                                     File.WriteAllText("Kicks.txt", theline); // could it be more simple?
-                                                Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": Done. Added line " + IrcFormatting.BoldText(string.Join(" ", cmd.Skip(5).ToArray())) + " to kicks database.");
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Done. Added line " + IrcFormatting.BoldText(string.Join(" ", cmd.Skip(5).ToArray())) + " to kicks database.");
                                             }
                                             if (cmd[4].Equals("clear"))
                                             {
                                                 if (File.Exists("Kicks.txt"))
                                                 {
                                                     File.Delete("Kicks.txt");
-                                                    Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": Done. Deleted kicks database.");
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Done. Deleted kicks database.");
                                                 }
-                                                else Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": Kicks database already deleted.");
+                                                else Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Kicks database already deleted.");
                                             }
                                             if (cmd[4].Equals("total") && File.Exists("Kicks.txt"))
                                             {
@@ -708,7 +756,7 @@ namespace CSharpBot
                                                     i++;
                                                 }
                                                 file.Close();
-                                                Functions.WriteData("PRIVMSG " + cmd[2] + " :" + msg.SourceNickname + ": " + i + " lines.");
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + i + " lines.");
                                             }
                                             if (cmd[4].Equals("read") && cmd.Length > 5)
                                             {
@@ -719,14 +767,14 @@ namespace CSharpBot
                                                     string line;
                                                     if (!int.TryParse(cmd[5], out x))
                                                     {
-                                                        Functions.WriteData("PRIVMSG " + cmd[2] + " :" + msg.SourceNickname + ": This isn't a valid number.");
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": This isn't a valid number.");
                                                     }
                                                     else
                                                     {
                                                         x--;
                                                         if (x < 0)
                                                         {
-                                                            Functions.WriteData("PRIVMSG " + cmd[2] + " :" + msg.SourceNickname + ": This isn't a valid number.");
+                                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": This isn't a valid number.");
                                                         }
                                                         else
                                                         {
@@ -739,11 +787,11 @@ namespace CSharpBot
                                                             {
                                                                 if (line != null)
                                                                 {
-                                                                    Functions.WriteData("PRIVMSG " + cmd[2] + " :" + msg.SourceNickname + ": " + line);
+                                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + line);
                                                                 }
                                                                 else
                                                                 {
-                                                                    Functions.WriteData("PRIVMSG " + cmd[2] + " :" + msg.SourceNickname + ": No kickline for this number.");
+                                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": No kickline for this number.");
                                                                 }
                                                             }
                                                             file.Close();
@@ -752,7 +800,7 @@ namespace CSharpBot
                                                 }
                                                 else
                                                 {
-                                                    Functions.WriteData("PRIVMSG " + cmd[2] + " :" + msg.SourceNickname + ": There is no kicks database!");
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": There is no kicks database!");
                                                 }
                                             }
                                             string[] command = cmd[3].Split(':');
@@ -761,7 +809,7 @@ namespace CSharpBot
                                     }
                                     else
                                     {
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         string[] command = cmd[3].Split(':');
                                         Functions.Log(msg.SourceNickname + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
                                     }
@@ -770,7 +818,8 @@ namespace CSharpBot
                                 {
                                     if (cmd.Length > 4)
                                     {
-                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        Botop check = new Botop();
+                                        if (Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname))
                                         {
                                             if (cmd.Length > 5)
                                             {
@@ -793,7 +842,7 @@ namespace CSharpBot
                                         }
                                         else
                                         {
-                                            Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": You are not my owner!");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "kick " + cmd[4]);
                                         }
                                     }
@@ -809,7 +858,7 @@ namespace CSharpBot
                                     else if (!Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "join " + cmd[4]);
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
                                 }
                                 else if (cmd[3] == ":" + prefix + "help")
@@ -840,12 +889,12 @@ namespace CSharpBot
                                         if (cmd.Length > 5)
                                         {
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + msg.Target);
-                                            Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": You are not my owner!");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         }
                                         else if (cmd.Length > 4)
                                         {
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "mode " + cmd[4] + " on " + msg.Target);
-                                            Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": You are not my owner!");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         }
                                     }
                                 }
@@ -861,7 +910,7 @@ namespace CSharpBot
                                     else if (!Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
                                 }
                                 else if (cmd[3] == ":" + prefix + "reset")
@@ -871,30 +920,34 @@ namespace CSharpBot
                                         FileInfo fi = new FileInfo("CSharpBot.xml");
                                         fi.Delete();
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "reset");
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": Configuration reset. The bot will now restart.");
-                                        Functions.WriteData("QUIT :Resetting!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration reset. The bot will now restart.");
+                                        Functions.Quit("Resetting!");
                                         ProgramRestart = true;
                                         goto start;
                                     }
                                     else
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "reset");
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
+                                }
+                                else if (cmd[3] == ":" + prefix + "action")
+                                {
+                                    Functions.Action(msg.Target, string.Join(" ", cmd.Skip(4).ToArray()));
                                 }
                                 else if (cmd[3] == ":" + prefix + "restart")
                                 {
                                     if (Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "restart");
-                                        Functions.WriteData("QUIT :Restarting!");
+                                        Functions.Quit("Restarting!");
                                         ProgramRestart = true;
                                         goto start;
                                     }
                                     else
                                     {
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "restart");
-                                        Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": You are not my owner!");
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                     }
                                 }
                                 else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 4)
@@ -984,9 +1037,9 @@ namespace CSharpBot
             }
             catch (Exception e)
             {
-                Functions.WriteData("PRIVMSG " + CHANNEL + " : Error! Error: " + e.ToString());
-                Functions.WriteData("PRIVMSG " + CHANNEL + " : Error! StackTrace: " + e.StackTrace);
-                Functions.WriteData("QUIT :Exception: " + e.ToString());
+                Functions.PrivateMessage(CHANNEL, "Error! Error: " + e.ToString());
+                Functions.PrivateMessage(CHANNEL, Error! StackTrace: " + e.StackTrace);
+                Functions.Quit("Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Functions.Log("The bot generated an error:");

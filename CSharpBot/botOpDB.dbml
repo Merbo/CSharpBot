@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="BotOpDB" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="Nicks">
+    <Type Name="Nicks">
+      <Column Name="nick" Member="Nick" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>

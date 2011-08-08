@@ -42,6 +42,15 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Sends QUIT to the server and disconnects.
+        /// </summary>
+        /// <param name="reason">Optional reason for QUIT</param>
+        public void Quit(string reason = "Bye!")
+        {
+            CSharpBot.writer.WriteLine("QUIT :" + reason);
+        }
+
+        /// <summary>
         /// Logs a text.
         /// </summary>
         /// <param name="input">The text to log</param>
@@ -173,12 +182,29 @@ namespace CSharpBot
         /// <summary>
         /// Sends RAW IRC.
         /// </summary>
-        /// <param name="RAWIRC">The RAW IRC to send.</param>
-        public void RAW(string RAWIRC)
+        /// <param name="rawline">The RAW IRC to send.</param>
+        public void Raw(string rawline)
         {
-            CSharpBot.writer.WriteLine(RAWIRC);
+            CSharpBot.writer.WriteLine(rawline);
         }
 
+        public void Action(string target, string text)
+        {
+            PrivateMessage(target, "\u0001" + "ACTION " + text + "\u0001");
+        }
+
+
+        /// <summary>
+        /// Sends a MODE command to server.
+        /// </summary>
+        /// <param name="channel">The channel to set the mode in</param>
+        /// <param name="command">The mode command(as in +o newop or +v newvoiceduser)</param>
+        public void mode(string channel,string command)
+        {
+            string execCommand = "MODE " + channel + " " + command;
+            Raw(execCommand);
+
+        }
         /// <summary>
         /// Outputs help to an IRC user (should be used threaded).
         /// </summary>
@@ -189,7 +215,8 @@ namespace CSharpBot
             string nick = param[0];
             string hostmask = param[1];
             string prefix = param[2];
-            
+            Botop check = new Botop();
+
             Notice(nick, "Bot commands:");
             Notice(nick, "Everything in <> is necessary and everything in [] are optional.");
 
@@ -199,7 +226,7 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "join <chan> -- Joins the bot to a channel");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "part <chan> [reason] -- Parts the bot from a channel");
-            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
+            if ((IsOwner(hostmask)) | check.isBotOp(nick)) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "reset -- Clears the config and restarts the bot");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "restart -- Restarts the bot");
@@ -207,6 +234,9 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
             DelayNotice(nick, prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
             DelayNotice(nick, prefix + "uptime -- Tells the time, which the bot is running now without crash or shutdown.");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "addbotop <nick> -- Add a BotOp user, where nick is the nickname of the user you want to add");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "delbotop <nick> -- Delete a BotOp user, where nick is the nickname of the user you want to Delete");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "amibotop -- Tells you if you are a BotOp");
         }
 
         /// <summary>
