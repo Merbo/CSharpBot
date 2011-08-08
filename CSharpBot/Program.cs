@@ -329,20 +329,20 @@ namespace CSharpBot
                 writer = new StreamWriter(stream);
                 writer.AutoFlush = true;
                 Functions.Log("Logging in...");
-                Functions.WriteData(config.Userline);
+                Functions.WriteData("USER " + config.Nickname + " * * :MerbosMagic C# IRC Bot");
                 Functions.WriteData("NICK " + config.Nickname);
                 if (config.ServerPassword != "")
                     Functions.WriteData("PASS " + config.ServerPassword);
                 if (config.NickServPassword != "")
                 {
                     Functions.Log("Identifying through NickServ...");
-                    if (config.NickServAccount == "")
+                    if (config.NickServAccount != "")
                     {
-                        Functions.WriteData("PRIVMSG NickServ :IDENTIFY " + config.NickServPassword);
+                        Functions.WriteData("PRIVMSG NickServ :IDENTIFY " + config.NickServAccount + " " + config.NickServPassword); 
                     }
                     else
                     {
-                        Functions.WriteData("PRIVMSG NickServ :IDENTIFY " + config.NickServAccount + " " + config.NickServPassword);
+                        Functions.WriteData("PRIVMSG NickServ :IDENTIFY " + config.NickServPassword);
                     }
                 }
                 string currentcmd = null;
@@ -531,7 +531,7 @@ namespace CSharpBot
                             {
                                 if (Functions.IsOwner(prenick1[1]))
                                 {
-                                    FileInfo fi = new FileInfo("options.txt");
+                                    FileInfo fi = new FileInfo("CSharpBot.xml");
                                     fi.Delete();
                                     Functions.Log(nick + " issued " + prefix + "clean");
                                     Functions.WriteData("QUIT :Cleaned!");
@@ -808,7 +808,7 @@ namespace CSharpBot
                             {
                                 if (Functions.IsOwner(prenick1[1]))
                                 {
-                                    FileInfo fi = new FileInfo("options.txt");
+                                    FileInfo fi = new FileInfo("CSharpBot.xml");
                                     fi.Delete();
                                     Functions.Log(nick + " issued " + prefix + "reset");
                                     Functions.WriteData("PRIVMSG " + chan + " : " + nick + ": Configuration reset. The bot will now restart.");
