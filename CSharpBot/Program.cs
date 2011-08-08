@@ -569,12 +569,12 @@ namespace CSharpBot
                                         if (cmd.Length > 4)
                                         {
                                             Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                            Functions.WriteData("QUIT :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                                            Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
                                         }
                                         else
                                         {
                                             Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
-                                            Functions.WriteData("QUIT :I shot myself because " + msg.SourceNickname + " told me to.");
+                                            Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
                                         }
                                     }
                                     else
@@ -590,7 +590,7 @@ namespace CSharpBot
                                         FileInfo fi = new FileInfo("CSharpBot.xml");
                                         fi.Delete();
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "clean");
-                                        Functions.WriteData("QUIT :Cleaned!");
+                                        Functions.Quit("Cleaned!");
                                     }
                                     else
                                     {
@@ -921,7 +921,7 @@ namespace CSharpBot
                                         fi.Delete();
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "reset");
                                         Functions.WriteData("PRIVMSG " + msg.Target + " : " + msg.SourceNickname + ": Configuration reset. The bot will now restart.");
-                                        Functions.WriteData("QUIT :Resetting!");
+                                        Functions.Quit("Resetting!");
                                         ProgramRestart = true;
                                         goto start;
                                     }
@@ -940,7 +940,7 @@ namespace CSharpBot
                                     if (Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "restart");
-                                        Functions.WriteData("QUIT :Restarting!");
+                                        Functions.Quit("Restarting!");
                                         ProgramRestart = true;
                                         goto start;
                                     }
@@ -1039,7 +1039,7 @@ namespace CSharpBot
             {
                 Functions.WriteData("PRIVMSG " + CHANNEL + " : Error! Error: " + e.ToString());
                 Functions.WriteData("PRIVMSG " + CHANNEL + " : Error! StackTrace: " + e.StackTrace);
-                Functions.WriteData("QUIT :Exception: " + e.ToString());
+                Functions.Quit("Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Functions.Log("The bot generated an error:");

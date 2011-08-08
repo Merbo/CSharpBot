@@ -42,6 +42,15 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Sends QUIT to the server and disconnects.
+        /// </summary>
+        /// <param name="reason">Optional reason for QUIT</param>
+        public void Quit(string reason = "Bye!")
+        {
+            CSharpBot.writer.WriteLine("QUIT :" + reason);
+        }
+
+        /// <summary>
         /// Logs a text.
         /// </summary>
         /// <param name="input">The text to log</param>
