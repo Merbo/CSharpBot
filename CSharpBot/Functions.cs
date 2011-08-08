@@ -142,3 +142,11 @@ namespace CSharpBot
         }
     }
 }
+//From hereby on, we post quotes of funny IRC as a sort of source code easter egg.
+/*
+ * --------------------
+* <+Champion03> I cannot cause a complete network failure.
+* <+Champion03> That was an act of god.
+* * +Champion03 (webchat@HARHAR-jog.9sj.1nmndk.IP) Quit (Killed (Merbo (This was an act of GOD!)))
+ * --------------------
+*/
