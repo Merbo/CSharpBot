@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace CSharpBot
 {
@@ -16,7 +17,9 @@ namespace CSharpBot
         /// <returns></returns>
         public static bool IsOwner(string inputmask)
         {
-            return Program.HostmaskRegex.Match(inputmask).Success;
+            Regex HostmaskRegex;
+            HostmaskRegex = new Regex(Program.config.OwnerHostMask);
+            return HostmaskRegex.Match(inputmask).Success;
         }
         public static void Log(string input)
         {
