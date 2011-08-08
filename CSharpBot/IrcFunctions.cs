@@ -206,7 +206,8 @@ namespace CSharpBot
             string nick = param[0];
             string hostmask = param[1];
             string prefix = param[2];
-            
+            Botop check = new Botop();
+
             Notice(nick, "Bot commands:");
             Notice(nick, "Everything in <> is necessary and everything in [] are optional.");
 
@@ -216,7 +217,7 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "join <chan> -- Joins the bot to a channel");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "part <chan> [reason] -- Parts the bot from a channel");
-            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
+            if ((IsOwner(hostmask)) | check.isBotOp(nick)) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "reset -- Clears the config and restarts the bot");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "restart -- Restarts the bot");
