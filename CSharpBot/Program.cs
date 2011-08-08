@@ -341,7 +341,7 @@ namespace CSharpBot
                         break;
                     case "-f":
                     case "--config-file":
-                        XmlFileName = value;
+                        XmlFileName = value;                       
                         break;
                 }
             }
@@ -404,20 +404,6 @@ namespace CSharpBot
                 Functions.Log("Logging in...");
                 Functions.User(config.Nickname, config.Realname);
                 Functions.Nick(config.Nickname);
-                if (config.ServerPassword != "")
-                    Functions.Pass(config.ServerPassword);
-                if (config.NickServPassword != "")
-                {
-                    Functions.Log("Identifying through NickServ...");
-                    if (config.NickServAccount != "")
-                    {
-                        Functions.PrivateMessage("NickServ", "IDENTIFY " + config.NickServPassword);
-                    }
-                    else
-                    {
-                        Functions.PrivateMessage("NickServ", "IDENTIFY " + config.NickServAccount + " " + config.NickServPassword);
-                    }
-                }
                 string whoistarget;
                 int replycode;
                 while ((inputline = reader.ReadLine()) != null)
@@ -438,7 +424,6 @@ namespace CSharpBot
                             Functions.Log("Ping? Pong!");
                             Console.ResetColor();
                         }
-
                         Functions.WriteData("PONG " + cmd[1]);
                     }
 
@@ -1050,6 +1035,20 @@ namespace CSharpBot
                 Functions.WriteData("MODE " + NICK + " -i"); // We don't want to be invisible
                 Functions.Log("Joining " + CHANNEL + "...");
                 Functions.WriteData("JOIN " + CHANNEL);
+                if (config.ServerPassword != "")
+                    Functions.Pass(config.ServerPassword);
+                if (config.NickServPassword != "")
+                {
+                    Functions.Log("Identifying through NickServ...");
+                    if (config.NickServAccount != "")
+                    {
+                        Functions.PrivateMessage("NickServ", "IDENTIFY " + config.NickServAccount + " " + config.NickServPassword);
+                    }
+                    else
+                    {
+                        Functions.PrivateMessage("NickServ", "IDENTIFY " + config.NickServPassword);
+                    }
+                }
             }
         }
     }
