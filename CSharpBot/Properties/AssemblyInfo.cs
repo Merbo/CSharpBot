@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CSharpBot")]
-[assembly: AssemblyDescription("The C# IRC Bot Free for Use and Open Source")]
+[assembly: AssemblyDescription("The C# IRC Bot - Free for use and Open Source")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MerbosMagic")]
 [assembly: AssemblyProduct("CSharpBot")]
