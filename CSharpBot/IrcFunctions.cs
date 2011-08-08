@@ -86,50 +86,6 @@ namespace CSharpBot
         }
 
         /// <summary>
-        /// Writes a text into a file.
-        /// </summary>
-        /// <param name="file">The target file</param>
-        /// <param name="input">The input text</param>
-        public void WriteToFile(string file, string input)
-        {
-            if (CSharpBot.config.EnableFileLogging)
-            {
-                if (File.Exists(file))
-                {
-                    List<string> lines = new List<string>();
-                    using (StreamReader r = new StreamReader(file))
-                    {
-                        string line;
-                        while ((line = r.ReadLine()) != null)
-                        {
-                            lines.Add(line);
-                        }
-                    }
-                    using (StreamWriter w = new StreamWriter(file))
-                    {
-                        lines.Add(input);
-                        foreach (string s in lines)
-                        {
-                            w.WriteLine(s);
-                        }
-                    }
-                }
-                else
-                {
-                    using (StreamWriter w = new StreamWriter(file))
-                    {
-                        w.WriteLine(input);
-                    }
-                }
-                Console.WriteLine(input);
-            }
-            else
-            {
-                Console.WriteLine(input);
-            }
-        }
-
-        /// <summary>
         /// Sends a text to a channel.
         /// </summary>
         /// <param name="channel">The target channel</param>
@@ -212,6 +168,15 @@ namespace CSharpBot
         {
             Thread.Sleep(delayMilliseconds);
             CSharpBot.writer.WriteLine("NOTICE " + target + " :" + text);
+        }
+
+        /// <summary>
+        /// Sends RAW IRC.
+        /// </summary>
+        /// <param name="RAWIRC">The RAW IRC to send.</param>
+        public void RAW(string RAWIRC)
+        {
+            CSharpBot.writer.WriteLine(RAWIRC);
         }
 
         /// <summary>
