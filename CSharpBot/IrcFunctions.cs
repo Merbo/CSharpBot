@@ -224,6 +224,9 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
             DelayNotice(nick, prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
             DelayNotice(nick, prefix + "uptime -- Tells the time, which the bot is running now without crash or shutdown.");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "addbotop <nick> -- Add a BotOp user, where nick is the nickname of the user you want to add");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "delbotop <nick> -- Delete a BotOp user, where nick is the nickname of the user you want to Delete");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "amibotop -- Tells you if you are a BotOp");
         }
 
         /// <summary>

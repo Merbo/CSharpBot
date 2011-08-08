@@ -472,6 +472,54 @@ namespace CSharpBot
                                     Functions.Log(msg.SourceNickname + " issued " + prefix + "amiowner");
                                     Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
                                 }
+                                else if (cmd[3] == ":" + prefix + "addbotop")
+                                {
+                                    if (Functions.IsOwner(msg.SourceHostmask))
+                                    {
+
+                                        Botop add = new Botop();
+                                        if (cmd.Length > 4)
+                                        {
+                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "addbotop");
+                                            add.AddBotOp(cmd[4]);
+                                            Functions.PrivateMessage(msg.Target, "Done!");
+                                        }
+                                        
+                                    }
+                                    else
+                                    {
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                    }
+                                }
+
+                                else if (cmd[3] == ":" + prefix + "delbotop")
+                                {
+                                    if (Functions.IsOwner(msg.SourceHostmask))
+                                    {
+
+                                        Botop del = new Botop();
+                                        if (cmd.Length > 4)
+                                        {
+                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "delbotop");
+                                            del.DelBotOp(cmd[4]);
+                                            Functions.PrivateMessage(msg.Target, "Done!");
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                    }
+                                }
+
+
+                                else if (cmd[3] == ":" + prefix + "amibotop")
+                                {
+                                    
+                                    Botop test = new Botop();
+                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "amibotop");
+                                    Functions.PrivateMessage(msg.Target, "The answer is: " + (test.isBotOp(msg.SourceNickname) ? "Yes!" : "No!"));
+                                }
                                 else if (cmd[3] == ":" + prefix + "uptime")
                                 {
                                     TimeSpan ts = DateTime.Now - startupTime;
@@ -770,7 +818,8 @@ namespace CSharpBot
                                 {
                                     if (cmd.Length > 4)
                                     {
-                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        Botop check = new Botop();
+                                        if (Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname))
                                         {
                                             if (cmd.Length > 5)
                                             {
