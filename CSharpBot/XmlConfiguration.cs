@@ -9,7 +9,7 @@ namespace CSharpBot
     /// <summary>
     /// XML functions for CSharpBot configuration.
     /// </summary>
-    class XmlConfiguration
+    public class XmlConfiguration
     {
         public string Prefix
         {
@@ -167,10 +167,11 @@ namespace CSharpBot
         }
 
         private XmlDocument Configuration = new XmlDocument();
-        private XmlNode ConfigFile
+        public XmlNode ConfigFile
         {
             get { return Configuration.SelectNodes("csharpbot")[0]; }
         }
+        
         private string OriginalFilePath = "CSharpBot.xml";
 
         private XmlNode GetChildByName(string name)
