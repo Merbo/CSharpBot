@@ -173,10 +173,15 @@ namespace CSharpBot
         /// <summary>
         /// Sends RAW IRC.
         /// </summary>
-        /// <param name="RAWIRC">The RAW IRC to send.</param>
-        public void RAW(string RAWIRC)
+        /// <param name="rawline">The RAW IRC to send.</param>
+        public void Raw(string rawline)
         {
-            CSharpBot.writer.WriteLine(RAWIRC);
+            CSharpBot.writer.WriteLine(rawline);
+        }
+
+        public void Action(string target, string text)
+        {
+            PrivateMessage(target, "\u0001" + "ACTION " + text + "\u0001");
         }
 
         /// <summary>

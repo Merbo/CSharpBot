@@ -555,7 +555,7 @@ namespace CSharpBot
                                     if (Functions.IsOwner(msg.SourceHostmask))
                                     {
                                         if (cmd.Length > 4)
-                                            Functions.RAW(string.Join(" ", cmd.Skip(4).ToArray()));
+                                            Functions.Raw(string.Join(" ", cmd.Skip(4).ToArray()));
                                     }
                                     else
                                     {
@@ -881,6 +881,10 @@ namespace CSharpBot
                                         Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "reset");
                                         Functions.WriteData("PRIVMSG " + msg.Target + " :" + msg.SourceNickname + ": You are not my owner!");
                                     }
+                                }
+                                else if (cmd[3] == ":" + prefix + "action")
+                                {
+                                    Functions.Action(msg.Target, string.Join(" ", cmd.Skip(4).ToArray()));
                                 }
                                 else if (cmd[3] == ":" + prefix + "restart")
                                 {
