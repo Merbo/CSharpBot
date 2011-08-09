@@ -922,70 +922,43 @@ namespace CSharpBot
                                         }
                                         break;
                                 }
-                                if (Regex.Match(msg.Message, "[c,d]+[voice,bot,halfop,op,[admin,protect],owner]").Success)
+                                if (Regex.Match(msg.BotCommandName, "^(c|d)(voice|bot|halfop|op|admin|protect|owner)$").Success)
                                 {
-                                    if (Regex.Match(msg.Message, "c+[voice,bot,halfop,op,[admin,protect],owner]").Success)
-                                    {
-                                        string cdmode = msg.Message.Substring(1);
-                                        if (cmd.Length > 4)
+
+                                    //if (msg.BotCommandName.StartsWith("c"))
+                                    //{
+                                    string pre = msg.BotCommandName.StartsWith("c") ? "+" : "-";
+                                        string cdmode = msg.BotCommandName.ToLower();
+                                        if (msg.BotCommandParams.Length > 0)
                                         {
+                                            cdmode = cdmode.Substring(1);
                                             if (cdmode.Equals("voice"))
                                             {
-                                                Functions.Mode(cmd[2], "+v " + cmd[4]);
+                                                Functions.Mode(msg.Target, pre + "v " + msg.BotCommandParams[0]);
                                             }
                                             else if (cdmode.Equals("bot"))
                                             {
-                                                Functions.Mode(cmd[2], "+V " + cmd[4]);
+                                                Functions.Mode(msg.Target, pre + "V " + msg.BotCommandParams[0]);
                                             }
                                             else if (cdmode.Equals("halfop"))
                                             {
-                                                Functions.Mode(cmd[2], "+h " + cmd[4]);
+                                                Functions.Mode(msg.Target, pre + "h " + msg.BotCommandParams[0]);
                                             }
                                             else if (cdmode.Equals("op"))
                                             {
-                                                Functions.Mode(cmd[2], "+o " + cmd[4]);
+                                                Functions.Mode(msg.Target, pre + "o " + msg.BotCommandParams[0]);
                                             }
-                                            else if (cdmode.Equals(Regex.Match(cdmode, "[admin,protect]").Value))
+                                            else if (cdmode.Equals(Regex.Match(cdmode, "^(admin|protect)$").Value))
                                             {
-                                                Functions.Mode(cmd[2], "+a " + cmd[4]);
+                                                Functions.Mode(msg.Target, pre + "a " + msg.BotCommandParams[0]);
                                             }
                                             else if (cdmode.Equals("owner"))
                                             {
-                                                Functions.Mode(cmd[2], "+q " + cmd[4]);
+                                                Functions.Mode(msg.Target, pre + "q " + msg.BotCommandParams[0]);
                                             }
                                         }
-                                    }
-                                    if (Regex.Match(msg.Message, "d+[voice,bot,halfop,op,[admin,protect],owner]").Success)
-                                    {
-                                        string cdmode = msg.Message.Substring(1);
-                                        if (cmd.Length > 4)
-                                        {
-                                            if (cdmode.Equals("voice"))
-                                            {
-                                                Functions.Mode(cmd[2], "-v " + cmd[4]);
-                                            }
-                                            else if (cdmode.Equals("bot"))
-                                            {
-                                                Functions.Mode(cmd[2], "-V " + cmd[4]);
-                                            }
-                                            else if (cdmode.Equals("halfop"))
-                                            {
-                                                Functions.Mode(cmd[2], "-h " + cmd[4]);
-                                            }
-                                            else if (cdmode.Equals("op"))
-                                            {
-                                                Functions.Mode(cmd[2], "-o " + cmd[4]);
-                                            }
-                                            else if (cdmode.Equals(Regex.Match(cdmode, "[admin,protect]").Value))
-                                            {
-                                                Functions.Mode(cmd[2], "-a " + cmd[4]);
-                                            }
-                                            else if (cdmode.Equals("owner"))
-                                            {
-                                                Functions.Mode(cmd[2], "-q " + cmd[4]);
-                                            }
-                                        }
-                                    }
+                                    //}
+
                                 }
                                 if (msg.Message.StartsWith("GTFO "))
                                 {
