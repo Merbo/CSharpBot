@@ -65,7 +65,7 @@ namespace CSharpBot
                                 if (_terms[i].Operator == Oper.Multiply) {
                                     retValue = _terms[i - 1].Value * _terms[i + 1].Value;
                                 } else if (_terms[i].Operator == Oper.Divide) {
-                                    retValue = _terms[i - 1].Value / _terms[i - 1].Value;
+                                    retValue = _terms[i - 1].Value / _terms[i + 1].Value;
                                 }
                                 continueProc(retValue, i);
                             } else if ((_terms[i].Operator == Oper.Add || _terms[i].Operator == Oper.Subtract) &&
