@@ -979,6 +979,11 @@ namespace CSharpBot
                                         }
                                     }
                                 }
+                                else if (cmd[3] == ":" + prefix + "math")
+                                {
+                                    Functions.PrivateMessage(msg.Target, Math.Math.Parse(cmd[4]));
+                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "math " + cmd[4]);
+                                }
                             }
                         }
                         #endregion
@@ -1038,7 +1043,7 @@ namespace CSharpBot
             catch (Exception e)
             {
                 Functions.PrivateMessage(CHANNEL, "Error! Error: " + e.ToString());
-                Functions.PrivateMessage(CHANNEL, Error! StackTrace: " + e.StackTrace);
+                Functions.PrivateMessage(CHANNEL, "Error! StackTrace: " + e.StackTrace);
                 Functions.Quit("Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;
