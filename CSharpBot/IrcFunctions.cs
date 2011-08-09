@@ -32,13 +32,22 @@ namespace CSharpBot
         }
 
         /// <summary>
-        /// Checks if a target is a channel
+        /// Checks if a target is a channel.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <param name="target">Target</param>
+        /// <returns>If target is a channel</returns>
         public bool IsChannel(string target)
         {
             return target.StartsWith("#");
+        }
+
+        /// <summary>
+        /// Lets the bot leave a channel.
+        /// </summary>
+        /// <param name="channel">The channel to leave</param>
+        public void Part(string channel, string reason = "Just leaving")
+        {
+            CSharpBot.writer.WriteLine("PART " + channel + " :" + reason);
         }
 
         /// <summary>
@@ -117,6 +126,16 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Lets the bot rejoin a channel
+        /// </summary>
+        /// <param name="channel">The channel</param>
+        public void Cycle(string channel)
+        {
+            CSharpBot.writer.WriteLine("PART " + channel + " :Cycling");
+            CSharpBot.writer.WriteLine("JOIN " + channel);
+        }
+
+        /// <summary>
         /// Tells the server our username.
         /// </summary>
         /// <param name="username">The username. Mostly, the initial nickname.</param>
@@ -180,31 +199,34 @@ namespace CSharpBot
         }
 
         /// <summary>
-        /// Sends RAW IRC.
+        /// Sends a raw IRC line.
         /// </summary>
-        /// <param name="rawline">The RAW IRC to send.</param>
+        /// <param name="rawline">The raw IRC line to send.</param>
         public void Raw(string rawline)
         {
             CSharpBot.writer.WriteLine(rawline);
         }
 
+        /// <summary>
+        /// Sends an ACTION to a channel
+        /// </summary>
+        /// <param name="target">Target channel</param>
+        /// <param name="text">Text to send</param>
         public void Action(string target, string text)
         {
             PrivateMessage(target, "\u0001" + "ACTION " + text + "\u0001");
         }
 
-
         /// <summary>
         /// Sends a MODE command to server.
         /// </summary>
         /// <param name="channel">The channel to set the mode in</param>
-        /// <param name="command">The mode command(as in +o newop or +v newvoiceduser)</param>
-        public void mode(string channel,string command)
+        /// <param name="command">The mode command (as in +o newop or +v newvoiceduser)</param>
+        public void Mode(string channel,string command)
         {
-            string execCommand = "MODE " + channel + " " + command;
-            Raw(execCommand);
-
+            Raw("MODE " + channel + " " + command);
         }
+
         /// <summary>
         /// Outputs help to an IRC user (should be used threaded).
         /// </summary>

@@ -409,6 +409,7 @@ namespace CSharpBot
                 while ((inputline = reader.ReadLine()) != null)
                 {
                     string[] cmd = inputline.Split(' ');
+
                     if (DebuggingEnabled)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
@@ -416,6 +417,8 @@ namespace CSharpBot
                             Functions.Log("RECV: " + inputline);
                         Console.ResetColor();
                     }
+
+                    // Automatic PING reply
                     if (cmd[0].Equals("PING"))
                     {
                         if (DebuggingEnabled == true)
@@ -434,6 +437,7 @@ namespace CSharpBot
                         this.OnNumericReplyReceived(reply);
                     }
 
+                    // Kick
                     else if (cmd[1].Equals("KICK"))
                     {
                         if (cmd[3] == NICK)
@@ -452,68 +456,63 @@ namespace CSharpBot
                     {
                         // Do nothing. DON'T DELETE THIS LINE! It prevents errors during compilation.
                     }
+
                     if (msg != null)
                     {
                         #region PRIVMSG
                         if (msg.MessageType == IrcMessageType.PrivateMessage)
                         {
-                            if (msg.Target.StartsWith("#"))
+                            if (msg.Target.StartsWith("#") && msg.IsBotCommand)
                             // Source is really a channel
                             {
 
                                 // Execute commands
-                                if (cmd[3] == ":" + prefix + "test")
+                                Functions.Log(msg.SourceNickname + " issued " + prefix + msg.BotCommandName + " with " + msg.BotCommandParams.Count() + " parameters.");
+                                switch(msg.BotCommandName.ToLower())
                                 {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "test");
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
-                                }
-                                else if (cmd[3] == ":" + prefix + "amiowner")
-                                {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "amiowner");
-                                    Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
-                                }
-                                else if (cmd[3] == ":" + prefix + "addbotop")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-
-                                        Botop add = new Botop();
-                                        if (cmd.Length > 4)
+                                    // TODO: Edit to "switch" (easier structure, you know ;) ) - Icedream
+                                    case "test":
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
+                                        break;
+                                    case "amiowner":
+                                        Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
+                                        break;
+                                    case "addbotop":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "addbotop");
-                                            add.AddBotOp(cmd[4]);
-                                            Functions.PrivateMessage(msg.Target, "Done!");
+                                            Botop add = new Botop();
+                                            if (cmd.Length > 4)
+                                            {
+                                                add.AddBotOp(cmd[4]);
+                                                Functions.PrivateMessage(msg.Target, "Done!");
+                                            }
                                         }
-                                        
-                                    }
-                                    else
-                                    {
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
-                                    }
-                                }
-
-                                else if (cmd[3] == ":" + prefix + "delbotop")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-
-                                        Botop del = new Botop();
-                                        if (cmd.Length > 4)
+                                        else
                                         {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "delbotop");
-                                            del.DelBotOp(cmd[4]);
-                                            Functions.PrivateMessage(msg.Target, "Done!");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
                                         }
+                                        break;
+                                    case "delbotop":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
 
-                                    }
-                                    else
-                                    {
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
-                                    }
+                                            Botop del = new Botop();
+                                            if (cmd.Length > 4)
+                                            {
+                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "delbotop");
+                                                del.DelBotOp(cmd[4]);
+                                                Functions.PrivateMessage(msg.Target, "Done!");
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                        }
+                                        break;
                                 }
-
-
-                                else if (cmd[3] == ":" + prefix + "amibotop")
+                                
+                                if (cmd[3] == ":" + prefix + "amibotop")
                                 {
                                     
                                     Botop test = new Botop();
@@ -1038,7 +1037,7 @@ namespace CSharpBot
             catch (Exception e)
             {
                 Functions.PrivateMessage(CHANNEL, "Error! Error: " + e.ToString());
-                Functions.PrivateMessage(CHANNEL, Error! StackTrace: " + e.StackTrace);
+                Functions.PrivateMessage(CHANNEL, "Error! StackTrace: " + e.StackTrace);
                 Functions.Quit("Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;

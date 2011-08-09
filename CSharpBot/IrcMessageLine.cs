@@ -17,6 +17,7 @@ namespace CSharpBot
         string hostmask;
         string target;
         string message;
+        XmlConfiguration config;
 
         public IrcMessageType MessageType
         {
@@ -61,6 +62,36 @@ namespace CSharpBot
             get { return message.Trim('\x01', '\n', '\r', '\t', ' ', '\0'); }
         }
 
+        public bool IsBotCommand
+        {
+            get { return message.StartsWith(config.Prefix); }
+        }
+
+        public string BotCommandName
+        {
+            get { return IsBotCommand ? message.Split(' ')[0].Substring(config.Prefix.Length) : null; }
+        }
+
+        public string[] BotCommandParams
+        {
+            get {
+                if (!IsBotCommand)
+                    return null;
+                string[] spl1 = message.Split('"');
+                List<string> args = new List<string>();
+                for (int i = 0; i < spl1.Length; i++)
+                {
+                    if (i / 2 == Math.Round((decimal)i / 2, 0))
+                    {
+                        string[] spl2 = spl1[i].Split(' ');
+                        args.AddRange(spl2); // argument: ... ... ... are multiple args
+                    }
+                    else
+                        args.Add(spl1[i]); // argument: "... ..." is 1 arg
+                }
+                return args.ToArray();
+            }
+        }
 
         public IrcMessageLine(string raw, XmlConfiguration xml)
         {
@@ -76,6 +107,8 @@ namespace CSharpBot
             if (prenick.Length > 2) this.host = prenick[2];
 
             message = string.Join(" ", cmd.Skip(3).ToArray()).Substring(1);
+
+            config = xml;
         }
     }
 
