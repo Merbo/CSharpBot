@@ -27,60 +27,7 @@ namespace CSharpBot
                 }
 
                 // Generate an Expression array and get the result out!
-                return result(expr).ToString();
-            }
-
-            private static double result(string expr) {
-                // Split expr by all oper characters and get the list of opers. 
-                string[] termStrings = expr.Split(OperChars.ToArray());
-                var numericTerms = termStrings.Select(s => new Term(s)).ToList();
-                var operTerms = getOperators(expr);
-                
-                // Merge the two lists. 
-                var termsList = mergeTerms(numericTerms, operTerms);
-
-                // Create the expression and get it's value. 
-                var e = new Expression(termsList.ToArray());
-                return e.Value;
-            }
-
-            private static List<Term> mergeTerms(List<Term> numericTerms, List<Term> operTerms)
-            {
-                // If we have no operators, our Terms list is already a simple expression and 
-                // can be simply returned. 
-                if (operTerms.Count == 0)
-                {
-                    return numericTerms;
-                }
-
-                List<Term> retValue = new List<Term>();
-                // If we get here, we have actual work to do. 
-                for(int i = 0; i < numericTerms.Count; i++)
-                {
-                    if (i < operTerms.Count) // We havn't run out of operators to merge. 
-                    {
-                        retValue.Add(numericTerms[i]);
-                        retValue.Add(operTerms[i]);
-                    }
-                    else // We have no more operators to merge. 
-                    {
-                        retValue.Add(numericTerms[i]);
-                    }
-                }
-                return retValue;
-            }
-
-            private static List<Term> getOperators(string expr)
-            {
-                var operTerms = new List<Term>();
-                foreach (char c in expr)
-                {
-                    if (c.EqualsAny(OperChars.ToArray()))
-                    {
-                        operTerms.Add(new Term(c.ToString()));
-                    }
-                }
-                return operTerms;
+                return Expression.Result(expr).ToString();
             }
         }
 
@@ -139,7 +86,6 @@ namespace CSharpBot
                                 }
                                 continueProc(retValue, i);
                             }
-
                         }
                     }
                     return retValue;
@@ -181,6 +127,59 @@ namespace CSharpBot
 
             public Expression(Term[] terms) {
                 _terms = terms.ToList();
+            }
+
+            public static double Result(string expr) {
+                // Split expr by all oper characters and get the list of opers. 
+                string[] termStrings = expr.Split(Math.OperChars.ToArray());
+                var numericTerms = termStrings.Select(s => new Term(s)).ToList();
+                var operTerms = getOperators(expr);
+                
+                // Merge the two lists. 
+                var termsList = mergeTerms(numericTerms, operTerms);
+
+                // Create the expression and get it's value. 
+                var e = new Expression(termsList.ToArray());
+                return e.Value;
+            }
+
+            private static List<Term> mergeTerms(List<Term> numericTerms, List<Term> operTerms)
+            {
+                // If we have no operators, our Terms list is already a simple expression and 
+                // can be simply returned. 
+                if (operTerms.Count == 0)
+                {
+                    return numericTerms;
+                }
+
+                List<Term> retValue = new List<Term>();
+                // If we get here, we have actual work to do. 
+                for(int i = 0; i < numericTerms.Count; i++)
+                {
+                    if (i < operTerms.Count) // We havn't run out of operators to merge. 
+                    {
+                        retValue.Add(numericTerms[i]);
+                        retValue.Add(operTerms[i]);
+                    }
+                    else // We have no more operators to merge. 
+                    {
+                        retValue.Add(numericTerms[i]);
+                    }
+                }
+                return retValue;
+            }
+
+            private static List<Term> getOperators(string expr)
+            {
+                var operTerms = new List<Term>();
+                foreach (char c in expr)
+                {
+                    if (c.EqualsAny(Math.OperChars.ToArray()))
+                    {
+                        operTerms.Add(new Term(c.ToString()));
+                    }
+                }
+                return operTerms;
             }
         }
 
