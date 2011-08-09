@@ -11,6 +11,9 @@ namespace CSharpBot
     /// </summary>
     public class XmlConfiguration
     {
+        /// <summary>
+        /// The command prefix
+        /// </summary>
         public string Prefix
         {
             get
@@ -22,6 +25,10 @@ namespace CSharpBot
                 GetChildByName("prefix").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The owner's hostmask
+        /// </summary>
         public string OwnerHostMask
         {
             get
@@ -33,6 +40,10 @@ namespace CSharpBot
                 GetChildByName("ownerhostmask").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The channel
+        /// </summary>
         public string Channel
         {
             get
@@ -44,6 +55,10 @@ namespace CSharpBot
                 GetChildByName("channel").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The nickname
+        /// </summary>
         public string Nickname
         {
 
@@ -56,6 +71,10 @@ namespace CSharpBot
                 GetChildByName("nickname").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The server
+        /// </summary>
         public string Server
         {
 
@@ -68,6 +87,10 @@ namespace CSharpBot
                 GetChildByName("server").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The port
+        /// </summary>
         public int Port
         {
             get
@@ -79,6 +102,10 @@ namespace CSharpBot
                 GetChildByName("port").InnerText = value.ToString();
             }
         }
+
+        /// <summary>
+        /// The real name
+        /// </summary>
         public string Realname
         {
             get
@@ -90,6 +117,10 @@ namespace CSharpBot
                 GetChildByName("realname").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The server password
+        /// </summary>
         public string ServerPassword
         {
             get
@@ -101,6 +132,10 @@ namespace CSharpBot
                 GetChildByName("serverpassword").InnerText = value;
             }
         }
+
+        /// <summary>
+        /// The NickServ account
+        /// </summary>
         public string NickServAccount
         {
             get
@@ -114,6 +149,10 @@ namespace CSharpBot
                 GetChildByName("nickserv").Attributes["accountname"].Value = value;
             }
         }
+
+        /// <summary>
+        /// The NickServ password
+        /// </summary>
         public string NickServPassword
         {
             get
@@ -127,10 +166,19 @@ namespace CSharpBot
                 GetChildByName("nickserv").Attributes["password"].Value = value;
             }
         }
+
+        /// <summary>
+        /// The dynamically combined complete USER line.
+        /// </summary>
+        [Obsolete("Use IrcFunctions.User to generate a userline.", false)]
         public string Userline
         {
             get { return "USER " + Nickname + " 8 * :" + Realname; }
         }
+
+        /// <summary>
+        /// Is file logging enabled?
+        /// </summary>
         public bool EnableFileLogging
         {
             get { return ConfigFile.SelectNodes("child::filelogging").Count > 1; }
@@ -141,7 +189,8 @@ namespace CSharpBot
                     if (ConfigFile.SelectNodes("child::filelogging").Count == 0)
                     {
                         ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement("filelogging"));
-                        GetChildByName("filelogging").Attributes.Append(ConfigFile.OwnerDocument.CreateAttribute("path")).Value = "CSharpBot.log";
+                        GetChildByName("filelogging").Attributes.Append(ConfigFile.OwnerDocument.CreateAttribute("path"));
+                        GetChildByName("filelogging").Attributes["path"].Value = "CSharpBot.log";
                     }
                 }
                 else
@@ -151,6 +200,10 @@ namespace CSharpBot
                 }
             }
         }
+
+        /// <summary>
+        /// The target file of logging
+        /// </summary>
         public string Logfile
         {
             get {
@@ -166,7 +219,11 @@ namespace CSharpBot
             }
         }
 
-        private XmlDocument Configuration = new XmlDocument();
+        private XmlDocument Configuration;
+
+        /// <summary>
+        /// The configuration file node
+        /// </summary>
         public XmlNode ConfigFile
         {
             get { return Configuration.SelectNodes("csharpbot")[0]; }
@@ -181,8 +238,46 @@ namespace CSharpBot
 
         private XmlNode CreateElement(string name) { return ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement(name)); }
 
+        /// <summary>
+        /// Constructs an XML configuration instance
+        /// </summary>
         public XmlConfiguration()
         {
+            Reset();
+        }
+
+        /// <summary>
+        /// Loads an XML configuration
+        /// </summary>
+        /// <param name="file">Optional new file name</param>
+        public void Load(string file = null)
+        {
+            try
+            {
+                Configuration.Load(OriginalFilePath = file != null ? file : OriginalFilePath);
+            }
+            catch (Exception n)
+            {
+                Console.WriteLine("[xml] " + n.ToString());
+                throw n;
+            }
+        }
+
+        /// <summary>
+        /// Saves the XML configuration
+        /// </summary>
+        /// <param name="file">Optional new file name</param>
+        public void Save(string file = null)
+        {
+            Configuration.Save(OriginalFilePath = file != null ? file : OriginalFilePath);
+        }
+
+        /// <summary>
+        /// Resets the configuration
+        /// </summary>
+        public void Reset()
+        {
+            Configuration = new XmlDocument();
             Configuration.AppendChild(Configuration.CreateElement("csharpbot")); // root node
 
             // child nodes of document
@@ -197,22 +292,12 @@ namespace CSharpBot
             CreateElement("channel");
         }
 
-        public void Load(string file = null)
+        /// <summary>
+        /// Deletes the configuration file.
+        /// </summary>
+        public void Delete()
         {
-            try
-            {
-                Configuration.Load(OriginalFilePath = file != null ? file : OriginalFilePath);
-            }
-            catch (Exception n)
-            {
-                Console.WriteLine("[xml] " + n.ToString());
-                throw n;
-            }
-        }
-
-        public void Save(string file = null)
-        {
-            Configuration.Save(OriginalFilePath = file != null ? file : OriginalFilePath);
+            System.IO.File.Delete(OriginalFilePath);
         }
     }
 }
