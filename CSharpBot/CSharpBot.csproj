@@ -137,8 +137,10 @@
     <Compile Include="IrcFormatting.cs" />
     <Compile Include="IrcNumericReplyLine.cs" />
     <Compile Include="IrcReplyCodes.cs" />
+    <Compile Include="Math.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="XmlConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
