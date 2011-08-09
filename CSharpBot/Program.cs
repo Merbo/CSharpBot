@@ -36,6 +36,8 @@ namespace CSharpBot
 
         public StreamWriter writer;
 
+        private MathParser mathp = new MathParser();
+
         public bool DebuggingEnabled = false;
         public bool ProgramRestart = false;
         public bool RejoinOnKick = true;
@@ -473,11 +475,38 @@ namespace CSharpBot
                                 switch(msg.BotCommandName.ToLower())
                                 {
                                     // TODO: Edit to "switch" (easier structure, you know ;) ) - Icedream
+                                    case "math":
+                                        switch(msg.BotCommandParams[0])
+                                        {
+                                            case "add":
+                                                mathp.AddVariable(msg.BotCommandParams[1], msg.BotCommandParams[2]);
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + msg.BotCommandParams[2]);
+                                                break;
+                                            case "clear":
+                                            case "reset":
+                                                mathp.Reset();
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator cleared.");
+                                                break;
+                                            default:
+                                                try
+                                                {
+                                                    string expression;
+                                                    string result = mathp.Calculate(expression = string.Join(" ", msg.BotCommandParams));
+                                                    Console.WriteLine(result);
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + expression + " = " + result);
+                                                }
+                                                catch (Exception x)
+                                                {
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + x.Message);
+                                                }
+                                                break;
+                                        }
+                                        break;
                                     case "test":
                                         Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
                                         break;
                                     case "amiowner":
-                                        Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
                                         break;
                                     case "addbotop":
                                         if (Functions.IsOwner(msg.SourceHostmask))
