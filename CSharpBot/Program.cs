@@ -950,6 +950,11 @@ namespace CSharpBot
                                             }
                                         }
                                         break;
+                                    case "math":
+                                        Functions.PrivateMessage(msg.Target, cmd[4] + " = " + BotMath.Math.Parse(cmd[4]));
+                                        Functions.Log(msg.SourceNickname + " used command " + cmd[3]);
+                                        break;
+
                                 }
                                 if (Regex.Match(msg.BotCommandName, "^(g|d)(voice|bot|halfop|op|admin|protect|owner)$").Success)
                                 {
