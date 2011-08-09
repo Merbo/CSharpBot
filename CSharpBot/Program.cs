@@ -101,6 +101,8 @@ namespace CSharpBot
             Console.WriteLine("Options:");
             Console.WriteLine("--help, -h");
             Console.WriteLine("\tThis page.");
+            Console.WriteLine("--debug, -d");
+            Console.WriteLine("\tRuns the bot in debug mode.");
             Console.WriteLine("--config-file=config.xml, -f=config.xml");
             Console.WriteLine("\tUses config.xml as the configuration file. If this file does not exist, it will be created by the first-use setup.");
         }
@@ -409,6 +411,7 @@ namespace CSharpBot
                 while ((inputline = reader.ReadLine()) != null)
                 {
                     string[] cmd = inputline.Split(' ');
+
                     if (DebuggingEnabled)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
@@ -416,6 +419,8 @@ namespace CSharpBot
                             Functions.Log("RECV: " + inputline);
                         Console.ResetColor();
                     }
+
+                    // Automatic PING reply
                     if (cmd[0].Equals("PING"))
                     {
                         if (DebuggingEnabled == true)
@@ -434,6 +439,7 @@ namespace CSharpBot
                         this.OnNumericReplyReceived(reply);
                     }
 
+                    // Kick
                     else if (cmd[1].Equals("KICK"))
                     {
                         if (cmd[3] == NICK)
@@ -452,254 +458,512 @@ namespace CSharpBot
                     {
                         // Do nothing. DON'T DELETE THIS LINE! It prevents errors during compilation.
                     }
+
                     if (msg != null)
                     {
                         #region PRIVMSG
                         if (msg.MessageType == IrcMessageType.PrivateMessage)
                         {
-                            if (msg.Target.StartsWith("#"))
+                            if (msg.Target.StartsWith("#") && msg.IsBotCommand)
                             // Source is really a channel
                             {
 
                                 // Execute commands
-                                if (cmd[3] == ":" + prefix + "test")
+                                Functions.Log(msg.SourceNickname + " issued " + prefix + msg.BotCommandName + " with " + msg.BotCommandParams.Count() + " parameters.");
+                                switch(msg.BotCommandName.ToLower())
                                 {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "test");
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
-                                }
-                                else if (cmd[3] == ":" + prefix + "amiowner")
-                                {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "amiowner");
-                                    Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
-                                }
-                                else if (cmd[3] == ":" + prefix + "addbotop")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-
-                                        Botop add = new Botop();
-                                        if (cmd.Length > 4)
+                                    // TODO: Edit to "switch" (easier structure, you know ;) ) - Icedream
+                                    case "test":
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
+                                        break;
+                                    case "amiowner":
+                                        Functions.PrivateMessage(msg.Target, "The answer is: " + (Functions.IsOwner(msg.SourceHostmask) ? "Yes!" : "No!"));
+                                        break;
+                                    case "addbotop":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "addbotop");
-                                            add.AddBotOp(cmd[4]);
-                                            Functions.PrivateMessage(msg.Target, "Done!");
-                                        }
-                                        
-                                    }
-                                    else
-                                    {
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
-                                    }
-                                }
-
-                                else if (cmd[3] == ":" + prefix + "delbotop")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-
-                                        Botop del = new Botop();
-                                        if (cmd.Length > 4)
-                                        {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "delbotop");
-                                            del.DelBotOp(cmd[4]);
-                                            Functions.PrivateMessage(msg.Target, "Done!");
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
-                                    }
-                                }
-
-
-                                else if (cmd[3] == ":" + prefix + "amibotop")
-                                {
-                                    
-                                    Botop test = new Botop();
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "amibotop");
-                                    Functions.PrivateMessage(msg.Target, "The answer is: " + (test.isBotOp(msg.SourceNickname) ? "Yes!" : "No!"));
-                                }
-                                else if (cmd[3] == ":" + prefix + "uptime")
-                                {
-                                    TimeSpan ts = DateTime.Now - startupTime;
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": The bot is now running " + ts.ToString());
-                                }
-                                else if (cmd[3] == ":" + prefix + "time")
-                                {
-                                    // UTC hours addition (#time +1 makes UTC+1 for example)
-                                    double add = 0;
-                                    string adds = "";
-                                    if (cmd.Length > 4)
-                                        double.TryParse(cmd[4], out add);
-                                    if (add != 0)
-                                        adds = add.ToString();
-                                    if (add > 0)
-                                        adds = "+" + adds;
-
-                                    if (cmd.Length > 4)
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "time " + cmd[4]);
-                                    else
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "time");
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": It's " + DateTime.UtcNow.AddHours(add).ToString() + "(UTC" + adds + ")");
-                                }
-                                else if (cmd[3] == ":" + prefix + "mynick")
-                                {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "mynick");
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your nick is " + msg.SourceNickname);
-                                }
-                                else if (cmd[3] == ":" + prefix + "myident")
-                                {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "myident");
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your ident is " + msg.SourceUsername);
-                                }
-                                else if (cmd[3] == ":" + prefix + "myhost")
-                                {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "myhost");
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your host is " + msg.SourceHost);
-                                }
-                                else if (cmd[3] == ":" + prefix + "myfullmask")
-                                {
-                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your full mask is " + cmd[0]);
-                                }
-                                else if (cmd[3] == ":" + prefix + "die")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        if (cmd.Length > 4)
-                                        {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                            Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
+                                            Botop add = new Botop();
+                                            if (cmd.Length > 4)
+                                            {
+                                                add.AddBotOp(cmd[4]);
+                                                Functions.PrivateMessage(msg.Target, "Done!");
+                                            }
                                         }
                                         else
                                         {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
-                                            Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
                                         }
-                                    }
-                                    else
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "die");
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "clean")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        FileInfo fi = new FileInfo("CSharpBot.xml");
-                                        fi.Delete();
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "clean");
-                                        Functions.Quit("Cleaned!");
-                                    }
-                                    else
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "clean");
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "raw")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        if (cmd.Length > 4)
-                                            Functions.Raw(string.Join(" ", cmd.Skip(4).ToArray()));
-                                    }
-                                    else
-                                    {
-                                        if (cmd.Length > 4)
-                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + " RAW " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "config")
-                                {
-                                    if (!Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "config");
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    } else if (cmd[4] == "list")
-                                    {
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "config list");
-                                        Regex search = new Regex("^(.*)$");
-                                        if(cmd.Length > 5)
-                                            search = new Regex(!cmd[5].StartsWith("regex:") ? "(" + cmd[5].Replace(".", "\\.") + ")" : cmd[5].Substring(6));
-                                        foreach (XmlNode node in config.ConfigFile.ChildNodes)
+                                        break;
+                                    case "delbotop":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            // Main settings
-                                            if (node.InnerText.Trim() != ""
-                                                && (config.NickServPassword != "" ? !node.InnerText.Contains(config.NickServPassword) : true)
-                                                && (config.ServerPassword != "" ? !node.InnerText.Contains(config.ServerPassword) : true)
-                                                && search.Match(node.Name).Success
-                                                )
-                                                Functions.Notice(msg.SourceNickname, node.Name + " = " + node.InnerText);
-                                            if (node.HasChildNodes)
-                                            {
 
-                                                // Sub settings, if any (might be useful for plugins)
-                                                foreach (XmlNode sub in node.ChildNodes)
-                                                {
-                                                    if (sub.Name != "#text" && sub.InnerText.Trim() != ""
-                                                    && (config.NickServPassword != "" ? !sub.InnerText.Contains(config.NickServPassword) : true)
-                                                    && (config.ServerPassword != "" ? !sub.InnerText.Contains(config.ServerPassword) : true)
+                                            Botop del = new Botop();
+                                            if (cmd.Length > 4)
+                                            {
+                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "delbotop");
+                                                del.DelBotOp(cmd[4]);
+                                                Functions.PrivateMessage(msg.Target, "Done!");
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                        }
+                                        break;
+                                    case "amibotop":
+                                        Botop test = new Botop();
+                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "amibotop");
+                                        Functions.PrivateMessage(msg.Target, "The answer is: " + (test.isBotOp(msg.SourceNickname) ? "Yes!" : "No!"));
+                                        break;
+                                    case "uptime":
+                                        TimeSpan ts = DateTime.Now - startupTime;
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": The bot is now running " + ts.ToString());
+                                        break;
+                                    case "time":
+                                        // UTC hours addition (#time +1 makes UTC+1 for example)
+                                        double hoursToAdd = 0;
+                                        string adds = "";
+                                        if (cmd.Length > 4)
+                                            double.TryParse(cmd[4], out hoursToAdd);
+                                        if (hoursToAdd != 0)
+                                            adds = hoursToAdd.ToString();
+                                        if (hoursToAdd > 0)
+                                            adds = "+" + adds;
+
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": It's " + DateTime.UtcNow.AddHours(hoursToAdd).ToString() + "(UTC" + adds + ")");
+                                        break;
+                                    case "mynick":
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your nick is \x02" + msg.SourceNickname + "\x02");
+                                        break;
+                                    case "myhost":
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your host is \x02" + msg.SourceHost + "\x02");
+                                        break;
+                                    case "myident":
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your ident/username is \x02" + msg.SourceUsername + "\x02");
+                                        break;
+                                    case "myfullmask":
+                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your full hostmask is \x02" + msg.SourceHostmask + "\x02");
+                                        break;
+                                    case "die":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            if (cmd.Length > 4)
+                                            {
+                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                                Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
+                                            }
+                                            else
+                                            {
+                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
+                                                Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "die");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        }
+                                        break;
+                                    case "clean":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            FileInfo fi = new FileInfo("CSharpBot.xml");
+                                            fi.Delete();
+                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "clean");
+                                            Functions.Quit("Cleaned!");
+                                        }
+                                        else
+                                        {
+                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "clean");
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        }
+                                        break;
+                                    case "raw":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            if (msg.BotCommandParams.Length > 0)
+                                                Functions.Raw(string.Join(" ", msg.BotCommandParams));
+                                        }
+                                        else
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        }
+                                        break;
+                                    case "config":
+                                        if (!Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        }
+                                        else if (cmd[4] == "list")
+                                        {
+                                            Regex search = new Regex("^(.*)$");
+                                            if(cmd.Length > 5)
+                                                search = new Regex(!cmd[5].StartsWith("regex:") ? "(" + cmd[5].Replace(".", "\\.") + ")" : cmd[5].Substring(6));
+                                            foreach (XmlNode node in config.ConfigFile.ChildNodes)
+                                            {
+                                                // Main settings
+                                                if (node.InnerText.Trim() != ""
+                                                    && (config.NickServPassword != "" ? !node.InnerText.Contains(config.NickServPassword) : true)
+                                                    && (config.ServerPassword != "" ? !node.InnerText.Contains(config.ServerPassword) : true)
                                                     && search.Match(node.Name).Success
                                                     )
-                                                        Functions.Notice(msg.SourceNickname, node.Name + "." + sub.Name + " = " + sub.InnerText);
+                                                    Functions.Notice(msg.SourceNickname, node.Name + " = " + node.InnerText);
+                                                if (node.HasChildNodes)
+                                                {
+
+                                                    // Sub settings, if any (might be useful for plugins)
+                                                    foreach (XmlNode sub in node.ChildNodes)
+                                                    {
+                                                        if (sub.Name != "#text" && sub.InnerText.Trim() != ""
+                                                        && (config.NickServPassword != "" ? !sub.InnerText.Contains(config.NickServPassword) : true)
+                                                        && (config.ServerPassword != "" ? !sub.InnerText.Contains(config.ServerPassword) : true)
+                                                        && search.Match(node.Name).Success
+                                                        )
+                                                            Functions.Notice(msg.SourceNickname, node.Name + "." + sub.Name + " = " + sub.InnerText);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "topic")
-                                {
-                                    if (cmd.Length > 4)
-                                    {
-                                        cmd[4] = cmd[4] == "reset" ? "" : cmd[4]; // !topic reset = set topic to ""
-
-                                        // Set topic if is owner
-                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        else if (msg.BotCommandParams[0] == "set")
                                         {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "topic (set topic)");
-                                            Functions.WriteData("TOPIC " + msg.Target + " :" + string.Join(" ", cmd.Skip(4).ToArray()));
-                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Topic has been set.");
+                                            string[] nodes = msg.BotCommandParams[1].Split('.');
+                                            XmlNodeList xmlnodes = config.ConfigFile.SelectNodes("child::" + nodes[0]);
+                                            if(xmlnodes.Count == 0)
+                                            {
+                                                Functions.Notice(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[0] + "\x02 could not be found.");
+                                            } else {
+                                                if(nodes.Length > 1)
+                                                {
+                                                    xmlnodes = xmlnodes[0].SelectNodes("child::" + nodes[1]);
+                                                    if(xmlnodes.Count == 0)
+                                                    {
+                                                        Functions.Notice(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[1] + "\x02 (in " + nodes[0] + ") could not be found.");
+                                                    } else {
+                                                        xmlnodes[0].InnerText = msg.BotCommandParams[2];
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration edited. You may need to restart the bot to apply.");
+                                                    }
+                                                } else {
+                                                    xmlnodes[0].InnerText = msg.BotCommandParams[2];
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration edited. Restart to apply.");
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case "topic":
+                                        if (msg.BotCommandParams.Length > 0)
+                                        {
+                                            msg.BotCommandParams[0] = msg.BotCommandParams[0] == "reset" ? "" : msg.BotCommandParams[0]; // !topic reset = set topic to ""
+
+                                            // Set topic if is owner
+                                            if (Functions.IsOwner(msg.SourceHostmask))
+                                            {
+                                                Functions.Topic(msg.Target, string.Join(" ", cmd.Skip(4).ToArray()));
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Topic has been set.");
+                                            }
+                                            else
+                                            {
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                            }
                                         }
                                         else
                                         {
-                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "topic (set topic).");
+                                            Functions.WriteData("TOPIC " + msg.Target);
+
+                                            bool foundTopic = false;
+                                            string topic = "";
+                                            while (!foundTopic)
+                                            {
+                                                topic = reader.ReadLine();
+                                                if (DebuggingEnabled == true)
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                    Functions.Log(topic);
+                                                    Console.ResetColor();
+                                                }
+                                                if (topic.Contains("331"))
+                                                {
+                                                    topic = "No topic is set for this channel.";
+                                                    foundTopic = true;
+                                                }
+                                                else if (topic.Contains("332"))
+                                                {
+                                                    topic = "The topic is: " + string.Join(":", topic.Split(':').Skip(2).ToArray());
+                                                    foundTopic = true;
+                                                }
+                                            }
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + topic);
+                                        }
+                                        break;
+                                    case "kicklines":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            if (msg.BotCommandParams.Length > 0)
+                                            {
+                                                if (msg.BotCommandParams[0].Equals("add") && msg.BotCommandParams.Length > 1)
+                                                {
+                                                    string theline = string.Join(" ", cmd.Skip(5).ToArray());
+                                                    if (File.Exists("Kicks.txt"))
+                                                    {
+                                                        List<string> kicklist = new List<string>();
+                                                        kicklist.Add(theline);
+                                                        kicklist.AddRange(File.ReadAllLines("Kicks.txt"));
+                                                        //string[] text = { string.Join(" ", cmd.Skip(5).ToArray() + "\r\n") + " " + string.Join(" ", pretext.Skip(0).ToArray()) + "\r\n" };
+                                                        File.WriteAllLines("Kicks.txt", kicklist.ToArray());
+                                                        kicklist = null;
+                                                    }
+                                                    else
+                                                        File.WriteAllText("Kicks.txt", theline); // could it be more simple?
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Done. Added line " + IrcFormatting.BoldText(string.Join(" ", cmd.Skip(5).ToArray())) + " to kicks database.");
+                                                }
+                                                if (msg.BotCommandParams[0].Equals("clear"))
+                                                {
+                                                    if (File.Exists("Kicks.txt"))
+                                                    {
+                                                        File.Delete("Kicks.txt");
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Done. Deleted kicks database.");
+                                                    }
+                                                    else Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Kicks database already deleted.");
+                                                }
+                                                if (msg.BotCommandParams[0].Equals("total") && File.Exists("Kicks.txt"))
+                                                {
+                                                    int i = 0;
+                                                    string line;
+                                                    System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                                                    while ((line = file.ReadLine()) != null)
+                                                    {
+                                                        i++;
+                                                    }
+                                                    file.Close();
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + i + " lines.");
+                                                }
+                                                if (msg.BotCommandParams[0].Equals("read") && msg.BotCommandParams.Length > 1)
+                                                {
+                                                    if (File.Exists("Kicks.txt"))
+                                                    {
+                                                        int i = 0;
+                                                        int x;
+                                                        string line;
+                                                        if (!int.TryParse(cmd[5], out x))
+                                                        {
+                                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": This isn't a valid number.");
+                                                        }
+                                                        else
+                                                        {
+                                                            x--;
+                                                            if (x < 0)
+                                                            {
+                                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": This isn't a valid number.");
+                                                            }
+                                                            else
+                                                            {
+                                                                System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
+                                                                while ((line = file.ReadLine()) != null && i != x)
+                                                                {
+                                                                    i++;
+                                                                }
+                                                                if (i == x)
+                                                                {
+                                                                    if (line != null)
+                                                                    {
+                                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + line);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": No kickline for this number.");
+                                                                    }
+                                                                }
+                                                                file.Close();
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": There is no kicks database!");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
                                             Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         }
-                                    }
-                                    else
-                                    {
-                                        Functions.WriteData("TOPIC " + msg.Target);
-
-                                        bool foundTopic = false;
-                                        string topic = "";
-                                        while (!foundTopic)
+                                        break;
+                                    case "kick":
+                                        if (cmd.Length > 4)
                                         {
-                                            topic = reader.ReadLine();
-                                            if (DebuggingEnabled == true)
+                                            Botop check = new Botop();
+                                            if (Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname))
                                             {
-                                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                                Functions.Log(topic);
-                                                Console.ResetColor();
+                                                if (cmd.Length > 5)
+                                                {
+                                                    Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " :" + string.Join(" ", cmd.Skip(5).ToArray()));
+                                                }
+                                                else if (File.Exists("Kicks.txt"))
+                                                {
+                                                    string[] lines = File.ReadAllLines("Kicks.txt");
+                                                    Random rand = new Random();
+                                                    Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
+                                                }
+                                                else
+                                                {
+                                                    Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " :Goodbye! You just got kicked by " + msg.SourceNickname + ".");
+                                                }
+                                                //  Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
                                             }
-                                            if (topic.Contains("331"))
+                                            else
                                             {
-                                                topic = "No topic is set for this channel.";
-                                                foundTopic = true;
-                                            }
-                                            else if (topic.Contains("332"))
-                                            {
-                                                topic = "The topic is: " + string.Join(":", topic.Split(':').Skip(2).ToArray());
-                                                foundTopic = true;
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                             }
                                         }
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + topic);
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "topic (read topic).");
-                                    }
+                                        break;
+                                    case "join":
+                                        if (Functions.IsOwner(msg.SourceHostmask) && msg.BotCommandParams.Length > 0)
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Joining " + cmd[4] + "...");
+                                            Functions.WriteData("JOIN " + cmd[4]);
+                                        }
+                                        else if (!Functions.IsOwner(msg.SourceHostmask))
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        break;
+                                    case "help": // async help
+                                        Thread HelpThread = new Thread(new ParameterizedThreadStart(Functions.SendHelp));
+                                        HelpThread.IsBackground = true;
+                                        string[] param = { msg.SourceNickname, msg.SourceHostmask, prefix };
+                                        HelpThread.Start(param);
+                                        break;
+                                    case "mode":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            if (cmd.Length > 5)
+                                            {
+                                                Functions.WriteData("MODE " + msg.Target + " " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                            }
+                                            else if (cmd.Length > 4)
+                                            {
+                                                Functions.WriteData("MODE " + msg.Target + " " + cmd[4]);
+                                            }
+                                        }
+                                        else if (!Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            if (cmd.Length > 5)
+                                            {
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                            }
+                                            else if (cmd.Length > 4)
+                                            {
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                            }
+                                        }
+                                        break;
+                                    case "part":
+                                        if (Functions.IsOwner(msg.SourceHostmask) && cmd.Length > 4)
+                                        {
+                                            if (cmd.Length > 5)
+                                                cmd[5] = ":" + cmd[5];
+                                            Functions.WriteData("PART " + string.Join(" ", cmd.Skip(4).ToArray()));
+                                        }
+                                        else if (!Functions.IsOwner(msg.SourceHostmask))
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        break;
+                                    case "reset":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            config.Reset();
+                                            config.Delete();
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration reset. The bot will now restart.");
+                                            Functions.Quit("Resetting!");
+                                            ProgramRestart = true;
+                                            goto start;
+                                        }
+                                        else
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        }
+                                        break;
+                                    case "action":
+                                        Functions.Action(msg.Target, string.Join(" ", cmd.Skip(4).ToArray()));
+                                        break;
+                                    case "restart":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            Functions.Quit("Restarting!");
+                                            ProgramRestart = true;
+                                            goto start;
+                                        }
+                                        else
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                        }
+                                        break;
+                                    case "hostmask":
+                                        if (msg.BotCommandParams.Length > 0)
+                                        {
+                                            whoistarget = msg.BotCommandParams[0];
+                                            inputline = reader.ReadLine();
+                                            cmd = inputline.Split(' ');
+                                            IrcNumericReplyLine reply = new IrcNumericReplyLine(inputline);
+                                            if (reply.ReplyCode == IrcReplyCode.RPL_WHOISUSER)
+                                            {
+                                                // WHOIS reply
+                                                if (cmd.Length > 6)
+                                                {
+                                                    if (DebuggingEnabled == true)
+                                                    {
+                                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                                        Functions.Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + msg.SourceNickname + "...");
+                                                        Console.ForegroundColor = ConsoleColor.White;
+                                                    }
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + whoistarget + "'s hostmask is " + cmd[5]);
+                                                    Functions.Log("Found the hostmask that " + msg.SourceNickname + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
+                                                }
+                                            }
+                                        }
+                                        break;
                                 }
-                                else if (cmd[3] == ":GTFO")
+                                if (Regex.Match(msg.BotCommandName, "^(g|d)(voice|bot|halfop|op|admin|protect|owner)$").Success)
+                                {
+
+                                    //if (msg.BotCommandName.StartsWith("g"))
+                                    //{
+                                    string pre = msg.BotCommandName.StartsWith("g") ? "+" : "-";
+                                        string cdmode = msg.BotCommandName.ToLower();
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            if (msg.BotCommandParams.Length > 0)
+                                            {
+                                                cdmode = cdmode.Substring(1);
+                                                if (cdmode.Equals("voice"))
+                                                {
+                                                    Functions.Mode(msg.Target, pre + "v " + msg.BotCommandParams[0]);
+                                                }
+                                                else if (cdmode.Equals("bot"))
+                                                {
+                                                    Functions.Mode(msg.Target, pre + "V " + msg.BotCommandParams[0]);
+                                                }
+                                                else if (cdmode.Equals("halfop"))
+                                                {
+                                                    Functions.Mode(msg.Target, pre + "h " + msg.BotCommandParams[0]);
+                                                }
+                                                else if (cdmode.Equals("op"))
+                                                {
+                                                    Functions.Mode(msg.Target, pre + "o " + msg.BotCommandParams[0]);
+                                                }
+                                                else if (cdmode.Equals(Regex.Match(cdmode, "^(admin|protect)$").Value))
+                                                {
+                                                    Functions.Mode(msg.Target, pre + "a " + msg.BotCommandParams[0]);
+                                                }
+                                                else if (cdmode.Equals("owner"))
+                                                {
+                                                    Functions.Mode(msg.Target, pre + "q " + msg.BotCommandParams[0]);
+                                                }
+                                            }
+                                        }
+                                    //}
+
+                                }
+                                if (msg.Message.StartsWith("GTFO "))
                                 {
                                     if (cmd.Length > 4)
                                     {
@@ -711,279 +975,11 @@ namespace CSharpBot
                                         else
                                         {
                                             Functions.Log(msg.SourceNickname + " told " + cmd[4] + " to GTFO of " + msg.Target + ", so I kicked " + msg.SourceNickname + " for being mean.");
-                                            Functions.WriteData("KICK " + msg.Target + " " + msg.SourceNickname + " :NO U");
+                                            Functions.WriteData("KICK " + msg.Target + " " + msg.SourceNickname + " :NO, U!");
                                         }
                                     }
                                 }
-                                else if (cmd[3] == ":" + prefix + "kicklines")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        if (cmd.Length > 4)
-                                        {
-                                            if (cmd[4].Equals("add") && cmd.Length > 5)
-                                            {
-                                                string theline = string.Join(" ", cmd.Skip(5).ToArray());
-                                                if (File.Exists("Kicks.txt"))
-                                                {
-                                                    List<string> kicklist = new List<string>();
-                                                    kicklist.Add(theline);
-                                                    kicklist.AddRange(File.ReadAllLines("Kicks.txt"));
-                                                    //string[] text = { string.Join(" ", cmd.Skip(5).ToArray() + "\r\n") + " " + string.Join(" ", pretext.Skip(0).ToArray()) + "\r\n" };
-                                                    File.WriteAllLines("Kicks.txt", kicklist.ToArray());
-                                                    kicklist = null;
-                                                }
-                                                else
-                                                    File.WriteAllText("Kicks.txt", theline); // could it be more simple?
-                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Done. Added line " + IrcFormatting.BoldText(string.Join(" ", cmd.Skip(5).ToArray())) + " to kicks database.");
-                                            }
-                                            if (cmd[4].Equals("clear"))
-                                            {
-                                                if (File.Exists("Kicks.txt"))
-                                                {
-                                                    File.Delete("Kicks.txt");
-                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Done. Deleted kicks database.");
-                                                }
-                                                else Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Kicks database already deleted.");
-                                            }
-                                            if (cmd[4].Equals("total") && File.Exists("Kicks.txt"))
-                                            {
-                                                int i = 0;
-                                                string line;
-                                                System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                                                while ((line = file.ReadLine()) != null)
-                                                {
-                                                    i++;
-                                                }
-                                                file.Close();
-                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + i + " lines.");
-                                            }
-                                            if (cmd[4].Equals("read") && cmd.Length > 5)
-                                            {
-                                                if (File.Exists("Kicks.txt"))
-                                                {
-                                                    int i = 0;
-                                                    int x;
-                                                    string line;
-                                                    if (!int.TryParse(cmd[5], out x))
-                                                    {
-                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": This isn't a valid number.");
-                                                    }
-                                                    else
-                                                    {
-                                                        x--;
-                                                        if (x < 0)
-                                                        {
-                                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": This isn't a valid number.");
-                                                        }
-                                                        else
-                                                        {
-                                                            System.IO.StreamReader file = new System.IO.StreamReader("Kicks.txt");
-                                                            while ((line = file.ReadLine()) != null && i != x)
-                                                            {
-                                                                i++;
-                                                            }
-                                                            if (i == x)
-                                                            {
-                                                                if (line != null)
-                                                                {
-                                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + line);
-                                                                }
-                                                                else
-                                                                {
-                                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": No kickline for this number.");
-                                                                }
-                                                            }
-                                                            file.Close();
-                                                        }
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": There is no kicks database!");
-                                                }
-                                            }
-                                            string[] command = cmd[3].Split(':');
-                                            Functions.Log(msg.SourceNickname + " issued " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                        string[] command = cmd[3].Split(':');
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + command[1] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "kick")
-                                {
-                                    if (cmd.Length > 4)
-                                    {
-                                        Botop check = new Botop();
-                                        if (Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname))
-                                        {
-                                            if (cmd.Length > 5)
-                                            {
-                                                Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " :" + string.Join(" ", cmd.Skip(5).ToArray()));
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "kick " + cmd[4] + " " + string.Join(" ", cmd.Skip(5).ToArray()));
-                                            }
-                                            else if (File.Exists("Kicks.txt"))
-                                            {
-                                                string[] lines = File.ReadAllLines("Kicks.txt");
-                                                Random rand = new Random();
-                                                Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " :" + lines[rand.Next(lines.Length)]);
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "kick " + cmd[4]);
-                                            }
-                                            else
-                                            {
-                                                Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " :Goodbye! You just got kicked by " + msg.SourceNickname + ".");
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "kick " + cmd[4]);
-                                            }
-                                            //  Functions.WriteData("KICK " + msg.Target + " " + cmd[4] + " Gotcha! You just got ass-kicked by " + nick + "."); // might also be an idea ;D
-                                        }
-                                        else
-                                        {
-                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "kick " + cmd[4]);
-                                        }
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "join")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask) && cmd.Length > 4)
-                                    {
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Joining " + cmd[4] + "...");
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "join " + cmd[4]);
-                                        Functions.WriteData("JOIN " + cmd[4]);
-                                    }
-                                    else if (!Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "join " + cmd[4]);
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "help")
-                                {
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "help");
-                                    Thread HelpThread = new Thread(new ParameterizedThreadStart(Functions.SendHelp));
-                                    HelpThread.IsBackground = true;
-                                    string[] param = { msg.SourceNickname, msg.SourceHostmask, prefix };
-                                    HelpThread.Start(param);
-                                }
-                                else if (cmd[3] == ":" + prefix + "mode")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        if (cmd.Length > 5)
-                                        {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + msg.Target);
-                                            Functions.WriteData("MODE " + msg.Target + " " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        }
-                                        else if (cmd.Length > 4)
-                                        {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "mode " + cmd[4] + " on " + msg.Target);
-                                            Functions.WriteData("MODE " + msg.Target + " " + cmd[4]);
-                                        }
-                                    }
-                                    else if (!Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        if (cmd.Length > 5)
-                                        {
-                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "mode " + string.Join(" ", cmd.Skip(4).ToArray()) + " on " + msg.Target);
-                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                        }
-                                        else if (cmd.Length > 4)
-                                        {
-                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "mode " + cmd[4] + " on " + msg.Target);
-                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                        }
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "part")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask) && cmd.Length > 4)
-                                    {
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        if (cmd.Length > 5)
-                                            cmd[5] = ":" + cmd[5];
-                                        Functions.WriteData("PART " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                    }
-                                    else if (!Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "part " + string.Join(" ", cmd.Skip(4).ToArray()));
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "reset")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        FileInfo fi = new FileInfo("CSharpBot.xml");
-                                        fi.Delete();
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "reset");
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration reset. The bot will now restart.");
-                                        Functions.Quit("Resetting!");
-                                        ProgramRestart = true;
-                                        goto start;
-                                    }
-                                    else
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "reset");
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "action")
-                                {
-                                    Functions.Action(msg.Target, string.Join(" ", cmd.Skip(4).ToArray()));
-                                }
-                                else if (cmd[3] == ":" + prefix + "restart")
-                                {
-                                    if (Functions.IsOwner(msg.SourceHostmask))
-                                    {
-                                        Functions.Log(msg.SourceNickname + " issued " + prefix + "restart");
-                                        Functions.Quit("Restarting!");
-                                        ProgramRestart = true;
-                                        goto start;
-                                    }
-                                    else
-                                    {
-                                        Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "restart");
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "hostmask" && cmd.Length > 4)
-                                {
-                                    /*
-                                    whoiscaller = msg.SourceNickname;
-                                    whoistarget = cmd[4];
-                                    whoischan = cmd[2];
-                                    currentcmd = "whois";
-                                    Functions.WriteData("WHOIS " + cmd[4]);
-                                     */
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "hostmask " + cmd[4]);
-                                    whoistarget = cmd[4];
-                                    inputline = reader.ReadLine();
-                                    cmd = inputline.Split(' ');
-                                    IrcNumericReplyLine reply = new IrcNumericReplyLine(inputline);
-                                    if (reply.ReplyCode == IrcReplyCode.RPL_WHOISUSER)
-                                    {
-                                        // WHOIS reply
-                                        if (cmd.Length > 6)
-                                        {
-#if DEBUG
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Functions.Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + msg.SourceNickname + "...");
-                                            Console.ForegroundColor = ConsoleColor.White;
-#endif
-                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + whoistarget + "'s hostmask is " + cmd[5]);
-                                            Functions.Log("Found the hostmask that " + msg.SourceNickname + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
-                                        }
-                                    }
-                                }
-                                else if (cmd[3] == ":" + prefix + "math")
-                                {
-                                    Functions.PrivateMessage(msg.Target, Math.Math.Parse(cmd[4]));
-                                    Functions.Log(msg.SourceNickname + " issued " + prefix + "math " + cmd[4]);
-                                }
+
                             }
                         }
                         #endregion
