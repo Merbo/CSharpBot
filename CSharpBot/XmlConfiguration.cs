@@ -166,6 +166,7 @@ namespace CSharpBot
             }
         }
 
+
         private XmlDocument Configuration = new XmlDocument();
         public XmlNode ConfigFile
         {

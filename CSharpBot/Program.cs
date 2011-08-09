@@ -9,6 +9,9 @@ using System.Net.Sockets;
 using System.IO;
 using System.Xml;
 
+#if DEBUG
+#warning DEBUG COMPILE!
+#endif
 namespace CSharpBot
 {
     public class CSharpBot
@@ -38,7 +41,6 @@ namespace CSharpBot
 
         public bool DebuggingEnabled = false;
         public bool ProgramRestart = false;
-        public bool RejoinOnKick = true;
 
         // Message of the day
         List<string> motdlines;
@@ -282,6 +284,7 @@ namespace CSharpBot
                 Console.WriteLine("You must specify Yes or No!");
                 goto retrylogging;
             }
+
             // Finishing configuration...
             Console.ResetColor();
             Console.WriteLine();
@@ -623,7 +626,7 @@ namespace CSharpBot
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "config list");
                                         Regex search = new Regex("^(.*)$");
                                         if(cmd.Length > 5)
-                                            search = new Regex(!cmd[5].StartsWith("regex:") ? "(" + cmd[5].Replace(".", "\\.") + ")" : cmd[5].Substring(6));
+                                            search = new Regex(!cmd[5].StartsWith("regex:") ? "(" + cmd[5].Replace(".", "\\.").Replace("*", ".+") + ")" : cmd[5].Substring(6));
                                         foreach (XmlNode node in config.ConfigFile.ChildNodes)
                                         {
                                             // Main settings
@@ -1038,7 +1041,6 @@ namespace CSharpBot
             catch (Exception e)
             {
                 Functions.PrivateMessage(CHANNEL, "Error! Error: " + e.ToString());
-                Functions.PrivateMessage(CHANNEL, Error! StackTrace: " + e.StackTrace);
                 Functions.Quit("Exception: " + e.ToString());
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -1062,8 +1064,7 @@ namespace CSharpBot
 
         void CSharpBot_Kicked(CSharpBot bot, string source, string channel)
         {
-            if (bot.RejoinOnKick)
-                bot.Functions.Join(channel);
+            bot.Functions.Join(channel);
         }
 
         void CSharpBot_NumericReplyReceived(CSharpBot bot, IrcNumericReplyLine reply)
