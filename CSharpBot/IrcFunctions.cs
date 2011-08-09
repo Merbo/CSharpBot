@@ -51,6 +51,16 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Sets the topic.
+        /// </summary>
+        /// <param name="channel">Target channel</param>
+        /// <param name="text">Text to set as topic</param>
+        public void Topic(string channel, string text)
+        {
+            Console.WriteLine("TOPIC " + channel + " :" + text);
+        }
+
+        /// <summary>
         /// Sends QUIT to the server and disconnects.
         /// </summary>
         /// <param name="reason">Optional reason for QUIT</param>
