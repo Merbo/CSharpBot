@@ -581,25 +581,21 @@ namespace CSharpBot
                                     case "raw":
                                         if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            if (cmd.Length > 4)
-                                                Functions.Raw(string.Join(" ", cmd.Skip(4).ToArray()));
+                                            if (msg.BotCommandParams.Length > 0)
+                                                Functions.Raw(string.Join(" ", msg.BotCommandParams));
                                         }
                                         else
                                         {
-                                            if (cmd.Length > 4)
-                                                Functions.Log(msg.SourceNickname + " attempted to use " + prefix + " RAW " + string.Join(" ", cmd.Skip(4).ToArray()));
                                             Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         }
                                         break;
                                     case "config":
                                         if (!Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "config");
                                             Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
                                         }
                                         else if (cmd[4] == "list")
                                         {
-                                            Functions.Log(msg.SourceNickname + " issued " + prefix + "config list");
                                             Regex search = new Regex("^(.*)$");
                                             if(cmd.Length > 5)
                                                 search = new Regex(!cmd[5].StartsWith("regex:") ? "(" + cmd[5].Replace(".", "\\.") + ")" : cmd[5].Substring(6));
@@ -634,17 +630,17 @@ namespace CSharpBot
                                             XmlNodeList xmlnodes = config.ConfigFile.SelectNodes("child::" + nodes[0]);
                                             if(xmlnodes.Count == 0)
                                             {
-                                                Functions.PrivateMessage(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[0] + "\x02 could not be found.");
+                                                Functions.Notice(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[0] + "\x02 could not be found.");
                                             } else {
                                                 if(nodes.Length > 1)
                                                 {
                                                     xmlnodes = xmlnodes[0].SelectNodes("child::" + nodes[1]);
                                                     if(xmlnodes.Count == 0)
                                                     {
-                                                        Functions.PrivateMessage(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[1] + "\x02 (in " + nodes[0] + ") could not be found.");
+                                                        Functions.Notice(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[1] + "\x02 (in " + nodes[0] + ") could not be found.");
                                                     } else {
                                                         xmlnodes[0].InnerText = msg.BotCommandParams[2];
-                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration edited. Restart to apply.");
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration edited. You may need to restart the bot to apply.");
                                                     }
                                                 } else {
                                                     xmlnodes[0].InnerText = msg.BotCommandParams[2];

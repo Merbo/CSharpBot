@@ -89,7 +89,7 @@ namespace CSharpBot
                     else
                         args.Add(spl1[i]); // argument: "... ..." is 1 arg
                 }
-                return args.ToArray();
+                return args.Skip(1).ToArray();
             }
         }
 
