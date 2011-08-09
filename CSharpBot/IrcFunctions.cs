@@ -232,7 +232,7 @@ namespace CSharpBot
         /// </summary>
         /// <param name="channel">The channel to set the mode in</param>
         /// <param name="command">The mode command (as in +o newop or +v newvoiceduser)</param>
-        public void Mode(string channel,string command)
+        public void Mode(string channel, string command)
         {
             Raw("MODE " + channel + " " + command);
         }

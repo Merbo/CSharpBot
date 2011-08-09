@@ -909,22 +909,84 @@ namespace CSharpBot
                                                 // WHOIS reply
                                                 if (cmd.Length > 6)
                                                 {
-#if DEBUG
-                                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                                    Functions.Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + msg.SourceNickname + "...");
-                                                    Console.ForegroundColor = ConsoleColor.White;
-#endif
+                                                    if (DebuggingEnabled == true)
+                                                    {
+                                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                                        Functions.Log("Reading WHOIS to get hostmask of " + whoistarget + " for " + msg.SourceNickname + "...");
+                                                        Console.ForegroundColor = ConsoleColor.White;
+                                                    }
                                                     Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": " + whoistarget + "'s hostmask is " + cmd[5]);
                                                     Functions.Log("Found the hostmask that " + msg.SourceNickname + " called for, of " + whoistarget + "'s hostmask, which is: " + cmd[5]);
                                                 }
                                             }
                                         }
                                         break;
-                                    default:
-                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Sorry, but command " + msg.BotCommandName + " does not exist.");
-                                        break;
                                 }
-                                
+                                if (Regex.Match(msg.Message, "[c,d]+[voice,bot,halfop,op,[admin,protect],owner]").Success)
+                                {
+                                    if (Regex.Match(msg.Message, "c+[voice,bot,halfop,op,[admin,protect],owner]").Success)
+                                    {
+                                        string cdmode = msg.Message.Substring(1);
+                                        if (cmd.Length > 4)
+                                        {
+                                            if (cdmode.Equals("voice"))
+                                            {
+                                                Functions.Mode(cmd[2], "+v " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("bot"))
+                                            {
+                                                Functions.Mode(cmd[2], "+V " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("halfop"))
+                                            {
+                                                Functions.Mode(cmd[2], "+h " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("op"))
+                                            {
+                                                Functions.Mode(cmd[2], "+o " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals(Regex.Match(cdmode, "[admin,protect]").Value))
+                                            {
+                                                Functions.Mode(cmd[2], "+a " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("owner"))
+                                            {
+                                                Functions.Mode(cmd[2], "+q " + cmd[4]);
+                                            }
+                                        }
+                                    }
+                                    if (Regex.Match(msg.Message, "d+[voice,bot,halfop,op,[admin,protect],owner]").Success)
+                                    {
+                                        string cdmode = msg.Message.Substring(1);
+                                        if (cmd.Length > 4)
+                                        {
+                                            if (cdmode.Equals("voice"))
+                                            {
+                                                Functions.Mode(cmd[2], "-v " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("bot"))
+                                            {
+                                                Functions.Mode(cmd[2], "-V " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("halfop"))
+                                            {
+                                                Functions.Mode(cmd[2], "-h " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("op"))
+                                            {
+                                                Functions.Mode(cmd[2], "-o " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals(Regex.Match(cdmode, "[admin,protect]").Value))
+                                            {
+                                                Functions.Mode(cmd[2], "-a " + cmd[4]);
+                                            }
+                                            else if (cdmode.Equals("owner"))
+                                            {
+                                                Functions.Mode(cmd[2], "-q " + cmd[4]);
+                                            }
+                                        }
+                                    }
+                                }
                                 if (msg.Message.StartsWith("GTFO "))
                                 {
                                     if (cmd.Length > 4)
