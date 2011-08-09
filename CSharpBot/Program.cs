@@ -31,12 +31,17 @@ namespace CSharpBot
             bot.Run();
         }
 
+        public CSharpBot()
+        {
+            mathp = new MathParser(this);
+        }
+
         // Our RegEx'es
         public Regex HostmaskRegex;
 
         public StreamWriter writer;
 
-        private MathParser mathp = new MathParser();
+        private MathParser mathp;
 
         public bool DebuggingEnabled = false;
         public bool ProgramRestart = false;
@@ -478,16 +483,100 @@ namespace CSharpBot
                                     case "math":
                                         switch(msg.BotCommandParams[0])
                                         {
+                                            case "set":
                                             case "add":
-                                                mathp.AddVariable(msg.BotCommandParams[1], msg.BotCommandParams[2]);
-                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + msg.BotCommandParams[2]);
+                                                // Set variable
+                                                float valf;
+                                                double vald;
+                                                short vals;
+                                                int vali;
+                                                long vall;
+                                                ulong valu;
+                                                
+                                                try
+                                                {
+                                                    float.TryParse(msg.BotCommandParams[2], out valf);
+                                                    mathp.AddVariable(msg.BotCommandParams[1], valf);
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + valf + " (floating number)");
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    try
+                                                    {
+                                                        double.TryParse(msg.BotCommandParams[2], out vald);
+                                                        mathp.AddVariable(msg.BotCommandParams[1], vald);
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + vald + " (double-precision number)");
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        try
+                                                        {
+                                                            short.TryParse(msg.BotCommandParams[2], out vals);
+                                                            mathp.AddVariable(msg.BotCommandParams[1], vals);
+                                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + vals + " (8-bit number)");
+                                                        }
+                                                        catch (Exception)
+                                                        {
+                                                            try
+                                                            {
+                                                                int.TryParse(msg.BotCommandParams[2], out vali);
+                                                                mathp.AddVariable(msg.BotCommandParams[1], vali);
+                                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + vali + " (32-bit number)");
+
+                                                            }
+                                                            catch (Exception)
+                                                            {
+                                                                try
+                                                                {
+                                                                    long.TryParse(msg.BotCommandParams[2], out vall);
+                                                                    mathp.AddVariable(msg.BotCommandParams[1], vall);
+                                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + vall + " (64-bit number)");
+                                                                }
+                                                                catch (Exception)
+                                                                {
+                                                                    try
+                                                                    {
+                                                                        ulong.TryParse(msg.BotCommandParams[2], out valu);
+                                                                        mathp.AddVariable(msg.BotCommandParams[1], valu);
+                                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator variable \"" + msg.BotCommandParams[1] + "\" set to " + valu + " (unsigned 64-bit number)");
+                                                                    }
+                                                                    catch (Exception s)
+                                                                    {
+                                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Variable not set: Value has an unknown type: " + msg.BotCommandParams[2]);
+                                                                        Functions.Log("Value error: " + s.Message);
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                                 break;
-                                            case "clear":
+
+                                            case "test":
+                                                // Selftest
+                                                try
+                                                {
+                                                    mathp.SelfTest();
+
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": MathParser self-test was completed successfully.");
+                                                }
+                                                catch (Exception n)
+                                                {
+
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": MathParser self-test failed. Phase: " + mathp.SelfTestCurrentAction + ". Message: " + n.Message);
+                                                }
+                                                break;
+                                            case 
+                                            "clear":
                                             case "reset":
+                                                // Reset
                                                 mathp.Reset();
                                                 Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Calculator cleared.");
                                                 break;
+
                                             default:
+                                                // Calculate expression
                                                 try
                                                 {
                                                     string expression;
