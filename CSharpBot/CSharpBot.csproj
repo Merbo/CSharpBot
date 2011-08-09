@@ -124,7 +124,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotCommand.cs" />
+    <Compile Include="IrcMessageLine.cs" />
     <Compile Include="Botop.cs" />
     <Compile Include="botOpDB.designer.cs">
       <AutoGen>True</AutoGen>
