@@ -12,7 +12,7 @@ namespace CSharpBot
 {
     class Program
     {
-        // Our RegEx'es
+q
         public static Regex HostmaskRegex;
 
         public static StreamWriter writer;
