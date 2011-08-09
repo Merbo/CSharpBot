@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpBot", "CSharpBot\CSharpBot.csproj", "{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CSharpBot Installer", "CSharpBot Installer\CSharpBot Installer\CSharpBot Installer.vdproj", "{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -12,12 +14,17 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x64.ActiveCfg = Debug|x86
+		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x64.Build.0 = Debug|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x86.ActiveCfg = Debug|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x86.Build.0 = Debug|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Release|x64.ActiveCfg = Release|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Release|x64.Build.0 = Release|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Release|x86.ActiveCfg = Release|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Release|x86.Build.0 = Release|x86
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Debug|x64.ActiveCfg = Debug
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Debug|x86.ActiveCfg = Debug
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Release|x64.ActiveCfg = Release
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
