@@ -101,6 +101,8 @@ namespace CSharpBot
             Console.WriteLine("Options:");
             Console.WriteLine("--help, -h");
             Console.WriteLine("\tThis page.");
+            Console.WriteLine("--debug, -d");
+            Console.WriteLine("\tRuns the bot in debug mode.");
             Console.WriteLine("--config-file=config.xml, -f=config.xml");
             Console.WriteLine("\tUses config.xml as the configuration file. If this file does not exist, it will be created by the first-use setup.");
         }
