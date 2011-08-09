@@ -11,6 +11,8 @@ namespace CSharpBot
         /// </summary>
         public static class Math
         {
+            // TODO: Add support for memory functions (preferably per user). 
+            // TODO: Persist memory between bot runs. 
             public const string ValidChars = "0123456789+-*/";
             public const string OperChars = "+-*/";
 
@@ -58,9 +60,13 @@ namespace CSharpBot
                     double retValue = 0;
                     while (HasOpers) {
                         for (int i = 0; i < _terms.Count; i++) {
-                            if (_terms[i].Operator == Oper.None) continue; // If the working term isn't an oper
-                            // don't continue. 
+                            // If the working term isn't an oper don't continue. 
+                            if (_terms[i].Operator == Oper.None) continue; 
                             // Using 3 terms at a time, get their value and remove them from the working list. 
+                            // TODO: Remove the hardcoded precedence evaluation. 
+                            // TODO: Add support for parentheses. 
+                            // We evaluate the expression starting with the highest precedence of operators, and 
+                            // evaluate those found, then work our way down to the lowest precendence. 
                             if (_terms[i].Operator == Oper.Multiply || _terms[i].Operator == Oper.Divide) {
                                 if (_terms[i].Operator == Oper.Multiply) {
                                     retValue = _terms[i - 1].Value * _terms[i + 1].Value;
