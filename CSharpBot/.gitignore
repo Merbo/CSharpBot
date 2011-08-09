@@ -1,3 +1,5 @@
 /CSharpBot.csproj.user
 /bin
+/bin/*
 /obj
+/obj/*
