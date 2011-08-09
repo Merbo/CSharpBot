@@ -481,6 +481,11 @@ namespace CSharpBot
                                 {
                                     // TODO: Edit to "switch" (easier structure, you know ;) ) - Icedream
                                     case "math":
+                                        if (Environment.OSVersion.Platform.ToString().ToLower().Contains("win"))
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Sorry, the calculator currently does only work on Windows systems.");
+                                            break;
+                                        }
                                         switch(msg.BotCommandParams[0])
                                         {
                                             case "set":
