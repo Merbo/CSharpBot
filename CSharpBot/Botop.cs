@@ -47,6 +47,22 @@ namespace CSharpBot
          
         }
 
+        public bool SetLevel(string nickname, int level)
+        {
+            var q = from c in conn.Nicks
+                    where c.Nick == nickname
+                    select c;
+            bool wasin = false;
+            foreach (var c in q)
+            {                          //Statements in here only executed if match found
+                c.AccessLevel = level;
+                conn.SubmitChanges();
+                wasin = true;
+            }
+            return wasin;
+
+        }
+
 
         public void DelBotOp(string nickname)
         {

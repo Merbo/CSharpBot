@@ -486,12 +486,25 @@ namespace CSharpBot
 
                                             if (cmd.Length > 5)
                                             {
-                                                try
+                                               try
                                                 {
                                                     add.AddBotOp(cmd[4],Convert.ToInt32(cmd[5]));
                                                     Functions.PrivateMessage(msg.Target, "Done!");
                                                 }catch(Exception){
                                                     Functions.PrivateMessage(msg.Target, "I'm Sorry, " + msg.SourceNickname + ", but I'm afraid I can't do that.");
+                                                  if (add.isBotOp(cmd[4])){
+                                                      Functions.PrivateMessage(msg.Target, "The user is already in the DB.");
+                                                }
+                                                  try
+                                                  {
+                                                      Convert.ToInt32(cmd[5]);
+                                                  }
+                                                  catch (Exception)
+                                                  {
+                                                      Functions.PrivateMessage(msg.Target, "The Access Level Number Is Invalid.");
+                                                  }
+
+
                                                 }
                                             }
                                             else if (cmd.Length > 4)
@@ -505,6 +518,49 @@ namespace CSharpBot
                                             Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
                                         }
                                         break;
+
+                                    case "setbotop":
+                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        {
+                                            Botop add = new Botop();
+
+                                            if (cmd.Length > 5)
+                                            {
+                                                try
+                                                {
+                                                    if (!add.SetLevel(cmd[4], Convert.ToInt32(cmd[5]))) {
+                                                        throw new IrcException("NO SUCH NICK");
+                                                    }
+                                                    Functions.PrivateMessage(msg.Target, "Done!");
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    Functions.PrivateMessage(msg.Target, "I'm Sorry, " + msg.SourceNickname + ", but I'm afraid I can't do that.");
+                                                    if (e.Message == "NO SUCH NICK")
+                                                    {
+                                                        Functions.PrivateMessage(msg.Target, "The user is not in the DB.");
+                                                    }
+
+                                                    try
+                                                    {
+                                                        Convert.ToInt32(cmd[5]);
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        Functions.PrivateMessage(msg.Target, "The Access Level Number Is Invalid.");
+                                                    }
+
+
+                                                }
+                                            }
+                                           
+                                        }
+                                        else
+                                        {
+                                            Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You aren't my owner!");
+                                        }
+                                        break;
+
                                     case "delbotop":
                                         if (Functions.IsOwner(msg.SourceHostmask))
                                         {

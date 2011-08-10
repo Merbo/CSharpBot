@@ -133,6 +133,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BotOpDB.dbml</DependentUpon>
     </Compile>
+    <Compile Include="IrcException.cs" />
     <Compile Include="IrcMessageLine.cs" />
     <Compile Include="Botop.cs" />
     <Compile Include="IrcFunctions.cs" />

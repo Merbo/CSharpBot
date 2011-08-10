@@ -269,6 +269,7 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "addbotop <nick> [level] -- Add a BotOp user, where nick is the nickname of the user you want to add and level is the access level of the user you want to add");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "delbotop <nick> -- Delete a BotOp user, where nick is the nickname of the user you want to Delete");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "amibotop -- Tells you if you are a BotOp");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "setbotop <nick> <level> -- Sets the level of a BotOP");
         }
 
         /// <summary>
