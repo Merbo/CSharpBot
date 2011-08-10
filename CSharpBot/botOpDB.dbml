@@ -3,6 +3,7 @@
   <Table Name="Nicks">
     <Type Name="Nicks">
       <Column Name="nick" Member="Nick" Type="System.String" DbType="NVarChar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Access Level" Member="AccessLevel" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

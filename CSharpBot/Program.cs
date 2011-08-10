@@ -483,11 +483,22 @@ namespace CSharpBot
                                         if (Functions.IsOwner(msg.SourceHostmask))
                                         {
                                             Botop add = new Botop();
-                                            if (cmd.Length > 4)
+
+                                            if (cmd.Length > 5)
+                                            {
+                                                try
+                                                {
+                                                    add.AddBotOp(cmd[4],Convert.ToInt32(cmd[5]));
+                                                    Functions.PrivateMessage(msg.Target, "Done!");
+                                                }catch(Exception){
+                                                    Functions.PrivateMessage(msg.Target, "I'm Sorry, " + msg.SourceNickname + ", but I'm afraid I can't do that.");
+                                                }
+                                            }
+                                            else if (cmd.Length > 4)
                                             {
                                                 add.AddBotOp(cmd[4]);
                                                 Functions.PrivateMessage(msg.Target, "Done!");
-                                            }
+                                            } 
                                         }
                                         else
                                         {
@@ -516,6 +527,12 @@ namespace CSharpBot
                                         Botop test = new Botop();
                                         Functions.Log(msg.SourceNickname + " issued " + prefix + "amibotop");
                                         Functions.PrivateMessage(msg.Target, "The answer is: " + (test.isBotOp(msg.SourceNickname) ? "Yes!" : "No!"));
+                                        if (test.isBotOp(msg.SourceNickname))
+                                        {
+                                            
+                                       Functions.PrivateMessage(msg.Target, "You are a level " + test.GetLevel(msg.SourceNickname).ToString() + " BotOP");
+                                        }
+ 
                                         break;
                                     case "uptime":
                                         TimeSpan ts = DateTime.Now - startupTime;
@@ -551,7 +568,7 @@ namespace CSharpBot
                                         {
                                             if (cmd.Length > 4)
                                             {
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + string.Join(" ", cmd.Skip(5).ToArray()));
+                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + msg.BotCommandParams);
                                                 Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
                                             }
                                             else
@@ -794,7 +811,7 @@ namespace CSharpBot
                                         if (cmd.Length > 4)
                                         {
                                             Botop check = new Botop();
-                                            if (Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname))
+                                            if (Functions.IsOwner(msg.SourceHostmask) | (check.isBotOp(msg.SourceNickname) && (check.GetLevel(msg.SourceNickname) >= 3)))
                                             {
                                                 if (cmd.Length > 5)
                                                 {
@@ -814,7 +831,7 @@ namespace CSharpBot
                                             }
                                             else
                                             {
-                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You are not my owner!");
+                                                Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": You don't have enough permissions!");
                                             }
                                         }
                                         break;

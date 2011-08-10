@@ -75,12 +75,16 @@ namespace CSharpBot
 		
 		private string _Nick;
 		
+		private System.Nullable<int> _AccessLevel;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
     partial void OnNickChanging(string value);
     partial void OnNickChanged();
+    partial void OnAccessLevelChanging(System.Nullable<int> value);
+    partial void OnAccessLevelChanged();
     #endregion
 		
 		public Nicks()
@@ -104,6 +108,26 @@ namespace CSharpBot
 					this._Nick = value;
 					this.SendPropertyChanged("Nick");
 					this.OnNickChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Access Level", Storage="_AccessLevel", DbType="Int")]
+		public System.Nullable<int> AccessLevel
+		{
+			get
+			{
+				return this._AccessLevel;
+			}
+			set
+			{
+				if ((this._AccessLevel != value))
+				{
+					this.OnAccessLevelChanging(value);
+					this.SendPropertyChanging();
+					this._AccessLevel = value;
+					this.SendPropertyChanged("AccessLevel");
+					this.OnAccessLevelChanged();
 				}
 			}
 		}
