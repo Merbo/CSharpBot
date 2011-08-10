@@ -594,6 +594,11 @@ namespace CSharpBot
                                         TimeSpan ts = DateTime.Now - startupTime;
                                         Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": The bot is now running " + ts.ToString());
                                         break;
+                                    case "script":
+                                        ScriptingGUI Scriptinggui = new ScriptingGUI();
+                                        Scriptinggui.Show();
+                                        scripting.scriptingaccess(true, true);
+                                        break;
                                     case "time":
                                         // UTC hours addition (#time +1 makes UTC+1 for example)
                                         double hoursToAdd = 0;
