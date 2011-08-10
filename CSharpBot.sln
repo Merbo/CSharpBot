@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpBot", "CSharpBot\CSharpBot.csproj", "{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "CSharpBot Installer", "CSharpBot Installer\CSharpBot Installer\CSharpBot Installer.vdproj", "{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}"

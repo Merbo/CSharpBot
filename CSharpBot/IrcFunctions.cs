@@ -269,6 +269,9 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "addbotop <nick> -- Add a BotOp user, where nick is the nickname of the user you want to add");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "delbotop <nick> -- Delete a BotOp user, where nick is the nickname of the user you want to Delete");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "amibotop -- Tells you if you are a BotOp");
+            DelayNotice(nick, prefix + "math \"expression\" -- Calculates an expression.");
+            //DelayNotice(nick, prefix + "math add name value -- Sets a variable.");
+            DelayNotice(nick, prefix + "math clear -- Clears all variables.");
         }
 
         /// <summary>
