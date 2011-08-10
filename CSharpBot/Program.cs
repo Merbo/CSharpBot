@@ -54,7 +54,7 @@ namespace CSharpBot
         NetworkStream stream;
         TcpClient irc;
         StreamReader reader;
-
+        Botop check;
         #region XML implementation
         public XmlConfiguration config;
         public string XmlFileName = "CSharpBot.xml";
@@ -354,7 +354,7 @@ namespace CSharpBot
             this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
             this.Kicked += new KickedHandler(CSharpBot_Kicked);
         start: // This is the point at which the bot restarts on errors
-
+            check = new Botop();
             if (ProgramRestart == true)
             {
                 Console.WriteLine("");
@@ -654,7 +654,7 @@ namespace CSharpBot
                                         }
                                         break;
                                     case "raw":
-                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                        if ((Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname) ) && (check.GetLevel(msg.SourceNickname) >= 4) )
                                         {
                                             if (msg.BotCommandParams.Length > 0)
                                                 Functions.Raw(string.Join(" ", msg.BotCommandParams));
@@ -866,7 +866,7 @@ namespace CSharpBot
                                     case "kick":
                                         if (cmd.Length > 4)
                                         {
-                                            Botop check = new Botop();
+                                           
                                             if (Functions.IsOwner(msg.SourceHostmask) | (check.isBotOp(msg.SourceNickname) && (check.GetLevel(msg.SourceNickname) >= 3)))
                                             {
                                                 if (cmd.Length > 5)
