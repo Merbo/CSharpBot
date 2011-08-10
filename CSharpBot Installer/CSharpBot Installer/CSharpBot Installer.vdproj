@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_690F6C622B0B4544A689F7DC8EF34E7A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8043BAEBA06A49C3BF90CD80E93154EA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -130,6 +136,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_690F6C622B0B4544A689F7DC8EF34E7A"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\csblogo.jpeg"
+            "TargetName" = "8:csblogo.jpeg"
+            "Tag" = "8:"
+            "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -198,7 +224,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{57AEC2EB-80FE-4C25-B874-0D106D085594}"
+        "PackageCode" = "8:{77E6452F-06E5-4050-A842-BA07D626786F}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -398,9 +424,45 @@
                             }
                         }
                     }
-                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_C35C5DA64A644DEAA032B8A9826989B2"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_A08FF673A25A44DD936078166191F948"
                     {
                     "Sequence" = "3:100"
+                    "DisplayName" = "8:Splash"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdAdminSplashDlg.wid"
+                        "Properties"
+                        {
+                            "SplashBitmap"
+                            {
+                            "Name" = "8:SplashBitmap"
+                            "DisplayName" = "8:#1013"
+                            "Description" = "8:#1113"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:_690F6C622B0B4544A689F7DC8EF34E7A"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Sunken"
+                            {
+                            "Name" = "8:Sunken"
+                            "DisplayName" = "8:#1007"
+                            "Description" = "8:#1107"
+                            "Type" = "3:5"
+                            "ContextData" = "8:4;True=4;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:4"
+                            "DefaultValue" = "3:4"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_C35C5DA64A644DEAA032B8A9826989B2"
+                    {
+                    "Sequence" = "3:110"
                     "DisplayName" = "8:Welcome"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -558,7 +620,7 @@
                     }
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_2AF6E3A344BC4052B0301624D246948B"
                     {
-                    "Sequence" = "3:100"
+                    "Sequence" = "3:110"
                     "DisplayName" = "8:Welcome"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
@@ -600,6 +662,42 @@
                             "Setting" = "3:1"
                             "Value" = "8:#1203"
                             "DefaultValue" = "8:#1203"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                        }
+                    }
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_5F10F9011EE243B9904EF8169A06E4EB"
+                    {
+                    "Sequence" = "3:100"
+                    "DisplayName" = "8:Splash"
+                    "UseDynamicProperties" = "11:TRUE"
+                    "IsDependency" = "11:FALSE"
+                    "SourcePath" = "8:<VsdDialogDir>\\VsdSplashDlg.wid"
+                        "Properties"
+                        {
+                            "SplashBitmap"
+                            {
+                            "Name" = "8:SplashBitmap"
+                            "DisplayName" = "8:#1013"
+                            "Description" = "8:#1113"
+                            "Type" = "3:8"
+                            "ContextData" = "8:Bitmap"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:2"
+                            "Value" = "8:_690F6C622B0B4544A689F7DC8EF34E7A"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
+                            "Sunken"
+                            {
+                            "Name" = "8:Sunken"
+                            "DisplayName" = "8:#1007"
+                            "Description" = "8:#1107"
+                            "Type" = "3:5"
+                            "ContextData" = "8:4;True=4;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:4"
+                            "DefaultValue" = "3:4"
                             "UsePlugInResources" = "11:TRUE"
                             }
                         }
@@ -761,7 +859,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot\\CSharpBot\\obj\\x86\\Release\\CSharpBot.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Release\\CSharpBot.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"

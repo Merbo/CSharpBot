@@ -9,10 +9,12 @@ namespace CSharpBot
     {
         BotOpDB conn = new BotOpDB("Data Source=BotOpDB.sdf");
 
-        public void AddBotOp(string nickname)
+        public void AddBotOp(string nickname, int level=5)
         {
             Nicks newnick = new Nicks();
+            newnick.AccessLevel = level;
             newnick.Nick = nickname;
+            
             conn.Nicks.InsertOnSubmit(newnick);
             conn.SubmitChanges();
         }
@@ -28,6 +30,37 @@ namespace CSharpBot
                 isBO = true;
             }
             return isBO;
+        }
+
+        public int GetLevel(string nickname)
+        {
+            var q = from c in conn.Nicks
+                    where c.Nick == nickname
+                    select c;
+            int level = 0;
+            foreach (var c in q)
+            {                          //Statements in here only executed if match found
+                level = c.AccessLevel.Value;
+
+            }
+            return level;
+         
+        }
+
+        public bool SetLevel(string nickname, int level)
+        {
+            var q = from c in conn.Nicks
+                    where c.Nick == nickname
+                    select c;
+            bool wasin = false;
+            foreach (var c in q)
+            {                          //Statements in here only executed if match found
+                c.AccessLevel = level;
+                conn.SubmitChanges();
+                wasin = true;
+            }
+            return wasin;
+
         }
 
 

@@ -128,13 +128,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IrcMessageLine.cs" />
-    <Compile Include="Botop.cs" />
-    <Compile Include="botOpDB.designer.cs">
+    <Compile Include="BotOpDB.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>botOpDB.dbml</DependentUpon>
+      <DependentUpon>BotOpDB.dbml</DependentUpon>
     </Compile>
+    <Compile Include="IrcException.cs" />
+    <Compile Include="IrcMessageLine.cs" />
+    <Compile Include="Botop.cs" />
     <Compile Include="IrcFunctions.cs" />
     <Compile Include="IrcFormatting.cs" />
     <Compile Include="IrcNumericReplyLine.cs" />
@@ -173,13 +174,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="botOpDB.dbml">
+    <None Include="BotOpDB.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>botOpDB.designer.cs</LastGenOutput>
+      <LastGenOutput>BotOpDB.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="botOpDB.dbml.layout">
-      <DependentUpon>botOpDB.dbml</DependentUpon>
     </None>
     <None Include="CSharpBot_TemporaryKey.pfx" />
   </ItemGroup>
@@ -203,6 +201,11 @@
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="BotOpDB.dbml.layout">
+      <DependentUpon>BotOpDB.dbml</DependentUpon>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

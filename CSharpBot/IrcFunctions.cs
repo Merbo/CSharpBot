@@ -258,7 +258,7 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "join <chan> -- Joins the bot to a channel");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "part <chan> [reason] -- Parts the bot from a channel");
-            if ((IsOwner(hostmask)) | check.isBotOp(nick)) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
+            if ((IsOwner(hostmask)) | (check.isBotOp(nick) & (check.GetLevel(nick) >= 3) ) ) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "reset -- Clears the config and restarts the bot");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "restart -- Restarts the bot");
@@ -266,12 +266,16 @@ namespace CSharpBot
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "die [quitmessage] -- Kills the bot, with optional [quitmessage]");
             DelayNotice(nick, prefix + "time [<+|-> <number>] -- Tells the time in GMT/UTC, with the offset you specify.");
             DelayNotice(nick, prefix + "uptime -- Tells the time, which the bot is running now without crash or shutdown.");
-            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "addbotop <nick> -- Add a BotOp user, where nick is the nickname of the user you want to add");
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "addbotop <nick> [level] -- Add a BotOp user, where nick is the nickname of the user you want to add and level is the access level of the user you want to add");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "delbotop <nick> -- Delete a BotOp user, where nick is the nickname of the user you want to Delete");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "amibotop -- Tells you if you are a BotOp");
+<<<<<<< HEAD
             DelayNotice(nick, prefix + "math \"expression\" -- Calculates an expression.");
             //DelayNotice(nick, prefix + "math add name value -- Sets a variable.");
             DelayNotice(nick, prefix + "math clear -- Clears all variables.");
+=======
+            if (IsOwner(hostmask)) DelayNotice(nick, prefix + "setbotop <nick> <level> -- Sets the level of a BotOP");
+>>>>>>> origin/master
         }
 
         /// <summary>
