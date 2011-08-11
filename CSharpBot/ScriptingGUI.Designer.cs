@@ -37,7 +37,6 @@
             this.ClientSize = new System.Drawing.Size(401, 266);
             this.Name = "ScriptingGUI";
             this.Text = "Scripting Engine Access";
-            this.Load += new System.EventHandler(this.ScriptingGUI_Load);
             this.ResumeLayout(false);
 
         }
