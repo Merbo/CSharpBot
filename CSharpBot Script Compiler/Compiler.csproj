@@ -33,6 +33,15 @@
   <PropertyGroup>
     <RootNamespace>Compiler</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Installer|x86'">
+    <OutputPath>bin\x86\Installer\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Compiler|x86'">
+    <OutputPath>bin\x86\Compiler\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x86'">
+    <OutputPath>bin\x86\CSharpBot\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />

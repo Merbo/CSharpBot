@@ -113,6 +113,24 @@
   <PropertyGroup>
     <ApplicationIcon>start.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Installer|x86'">
+    <OutputPath>bin\x86\Installer\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Installer|x64'">
+    <OutputPath>bin\x64\Installer\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Compiler|x86'">
+    <OutputPath>bin\x86\Compiler\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Compiler|x64'">
+    <OutputPath>bin\x64\Compiler\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x86'">
+    <OutputPath>bin\x86\CSharpBot\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x64'">
+    <OutputPath>bin\x64\CSharpBot\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
