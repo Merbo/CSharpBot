@@ -9,25 +9,29 @@ namespace CSBCompiler
     {
         static void Main(string[] args)
         {
-            if (args.Length != 1)
+            if (args.Length < 1)
             {
-                Console.WriteLine("Usage: CSBc.exe program.csb");
-                return;
+                GUI.GUI gui = new GUI.GUI();
+                gui.Show();
+
             }
 
-            try
+            if (args.Length == 1)
             {
-                Scanner scanner = null;
-                using (TextReader input = File.OpenText(args[0]))
+                try
                 {
-                    scanner = new Scanner(input);
+                    Scanner scanner = null;
+                    using (TextReader input = File.OpenText(args[0]))
+                    {
+                        scanner = new Scanner(input);
+                    }
+                    Parser parser = new Parser(scanner.Tokens);
+                    CodeGen codeGen = new CodeGen(parser.Result, Path.GetFileNameWithoutExtension(args[0]) + ".exe");
                 }
-                Parser parser = new Parser(scanner.Tokens);
-                CodeGen codeGen = new CodeGen(parser.Result, Path.GetFileNameWithoutExtension(args[0]) + ".exe");
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e.Message);
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
             }
         }
     }

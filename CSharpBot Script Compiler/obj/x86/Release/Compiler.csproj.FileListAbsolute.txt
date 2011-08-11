@@ -8,3 +8,6 @@ D:\Projects\CSharpBot\CSharpBot Script Compiler\bin\Release\CSBc.pdb
 D:\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Release\ResolveAssemblyReference.cache
 D:\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Release\CSBc.exe
 D:\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Release\CSBc.pdb
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Release\GUI.GUI.resources
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Release\GenerateResource.write.1.tlog

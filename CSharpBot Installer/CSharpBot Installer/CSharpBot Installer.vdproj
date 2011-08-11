@@ -379,7 +379,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{9BC5481C-94D6-4EDD-8A4D-575673DDD702}"
+        "PackageCode" = "8:{AADB1908-F55A-42D9-9305-580D6AFD986F}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -942,7 +942,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26CE5777B48443ED936914924CAFAD36"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Release\\CSBc.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Compiler\\CSBc.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B48650C5737045A186DF72BAAB785801"
@@ -970,7 +970,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Release\\CSharpBot.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x64\\Compiler\\CSharpBot.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
