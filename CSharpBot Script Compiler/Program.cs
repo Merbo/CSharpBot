@@ -2,18 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Windows.Forms;
 
 namespace CSBCompiler
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             if (args.Length < 1)
             {
-                GUI.GUI gui = new GUI.GUI();
-                gui.Show();
-                Console.ReadLine();
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new GUI.GUI());
             }
 
             if (args.Length == 1)
