@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Xml;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace CSharpBot
 {
@@ -1036,7 +1037,52 @@ namespace CSharpBot
                                     case "math":
                                         Functions.PrivateMessage(msg.Target, cmd[4] + " = " + MathParser.Parse(cmd[4]));
                                         break;
-
+                                    case "saymodule":
+                                        ProcessStartInfo start = new ProcessStartInfo();
+                                        try
+                                        {
+                                            if (cmd.Length == 5)
+                                            {
+                                                start.FileName = cmd[4];
+                                                start.UseShellExecute = false;
+                                                start.RedirectStandardOutput = true;
+                                                using (Process process = Process.Start(start))
+                                                {
+                                                    using (StreamReader sreader = process.StandardOutput)
+                                                    {
+                                                        string output = sreader.ReadToEnd();
+                                                        cwin.textBox3.Text = output;
+                                                        string[] split = cwin.textBox3.Text.Split('\n');
+                                                        foreach (string s in split)
+                                                        {
+                                                            Functions.PrivateMessage(msg.Target, s);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Functions.PrivateMessage(msg.Target, "Usage: " + prefix + "saymodule <path_to_csbfile.exe>");
+                                            }
+                                        }
+                                        catch (FileNotFoundException)
+                                        {
+                                            Functions.PrivateMessage(msg.Target, "That file doesn't exist :(");
+                                        }
+                                        catch (System.ComponentModel.Win32Exception)
+                                        {
+                                            Functions.PrivateMessage(msg.Target, "That file doesn't exist :(");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Functions.PrivateMessage(msg.Target, ex.ToString());
+                                            string[] st = ex.StackTrace.Split('\n');
+                                            foreach (string s in st)
+                                            {
+                                                Functions.PrivateMessage(msg.Target, s);
+                                            }
+                                        }
+                                        break;
                                     case "version":
                                         Functions.SendCTCP(msg.SourceNickname, "VERSION");
                                         while (msg.MessageType != IrcMessageType.CtcpReply)

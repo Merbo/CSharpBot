@@ -17,8 +17,6 @@ namespace CSharpBot
             
         }
 
-        
-
         private void button1_Click(object sender, EventArgs e)
         {
             CSharpBot.bot.Join(this.textBox1.Text);
