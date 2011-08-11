@@ -74,19 +74,6 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
-                "Items"
-                {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
-                    {
-                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
-                    }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
-                    {
-                    "Name" = "8:Windows Installer 3.1"
-                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
-                    }
-                }
             }
         }
         "Compiler"
@@ -111,19 +98,6 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
-                "Items"
-                {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
-                    {
-                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
-                    }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
-                    {
-                    "Name" = "8:Windows Installer 3.1"
-                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
-                    }
-                }
             }
         }
         "Debug"
@@ -418,7 +392,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{404C1968-2DA8-4AE4-A1E4-F2F164DEE081}"
+        "PackageCode" = "8:{4592F69A-53A4-4E13-AFC3-527500903D95}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -981,7 +955,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26CE5777B48443ED936914924CAFAD36"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Release\\CSBc.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Compiler\\CSBc.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B48650C5737045A186DF72BAAB785801"
@@ -1009,7 +983,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Release\\CSharpBot.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Compiler\\CSharpBot.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
