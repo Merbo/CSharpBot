@@ -1,0 +1,1 @@
+Run CSBc.exe with the file as the arguement (e.g. "CSBc.exe helloworld.csb") to compile it.
