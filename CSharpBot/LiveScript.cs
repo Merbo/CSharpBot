@@ -24,10 +24,9 @@ namespace CSharpBot
             identifier = identifier.Replace("$time", DateTime.Now.ToString("h:mm tt"));
             return identifier;
         }
-      public  void RunScript(string input)
+
+        public  void RunScript(string input)
         {
-
-
             string code = input;
             code = stripnewlines(code);
             code = processvars(code);
