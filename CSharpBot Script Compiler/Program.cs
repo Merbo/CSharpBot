@@ -13,7 +13,7 @@ namespace CSBCompiler
             {
                 GUI.GUI gui = new GUI.GUI();
                 gui.Show();
-
+                Console.ReadLine();
             }
 
             if (args.Length == 1)
