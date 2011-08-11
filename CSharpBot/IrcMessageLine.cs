@@ -81,7 +81,7 @@ namespace CSharpBot
                 List<string> args = new List<string>();
                 for (int i = 0; i < spl1.Length; i++)
                 {
-                    if (i / 2 == Math.Round((decimal)i / 2, 0))
+                    if (i / 2 == MathParser.Round((decimal)i / 2, 0))
                     {
                         string[] spl2 = spl1[i].Split(' ');
                         args.AddRange(spl2); // argument: ... ... ... are multiple args

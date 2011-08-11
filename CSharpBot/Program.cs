@@ -1000,7 +1000,7 @@ namespace CSharpBot
                                         }
                                         break;
                                     case "math":
-                                        Functions.PrivateMessage(msg.Target, cmd[4] + " = " + BotMath.Math.Parse(cmd[4]));
+                                        Functions.PrivateMessage(msg.Target, cmd[4] + " = " + MathParser.Parse(cmd[4]));
                                         Functions.Log(msg.SourceNickname + " used command " + cmd[3]);
                                         break;
 
