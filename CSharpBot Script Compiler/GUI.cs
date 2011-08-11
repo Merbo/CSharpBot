@@ -48,6 +48,10 @@ namespace GUI
             label2.Text = "Not Selected.";
             button2.Enabled = false;
             button3.Enabled = false;
+            Console.WindowHeight = 1;
+            Console.WindowWidth = 1;
+            Console.WindowLeft = 0;
+            Console.WindowTop = 0;
         }
 
         private void button2_Click(object sender, EventArgs e)
