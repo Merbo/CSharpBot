@@ -1038,48 +1038,54 @@ namespace CSharpBot
                                         Functions.PrivateMessage(msg.Target, cmd[4] + " = " + MathParser.Parse(cmd[4]));
                                         break;
                                     case "saymodule":
-                                        ProcessStartInfo start = new ProcessStartInfo();
-                                        try
+                                        if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            if (cmd.Length == 5)
+                                            ProcessStartInfo start = new ProcessStartInfo();
+                                            try
                                             {
-                                                start.FileName = cmd[4];
-                                                start.UseShellExecute = false;
-                                                start.RedirectStandardOutput = true;
-                                                using (Process process = Process.Start(start))
+                                                if (cmd.Length > 4)
                                                 {
-                                                    using (StreamReader sreader = process.StandardOutput)
+                                                    if (cmd[4].StartsWith("\"") && cmd.Last().EndsWith("\""))
+                                                        start.FileName = string.Join(" ", cmd.Skip(4)).Remove('"');
+                                                    else
+                                                        start.FileName = cmd[4];
+                                                    start.UseShellExecute = false;
+                                                    start.RedirectStandardOutput = true;
+                                                    using (Process process = Process.Start(start))
                                                     {
-                                                        string output = sreader.ReadToEnd();
-                                                        cwin.textBox3.Text = output;
-                                                        string[] split = cwin.textBox3.Text.Split('\n');
-                                                        foreach (string s in split)
+                                                        using (StreamReader sreader = process.StandardOutput)
                                                         {
-                                                            Functions.PrivateMessage(msg.Target, s);
+                                                            string output = sreader.ReadToEnd();
+                                                            cwin.textBox3.Text = output;
+                                                            string[] split = cwin.textBox3.Text.Split('\n');
+                                                            foreach (string s in split)
+                                                            {
+                                                                Functions.PrivateMessage(msg.Target, s);
+                                                            }
                                                         }
                                                     }
                                                 }
+                                                else
+                                                {
+                                                    Functions.PrivateMessage(msg.Target, "Usage: " + prefix + "saymodule <path_to_csbfile.exe>");
+                                                }
                                             }
-                                            else
+                                            catch (FileNotFoundException)
                                             {
-                                                Functions.PrivateMessage(msg.Target, "Usage: " + prefix + "saymodule <path_to_csbfile.exe>");
+                                                Functions.PrivateMessage(msg.Target, "That file doesn't exist :(");
                                             }
-                                        }
-                                        catch (FileNotFoundException)
-                                        {
-                                            Functions.PrivateMessage(msg.Target, "That file doesn't exist :(");
-                                        }
-                                        catch (System.ComponentModel.Win32Exception)
-                                        {
-                                            Functions.PrivateMessage(msg.Target, "That file doesn't exist :(");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Functions.PrivateMessage(msg.Target, ex.ToString());
-                                            string[] st = ex.StackTrace.Split('\n');
-                                            foreach (string s in st)
+                                            catch (System.ComponentModel.Win32Exception)
                                             {
-                                                Functions.PrivateMessage(msg.Target, s);
+                                                Functions.PrivateMessage(msg.Target, "That file doesn't exist :(");
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Functions.PrivateMessage(msg.Target, ex.ToString());
+                                                string[] st = ex.StackTrace.Split('\n');
+                                                foreach (string s in st)
+                                                {
+                                                    Functions.PrivateMessage(msg.Target, s);
+                                                }
                                             }
                                         }
                                         break;
