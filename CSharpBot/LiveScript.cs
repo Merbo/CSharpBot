@@ -40,6 +40,14 @@ namespace CSharpBot
                         sub = 7;
                     CSharpBot.bot.Functions.PrivateMessage(CSharpBot.bot.currentchan, cmd.Substring(sub));
                 }
+                else if (cmd == "time" || cmd == " time")
+                {
+                    CSharpBot.bot.Functions.PrivateMessage(CSharpBot.bot.currentchan, DateTime.Now.ToString("h:mm tt"));
+                }
+                else if (cmd == "die" || cmd == " die")
+                {
+                    CSharpBot.bot.Shutdown();
+                }
             }
         }
     }
