@@ -8,11 +8,14 @@ using System.Text.RegularExpressions;
 using System.Net.Sockets;
 using System.IO;
 using System.Xml;
+using System.Windows.Forms;
 
 namespace CSharpBot
 {
     public class CSharpBot
     {
+        public static CSharpBot bot;
+
         /// <summary>
         /// Our entry point for execution.
         /// </summary>
@@ -26,9 +29,15 @@ namespace CSharpBot
             Console.WriteLine("\t(c) peapodamus August 7 2011-Present");
             Console.WriteLine();
 
-            CSharpBot bot = new CSharpBot();
+            bot = new CSharpBot();
             bot.ParseArguments(args);
             bot.Run();
+
+            Console.WriteLine("Bot is now running.");
+            Console.WriteLine();
+
+            Application.EnableVisualStyles();
+            Application.Run(new ControlWindow());
         }
 
         // Our RegEx'es
@@ -39,6 +48,12 @@ namespace CSharpBot
         public bool DebuggingEnabled = false;
         public bool ProgramRestart = false;
         public bool RejoinOnKick = true;
+
+        public bool IsRunning
+        {
+            get { return botThread.IsAlive; }
+        }
+        Thread botThread;
 
         // Message of the day
         List<string> motdlines;
@@ -351,6 +366,14 @@ namespace CSharpBot
 
         public void Run()
         {
+            if (Thread.CurrentThread.IsBackground == false)
+            {
+                // Make this thread do not block the main thread
+                botThread = new Thread(new ThreadStart(Run));
+                botThread.IsBackground = true;
+                botThread.Start();
+                return;
+            }
             this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
             this.Kicked += new KickedHandler(CSharpBot_Kicked);
         start: // This is the point at which the bot restarts on errors
@@ -1001,9 +1024,25 @@ namespace CSharpBot
                                         break;
                                     case "math":
                                         Functions.PrivateMessage(msg.Target, cmd[4] + " = " + MathParser.Parse(cmd[4]));
-                                        Functions.Log(msg.SourceNickname + " used command " + cmd[3]);
                                         break;
 
+                                    case "version":
+                                        Functions.SendCTCP(msg.SourceNickname, "VERSION");
+                                        while (msg.MessageType != IrcMessageType.CtcpReply)
+                                        {
+                                            inputline = reader.ReadLine();
+                                            IrcMessageLine cmsg = new IrcMessageLine(inputline, config);
+                                            if (cmsg.MessageType == IrcMessageType.CtcpReply)
+                                            {
+                                                string[] ctcpSplit = cmsg.Message.Split(' ');
+                                                if (ctcpSplit[0].ToUpper() == "VERSION")
+                                                {
+                                                    Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Your chat client says, that it is " + IrcFormatting.BoldText(string.Join(" ", ctcpSplit.Skip(1).ToArray())));
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        break;
                                 }
                                 if (Regex.Match(msg.BotCommandName, "^(g|d)(voice|bot|halfop|op|admin|protect|owner)$").Success)
                                 {
@@ -1139,9 +1178,30 @@ namespace CSharpBot
             }
         }
 
-        public void Join()
+        /// <summary>
+        /// Shuts the bot down
+        /// </summary>
+        public void Shutdown(string text="Shutdown through GUI")
         {
+            Functions.Quit(text);
+        }
+        
+        /// <summary>
+        /// Lets the bot join a channel
+        /// </summary>
+        /// <param name="channel">The channel</param>
+        public void Join(string channel)
+        {
+            Functions.Join(channel);
+        }
 
+        /// <summary>
+        /// Lets the bot leave a channel
+        /// </summary>
+        /// <param name="channel">The channel</param>
+        public void Leave(string channel)
+        {
+            Functions.Part(channel);
         }
 
         void CSharpBot_Kicked(CSharpBot bot, string source, string channel)

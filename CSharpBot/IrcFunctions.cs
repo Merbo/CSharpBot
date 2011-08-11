@@ -286,6 +286,11 @@ namespace CSharpBot
                 Console.ResetColor();
             }
         }
+
+        public void SendCTCP(string nickname, string data)
+        {
+            CSharpBot.writer.WriteLine("PRIVMSG " + nickname + " :\x01" + data + "\x01");
+        }
     }
 }
 //From hereby on, we post quotes of funny IRC as a sort of source code easter egg.
