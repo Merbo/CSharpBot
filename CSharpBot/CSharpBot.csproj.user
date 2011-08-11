@@ -22,4 +22,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x86'">
+    <StartArguments>--debug</StartArguments>
+  </PropertyGroup>
 </Project>

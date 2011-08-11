@@ -47,7 +47,7 @@ namespace CSharpBot
         /// <param name="channel">The channel to leave</param>
         public void Part(string channel, string reason = "Just leaving")
         {
-            CSharpBot.writer.WriteLine("PART " + channel + " :" + reason);
+            WriteData("PART " + channel + " :" + reason);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace CSharpBot
         {
             try
             {
-                CSharpBot.writer.WriteLine("QUIT :" + reason);
+                WriteData("QUIT :" + reason);
             }
             catch (IOException) // Disconnected from server early
             {
@@ -131,7 +131,7 @@ namespace CSharpBot
         {
             if (channel.StartsWith("#"))
             {
-                CSharpBot.writer.WriteLine("PRIVMSG " + channel + " :" + text);
+                WriteData("PRIVMSG " + channel + " :" + text);
             }
         }
 
@@ -172,7 +172,7 @@ namespace CSharpBot
         /// <param name="password">The password</param>
         public void Pass(string password)
         {
-            CSharpBot.writer.WriteLine("PASS " + password);
+            WriteData("PASS " + password);
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace CSharpBot
         /// <param name="nickname">The nickname</param>
         public void Nick(string nickname)
         {
-            CSharpBot.writer.WriteLine("NICK " + nickname);
+            WriteData("NICK " + nickname);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace CSharpBot
         {
             try
             {
-                CSharpBot.writer.WriteLine("PRIVMSG " + target + " :" + text);
+                WriteData("PRIVMSG " + target + " :" + text);
             }
             catch (IOException x)
             {
@@ -220,7 +220,7 @@ The geru meditation is:
         /// <param name="text">The text to send</param>
         public void Notice(string target, string text)
         {
-            CSharpBot.writer.WriteLine("NOTICE " + target + " :" + text);
+            WriteData("NOTICE " + target + " :" + text);
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ The geru meditation is:
         public void DelayNotice(string target, string text, int delayMilliseconds = 500)
         {
             Thread.Sleep(delayMilliseconds);
-            CSharpBot.writer.WriteLine("NOTICE " + target + " :" + text);
+            WriteData("NOTICE " + target + " :" + text);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ The geru meditation is:
         /// <param name="rawline">The raw IRC line to send.</param>
         public void Raw(string rawline)
         {
-            CSharpBot.writer.WriteLine(rawline);
+            WriteData(rawline);
         }
 
         /// <summary>
@@ -285,7 +285,7 @@ The geru meditation is:
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "join <chan> -- Joins the bot to a channel");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "part <chan> [reason] -- Parts the bot from a channel");
-            if ((IsOwner(hostmask)) | (check.isBotOp(nick) & (check.GetLevel(nick) >= 3) ) ) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
+            if (IsOwner(hostmask) || (check.isBotOp(nick) && (check.GetLevel(nick) >= 3 ))) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "reset -- Clears the config and restarts the bot");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "restart -- Restarts the bot");
@@ -316,7 +316,7 @@ The geru meditation is:
 
         public void SendCTCP(string nickname, string data)
         {
-            CSharpBot.writer.WriteLine("PRIVMSG " + nickname + " :\x01" + data + "\x01");
+            WriteData("PRIVMSG " + nickname + " :\x01" + data + "\x01");
         }
     }
 }

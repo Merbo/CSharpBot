@@ -18,8 +18,11 @@ namespace CSharpBot
 
         string processvars(string codein)
         {
-            string codeout = codein.Replace("$CHANNEL", CSharpBot.bot.currentchan);
-            return codeout;
+            string cin = codein.ToLower();
+            string identifier = cin;
+            identifier = identifier.Replace("$channel", CSharpBot.bot.currentchan);
+            identifier = identifier.Replace("$time", DateTime.Now.ToString("h:mm tt"));
+            return identifier;
         }
       public  void RunScript(string input)
         {

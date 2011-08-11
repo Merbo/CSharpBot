@@ -127,6 +127,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x86'">
     <OutputPath>bin\x86\CSharpBot\</OutputPath>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x64'">
     <OutputPath>bin\x64\CSharpBot\</OutputPath>
