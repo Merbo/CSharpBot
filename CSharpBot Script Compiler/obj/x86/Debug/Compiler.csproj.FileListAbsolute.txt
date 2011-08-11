@@ -3,3 +3,8 @@ C:\Users\Merbo\Desktop\Compiler\CompilerWriting\bin\Debug\CSBc.exe
 C:\Users\Merbo\Desktop\Compiler\CompilerWriting\bin\Debug\CSBc.pdb
 C:\Users\Merbo\Desktop\Compiler\CompilerWriting\obj\x86\Debug\CSBc.exe
 C:\Users\Merbo\Desktop\Compiler\CompilerWriting\obj\x86\Debug\CSBc.pdb
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\bin\Debug\CSBc.exe
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\bin\Debug\CSBc.pdb
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\CSBc.exe
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\CSBc.pdb

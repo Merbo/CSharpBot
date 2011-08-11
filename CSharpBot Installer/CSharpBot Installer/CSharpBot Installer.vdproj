@@ -261,7 +261,7 @@
                 {
                     "{95C0C507-CBF0-42B8-B119-07219E384A4A}:_BA0887F881324890BAA9DA1F2B85EFE3"
                     {
-                    "Command" = "8:open"
+                    "Command" = "8:&open"
                     "Verb" = "8:open"
                     "Arguments" = "8:\"%1\""
                     "Order" = "3:0"
@@ -355,7 +355,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{8E780D44-1C9C-4ACA-898C-84D655FD186D}"
+        "PackageCode" = "8:{5CF85168-F53D-42E2-BA38-47C32D60A273}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -715,7 +715,7 @@
                     }
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_2AF6E3A344BC4052B0301624D246948B"
                     {
-                    "Sequence" = "3:110"
+                    "Sequence" = "3:100"
                     "DisplayName" = "8:Welcome"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
