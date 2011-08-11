@@ -31,17 +31,32 @@ namespace CSharpBot
             string code = input;
             code = stripnewlines(code);
             code = processvars(code);
+            string[] codesplit = code.Split(';');
          
-         
-            foreach (string cmd in code.Split(';'))
+            foreach (string cmd in codesplit)
             {
-
-                if (cmd.StartsWith("print ") || cmd.StartsWith(" print "))
+                string[] tmp = cmd.Split(' ');
+                if (cmd.StartsWith("msg ") || cmd.StartsWith(" msg "))
                 {
-                    int sub = 6;
-                    if (cmd.StartsWith(" print "))
-                        sub = 7;
-                    CSharpBot.bot.Functions.PrivateMessage(CSharpBot.bot.currentchan, cmd.Substring(sub));
+                    if (cmd.StartsWith(" msg "))
+                    {
+                        CSharpBot.bot.Functions.PrivateMessage(tmp[2], string.Join(" ", tmp.Skip(3)));
+                    }
+                    else
+                    {
+                        CSharpBot.bot.Functions.PrivateMessage(tmp[1], string.Join(" ", tmp.Skip(2)));
+                    }
+                }
+                if (cmd.StartsWith("notice ") || cmd.StartsWith(" notice "))
+                {
+                    if (cmd.StartsWith(" notice "))
+                    {
+                        CSharpBot.bot.Functions.Notice(tmp[2], string.Join(" ", tmp.Skip(3)));
+                    }
+                    else
+                    {
+                        CSharpBot.bot.Functions.Notice(tmp[1], string.Join(" ", tmp.Skip(2)));
+                    }
                 }
                 else if (cmd == "die" || cmd == " die")
                 {
