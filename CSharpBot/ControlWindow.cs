@@ -14,7 +14,10 @@ namespace CSharpBot
         public ControlWindow()
         {
             InitializeComponent();
+            
         }
+
+        
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -36,5 +39,21 @@ namespace CSharpBot
             }
             this.Close();
         }
+
+  
+
+       private void timer1_Tick(object sender, EventArgs e)
+       {
+           if (!CSharpBot.bot.IsRunning){
+               this.Close();
+           }
+       }
+
+       private void button4_Click(object sender, EventArgs e)
+       {
+           LiveScript ls = new LiveScript();
+           ls.RunScript(textBox2.Text);
+           textBox2.Text = "";
+       }
     }
 }

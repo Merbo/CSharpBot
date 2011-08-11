@@ -15,7 +15,8 @@ namespace CSharpBot
     public class CSharpBot
     {
         public static CSharpBot bot;
-
+        public string currentchan;
+        public static ControlWindow cwin = new ControlWindow();
         /// <summary>
         /// Our entry point for execution.
         /// </summary>
@@ -37,7 +38,7 @@ namespace CSharpBot
             Console.WriteLine();
 
             Application.EnableVisualStyles();
-            Application.Run(new ControlWindow());
+            Application.Run(cwin);
         }
 
         // Our RegEx'es
@@ -650,17 +651,27 @@ namespace CSharpBot
                                     case "die":
                                         if (Functions.IsOwner(msg.SourceHostmask))
                                         {
+                                            string message;
                                             if (cmd.Length > 4)
                                             {
                                                 Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + msg.BotCommandParams);
-                                                Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
+                                                //Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
+                                             //   this.Shutdown(string.Join(" ", cmd.Skip(5).ToArray()));
+                                                message = string.Join(" ", cmd.Skip(5).ToArray());
+                                                this.Shutdown(message);
+                                                
+                                
                                             }
                                             else
                                             {
                                                 Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
-                                                Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
+                                                //Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
+                                               message="I shot myself because " + msg.SourceNickname + " told me to.";
+                                               this.Shutdown(message);
                                             }
-                                        }
+                                    
+                                            }
+                                        
                                         else
                                         {
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "die");
@@ -1181,9 +1192,17 @@ namespace CSharpBot
         /// <summary>
         /// Shuts the bot down
         /// </summary>
-        public void Shutdown(string text="Shutdown through GUI")
+        public void Shutdown(string text="Shutdown through GUI", bool alliswell = true)
         {
-            Functions.Quit(text);
+            if (alliswell) //If shutting down normally
+            {
+                Functions.Quit(text);
+            }
+            else
+            {            //If we are panicing
+                Application.Exit();
+            }
+
         }
         
         /// <summary>
@@ -1192,6 +1211,7 @@ namespace CSharpBot
         /// <param name="channel">The channel</param>
         public void Join(string channel)
         {
+            currentchan = channel;
             Functions.Join(channel);
         }
 
@@ -1232,6 +1252,7 @@ namespace CSharpBot
                 Functions.WriteData("MODE " + NICK + " -i"); // We don't want to be invisible
                 Functions.Log("Joining " + CHANNEL + "...");
                 Functions.WriteData("JOIN " + CHANNEL);
+                currentchan = CHANNEL;
                 if (config.ServerPassword != "")
                     Functions.Pass(config.ServerPassword);
                 if (config.NickServPassword != "")
