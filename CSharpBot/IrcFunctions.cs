@@ -65,8 +65,16 @@ namespace CSharpBot
         /// </summary>
         /// <param name="reason">Optional reason for QUIT</param>
         public void Quit(string reason = "Bye!")
+
         {
-            CSharpBot.writer.WriteLine("QUIT :" + reason);
+            try
+            {
+                CSharpBot.writer.WriteLine("QUIT :" + reason);
+            }
+            catch (IOException) // Disconnected from server early
+            {
+                Console.WriteLine("Disconnected.");
+            }
         }
 
         /// <summary>
@@ -183,7 +191,26 @@ namespace CSharpBot
         /// <param name="text">The text to send</param>
         public void PrivateMessage(string target, string text)
         {
-            CSharpBot.writer.WriteLine("PRIVMSG " + target + " :" + text);
+            try
+            {
+                CSharpBot.writer.WriteLine("PRIVMSG " + target + " :" + text);
+            }
+            catch (IOException x)
+            {
+                Console.Beep();
+                Console.Clear();
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.Write(@"THE CONNECTION TO THE SERVER WAS LOST!
+The connection to the server
+Was Lost.
+The geru meditation is:
+
+" + x.Message);
+
+                Console.Title = "ERROR";
+                Console.ReadKey();
+                CSharpBot.Shutdown("ERR", false);
+            }
         }
 
         /// <summary>
@@ -285,6 +312,11 @@ namespace CSharpBot
                 Console.WriteLine("SEND: " + data);
                 Console.ResetColor();
             }
+        }
+
+        public void SendCTCP(string nickname, string data)
+        {
+            CSharpBot.writer.WriteLine("PRIVMSG " + nickname + " :\x01" + data + "\x01");
         }
     }
 }

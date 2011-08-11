@@ -151,6 +151,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BotOpDB.dbml</DependentUpon>
     </Compile>
+    <Compile Include="ControlWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ControlWindow.Designer.cs">
+      <DependentUpon>ControlWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="IrcException.cs" />
     <Compile Include="IrcMessageLine.cs" />
     <Compile Include="Botop.cs" />
@@ -158,6 +164,7 @@
     <Compile Include="IrcFormatting.cs" />
     <Compile Include="IrcNumericReplyLine.cs" />
     <Compile Include="IrcReplyCodes.cs" />
+    <Compile Include="LiveScript.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -174,7 +181,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 und x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -233,6 +240,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ControlWindow.resx">
+      <DependentUpon>ControlWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ScriptingGUI.resx">
       <DependentUpon>ScriptingGUI.cs</DependentUpon>
     </EmbeddedResource>
