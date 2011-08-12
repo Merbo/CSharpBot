@@ -61,6 +61,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>88AC8D68CA14CA919F1D629D5EC57487C7008F32</ManifestCertificateThumbprint>
@@ -115,12 +116,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Installer|x86'">
     <OutputPath>bin\x86\Installer\</OutputPath>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Installer|x64'">
     <OutputPath>bin\x64\Installer\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Compiler|x86'">
     <OutputPath>bin\x86\Compiler\</OutputPath>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Compiler|x64'">
     <OutputPath>bin\x64\Compiler\</OutputPath>

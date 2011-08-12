@@ -28,28 +28,39 @@ namespace CSharpBot
                 {
                     string sa = s.ToLower();
                     string[] identifier = sa.Split('$');
-                    //This marks the beginning of the identifiers without () in them ($channel)
-                    if (identifier[1].Equals("channel"))
-                        tmp = CSharpBot.bot.currentchan;
-                    else if (identifier[1].Equals("time"))
-                        tmp = DateTime.Now.ToString("h:mm tt");
+
                     //This marks the beginning of the identifiers with () in them ($calc(1+1))
                     if (identifier[1].Contains('(') && identifier[1].Contains(')'))
                     {
                         string[] temp1 = identifier[1].Split('(');
                         string[] temp = temp1[1].Split(')');
-                        if (temp1[0].Equals("calc"))
+                        switch (temp1[0])
                         {
-                            try
-                            {
-                                tmp = MathParser.Parse(temp[0]);
-                            }
-                            catch (Exception e)
-                            {
-                                MessageBox.Show(e.ToString());
-                            }
+                            case "calc":
+                                try
+                                {
+                                    tmp = MathParser.Parse(temp[0]);
+                                }
+                                catch (Exception e)
+                                {
+                                    MessageBox.Show(e.ToString());
+                                }
+                                break;
                         }
-                    }  
+                    }
+                    else
+                    {
+                        //This marks the beginning of the identifiers without () in them ($channel)
+                        switch (identifier[1])
+                        {
+                            case "channel":
+                                tmp = CSharpBot.bot.currentchan;
+                                break;
+                            case "time":
+                                tmp = DateTime.Now.ToString("h:mm tt");
+                                break;
+                        }
+                    }
                     codeout = codeout + tmp + " ";
                 }
                 else
