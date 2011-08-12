@@ -18,6 +18,7 @@ namespace CSharpBot
         public static CSharpBot bot;
         public string currentchan;
         public static ControlWindow cwin = new ControlWindow();
+        public static LiveServer server;
         /// <summary>
         /// Our entry point for execution.
         /// </summary>
@@ -36,8 +37,11 @@ namespace CSharpBot
             bot.Run();
 
             Console.WriteLine("Bot is now running.");
+            server = new LiveServer();
+            server.password = "PASSWORD"; //ICEDREAM PLEASE HELP ME WITH THE CONFIG!
+            Console.WriteLine("Server is now running.");
             Console.WriteLine();
-
+            
             Application.EnableVisualStyles();
             Application.Run(cwin);
         }
@@ -1254,6 +1258,8 @@ namespace CSharpBot
             if (alliswell) //If shutting down normally
             {
                 Functions.Quit(text);
+                
+                Environment.Exit(0); //Terminate All threads
             }
             else
             {            //If we are panicing

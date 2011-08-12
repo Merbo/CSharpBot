@@ -14,7 +14,13 @@ namespace CSharpBot
         public ControlWindow()
         {
             InitializeComponent();
+            this.FormClosed += new FormClosedEventHandler(ControlWindow_FormClosed);
             
+        }
+
+        void ControlWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            CSharpBot.bot.Shutdown();
         }
 
         private void button1_Click(object sender, EventArgs e)
