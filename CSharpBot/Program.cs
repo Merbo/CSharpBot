@@ -1040,12 +1040,19 @@ namespace CSharpBot
                                             {
                                                 if (cmd.Length > 4)
                                                 {
-                                                    if (cmd[4].StartsWith("\"") && cmd.Last().EndsWith("\""))
-                                                        start.FileName = string.Join(" ", cmd.Skip(4)).Remove('"');
-                                                    else
-                                                        start.FileName = cmd[4];
+                                                  //  if (cmd[4].StartsWith("\"") && cmd.Last().EndsWith("\""))
+                                                    //    start.FileName = string.Join(" ", cmd.Skip(4)).Remove('"');
+                                                   // else
+                                                        start.FileName = String.Join(" ", cmd.Skip(4).ToArray());
                                                     start.UseShellExecute = false;
                                                     start.RedirectStandardOutput = true;
+                                                    bool ok=false;
+                                                    try{
+                                                        ok=Functions.CheckEXE(start.FileName);
+                                                    }catch (Exception){
+                                                        ok=false;
+                                                    }
+                                                    if (ok){
                                                     using (Process process = Process.Start(start))
                                                     {
                                                         using (StreamReader sreader = process.StandardOutput)
@@ -1058,6 +1065,9 @@ namespace CSharpBot
                                                                 Functions.PrivateMessage(msg.Target, s);
                                                             }
                                                         }
+                                                    }
+                                                    }else{
+                                                        Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I'm sorry, but the file you have attempted to run is not a valid CSB executable.");
                                                     }
                                                 }
                                                 else
