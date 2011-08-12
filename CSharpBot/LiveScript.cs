@@ -20,9 +20,17 @@ namespace CSharpBot
         {
             string cin = codein.ToLower();
             string identifier = cin;
-            identifier = identifier.Replace("$channel", CSharpBot.bot.currentchan);
-            identifier = identifier.Replace("$time", DateTime.Now.ToString("h:mm tt"));
+            try
+            {
+                identifier = identifier.Replace("$channel", CSharpBot.bot.currentchan);
+                identifier = identifier.Replace("$time", DateTime.Now.ToString("h:mm tt"));
+            }
+            catch (Exception)
+            {
+                //Nothing.
+            }
             return identifier;
+            
         }
 
         public  void RunScript(string input)
