@@ -357,11 +357,11 @@ namespace CSharpBot
                     case "-d":
                     case "--debug":
                         DebuggingEnabled = true;
-                        break;
+                        continue;
                     case "-f":
                     case "--config-file":
                         XmlFileName = value;                       
-                        break;
+                        continue;
                 }
             }
         }
