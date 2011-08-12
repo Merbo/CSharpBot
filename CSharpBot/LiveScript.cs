@@ -50,11 +50,11 @@ namespace CSharpBot
                             }
                         }
                     }  
-                    codeout = codeout + tmp;
+                    codeout = codeout + tmp + " ";
                 }
                 else
                 {
-                    codeout = codeout + s;  
+                    codeout = codeout + s + " ";  
                 }
             }
             return codeout;
@@ -63,8 +63,10 @@ namespace CSharpBot
         public void RunScript(string input)
         {
             string code = input;
+            
             code = stripnewlines(code);
             code = processvars(code);
+            
             string[] codesplit = code.Split(';');
          
             foreach (string cmd in codesplit)
@@ -94,6 +96,7 @@ namespace CSharpBot
                 }
                 else if (cmd == "die" || cmd == " die")
                 {
+                    
                     CSharpBot.bot.Shutdown();
                 }
             }
