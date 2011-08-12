@@ -34,12 +34,13 @@ namespace CSharpBot
                     {
                         string[] temp1 = identifier[1].Split('(');
                         string[] temp = temp1[1].Split(')');
+                        string args = temp[0];
                         switch (temp1[0])
                         {
                             case "calc":
                                 try
                                 {
-                                    tmp = MathParser.Parse(temp[0]);
+                                    tmp = MathParser.Parse(args);
                                 }
                                 catch (Exception e)
                                 {
