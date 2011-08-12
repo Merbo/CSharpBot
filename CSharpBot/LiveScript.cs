@@ -18,19 +18,45 @@ namespace CSharpBot
 
         string processvars(string codein)
         {
-            string cin = codein.ToLower();
-            string identifier = cin;
-            try
+            string[] split = codein.Split(' ');
+            string codeout = "";
+            string tmp = "";
+            foreach (string s in split)
             {
-                identifier = identifier.Replace("$channel", CSharpBot.bot.currentchan);
-                identifier = identifier.Replace("$time", DateTime.Now.ToString("h:mm tt"));
+                if (s.StartsWith("$"))
+                {
+                    string sa = s.ToLower();
+                    string[] identifier = sa.Split('$');
+                    //This marks the beginning of the identifiers without () in them ($channel)
+                    if (identifier[1].Equals("channel"))
+                        tmp = CSharpBot.bot.currentchan;
+                    else if (identifier[1].Equals("time"))
+                        tmp = DateTime.Now.ToString("h:mm tt");
+                    //This marks the beginning of the identifiers with () in them ($calc(1+1))
+                    else if (identifier[1].EndsWith("(") && identifier[1].EndsWith(")"))
+                    {
+                        string[] temp1 = identifier[1].Split('(');
+                        string[] temp = temp1[1].Split(')');
+                        if (temp1[0].Equals("calc"))
+                        {
+                            try
+                            {
+                                tmp = MathParser.Parse(temp[0]);
+                            }
+                            catch (Exception)
+                            {
+                                //Nothing.
+                            }
+                        }
+                    }  
+                    codeout = codeout + tmp;
+                }
+                else
+                {
+                    codeout = codeout + s;  
+                }
             }
-            catch (Exception)
-            {
-                //Nothing.
-            }
-            return identifier;
-            
+            return codeout;
         }
 
         public  void RunScript(string input)
