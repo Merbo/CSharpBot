@@ -20,6 +20,7 @@ namespace GUI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            textBox3.Hide();
             openFileDialog1.ShowDialog();
         }
 
@@ -52,6 +53,7 @@ namespace GUI
             Console.WindowWidth = 1;
             Console.WindowLeft = 0;
             Console.WindowTop = 0;
+            textBox3.Hide();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -73,9 +75,10 @@ namespace GUI
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine(ex.Message);
+                textBox3.Show();
+                textBox3.Text = ex.Message;
                 label2.ForeColor = Color.Red;
-                label2.Text = "Error-prone. Check the console.";
+                label2.Text = "Error!";
                 button3.Enabled = false;
             }
         }

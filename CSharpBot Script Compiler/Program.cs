@@ -20,19 +20,30 @@ namespace CSBCompiler
 
             if (args.Length == 1)
             {
-                try
+                if (args[1].EndsWith(".csb"))
                 {
-                    Scanner scanner = null;
-                    using (TextReader input = File.OpenText(args[0]))
+                    try
                     {
-                        scanner = new Scanner(input);
+                        Scanner scanner = null;
+                        using (TextReader input = File.OpenText(args[0]))
+                        {
+                            scanner = new Scanner(input);
+                        }
+                        Parser parser = new Parser(scanner.Tokens);
+                        CodeGen codeGen = new CodeGen(parser.Result, Path.GetFileNameWithoutExtension(args[0]) + ".exe");
                     }
-                    Parser parser = new Parser(scanner.Tokens);
-                    CodeGen codeGen = new CodeGen(parser.Result, Path.GetFileNameWithoutExtension(args[0]) + ".exe");
+                    catch (Exception e)
+                    {
+                        Console.Error.WriteLine(e.Message);
+                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.Error.WriteLine(e.Message);
+                    Console.WriteLine("File does not end with .csb");
+                    Console.WriteLine("Opening GUI...");
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new GUI.GUI());
                 }
             }
         }
