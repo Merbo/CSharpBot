@@ -7,7 +7,22 @@ namespace CSharpBot
 {
    public class Botop
     {
-        BotOpDB conn = new BotOpDB("Data Source=BotOpDB.sdf");
+        BotOpDB conn;
+
+	public Botop()
+	{
+	    /** FIXME: Not cross-platform-compatible: BotOpDB
+	     *
+	     * The file-based database connection is currently not supported
+             * by Mono. This problem has been found by accident.
+             *
+             * Exception: NotSupportedException
+             */
+            if(!Environment.OSVersion.Platform.ToString().ToLower().Contains("win"))
+                Console.WriteLine("WARNING: BotOp database not usable on non-Windows systems.");
+            else
+	        conn = new BotOpDB("Data Source=BotOpDB.sdf");
+	}
 
         public void AddBotOp(string nickname, int level=5)
         {

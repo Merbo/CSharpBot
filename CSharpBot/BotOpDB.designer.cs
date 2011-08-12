@@ -37,6 +37,8 @@ namespace CSharpBot
 		public BotOpDB(string connection) : 
 				base(connection, mappingSource)
 		{
+                        if(!Environment.OSVersion.Platform.ToString().ToLower().Contains("win")) // Not windows?
+                          throw new NotSupportedException("Database is not supported on Linux.");
 			OnCreated();
 		}
 		
