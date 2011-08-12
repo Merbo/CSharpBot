@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace CSharpBot
 {
@@ -33,7 +34,7 @@ namespace CSharpBot
                     else if (identifier[1].Equals("time"))
                         tmp = DateTime.Now.ToString("h:mm tt");
                     //This marks the beginning of the identifiers with () in them ($calc(1+1))
-                    else if (identifier[1].EndsWith("(") && identifier[1].EndsWith(")"))
+                    if (identifier[1].Contains('(') && identifier[1].Contains(')'))
                     {
                         string[] temp1 = identifier[1].Split('(');
                         string[] temp = temp1[1].Split(')');
@@ -43,9 +44,9 @@ namespace CSharpBot
                             {
                                 tmp = MathParser.Parse(temp[0]);
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                //Nothing.
+                                MessageBox.Show(e.ToString());
                             }
                         }
                     }  
@@ -59,7 +60,7 @@ namespace CSharpBot
             return codeout;
         }
 
-        public  void RunScript(string input)
+        public void RunScript(string input)
         {
             string code = input;
             code = stripnewlines(code);
