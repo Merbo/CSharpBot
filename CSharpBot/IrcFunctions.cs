@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
-
+using System.Reflection;
 namespace CSharpBot
 {
     public class IrcFunctions
@@ -65,7 +65,6 @@ namespace CSharpBot
         /// </summary>
         /// <param name="reason">Optional reason for QUIT</param>
         public void Quit(string reason = "Bye!")
-
         {
             try
             {
@@ -139,7 +138,8 @@ namespace CSharpBot
         /// Tells the bot to join a channel.
         /// </summary>
         /// <param name="channel">The channel</param>
-        public void Join(string channel) {
+        public void Join(string channel)
+        {
             CSharpBot.writer.WriteLine("JOIN " + channel);
         }
 
@@ -165,7 +165,7 @@ namespace CSharpBot
             string binary = "1" + (invisible ? "1" : "0") + (getwallops ? "1" : "0");
             CSharpBot.writer.WriteLine("USER " + username + " " + Convert.ToUInt16(binary, 2).ToString() + " * :" + realname);
         }
-        
+
         /// <summary>
         /// Tells the server our password.
         /// </summary>
@@ -285,7 +285,7 @@ The geru meditation is:
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "config <list|edit> [<variable> <value>] -- Tells current config.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "join <chan> -- Joins the bot to a channel");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "part <chan> [reason] -- Parts the bot from a channel");
-            if (IsOwner(hostmask) || (check.isBotOp(nick) && (check.GetLevel(nick) >= 3 ))) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
+            if (IsOwner(hostmask) || (check.isBotOp(nick) && (check.GetLevel(nick) >= 3))) DelayNotice(nick, prefix + "kick <nick> [reason] -- Kicks <nick> from the current channel for [reason], or, if [reason] is not specified, kicks user with one of the kick lines in the kicks database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "kicklines <add|clear|read|total> <kickmessage|(do nothing)|number|(do nothing)> -- Does various actions to the kicklines database.");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "reset -- Clears the config and restarts the bot");
             if (IsOwner(hostmask)) DelayNotice(nick, prefix + "restart -- Restarts the bot");
@@ -317,6 +317,31 @@ The geru meditation is:
         public void SendCTCP(string nickname, string data)
         {
             WriteData("PRIVMSG " + nickname + " :\x01" + data + "\x01");
+        }
+
+
+
+        public bool CheckEXE(string fileName)
+        {
+            // read the bytes from the application exe file
+            FileStream fs = new FileStream(fileName, FileMode.Open);
+            BinaryReader br = new BinaryReader(fs);
+            byte[] bin = br.ReadBytes(Convert.ToInt32(fs.Length));
+            fs.Close();
+            br.Close();
+            Assembly assem = Assembly.Load(bin);
+
+            // search for the Entry Point
+            MethodInfo method = assem.EntryPoint;
+
+            if (method != null || method.Name == "CSBMain")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

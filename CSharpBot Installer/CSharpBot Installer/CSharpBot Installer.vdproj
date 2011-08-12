@@ -381,7 +381,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{31C00B09-7323-4E18-A293-7656BB66F909}"
+        "PackageCode" = "8:{DD37F7B7-10BB-47A1-9E58-A7E955163C10}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
