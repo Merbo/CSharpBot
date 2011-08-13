@@ -3,30 +3,53 @@ using System.Text;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
+using System.Linq;
 
 namespace CSharpBot
 {
+    public class Clients
+    {
+        LiveServer LiveServer = new LiveServer();
+        string[] clients;
+        public void AddClient(string client)
+        {
+            clients[clients.Length] = client;
+        }
+        public void DelClient(string client)
+        {
+            for (int i = 0; i < clients.Length; i++)
+            {
+                if (clients[i] == client)
+                {
+                    for (int x = i; x < clients.Length; x++)
+                    {
+                        clients[x] = clients[x + 1];    
+                    }
+                }
+            }
+        }
+        public void SendBytes(string input)
+        {
+            TcpClient tcpClient = (TcpClient)LiveServer.client;
+            NetworkStream clientStream = tcpClient.GetStream();
+            clientStream.Write(LiveServer.encoder.GetBytes(input), 0, input.Length);
+        }
+    }
 
     public class LiveServer
     {
+        Clients Clients = new Clients();
         private TcpListener tcpListener;
         private Thread listenThread;
-        TcpClient client;
+        public TcpClient client;
         LiveScript ls = new LiveScript();
         public string password;
-        ASCIIEncoding encoder = new ASCIIEncoding();
+        public ASCIIEncoding encoder = new ASCIIEncoding();
 
         public LiveServer() {
             this.tcpListener = new TcpListener(IPAddress.Any, 3000);
             this.listenThread = new Thread(new ThreadStart(ListenForClients));
             this.listenThread.Start();
-        }
-
-        void SendBytes(string input)
-        {
-            TcpClient tcpClient = (TcpClient)client;
-            NetworkStream clientStream = tcpClient.GetStream();
-            clientStream.Write(encoder.GetBytes(input), 0, input.Length);
         }
 
         private void ListenForClients()
@@ -86,9 +109,9 @@ namespace CSharpBot
 
                     string commandin = encoder.GetString(message, 0, bytesRead);
                     string[] command = commandin.Split(' ');
-                    Console.WriteLine(encoder.GetString(message, 0, bytesRead));
-                    Console.WriteLine(msg == password);
-                    Console.WriteLine(msg + "!=" + password);
+                    Console.WriteLine("LiveServer activity: " + commandin);
+                    //Console.WriteLine(msg == password);
+                    //Console.WriteLine(msg + "!=" + password);
                     //Console.WriteLine("Password:" + password);
                     //Console.WriteLine(password.CompareTo(commandin));
                     //Console.WriteLine(string.Compare(commandin, password));
@@ -96,24 +119,28 @@ namespace CSharpBot
                     switch (command[0].ToLower())
                     {
                         case "join":
-                            SendBytes("002 " + command[1]);
+                            Clients.SendBytes("002 " + command[1]);
                             break;
                     }
                     if (msg == password) 
                     {
                         Console.WriteLine("Server: Client has authenticated.");
                         
-                        SendBytes("003");
+                        Clients.SendBytes("003");
                         
                         hasauth = true;
                     }
+                    else if (msg.Length > 0)
+                    {
+                        Clients.SendBytes("004 " + command[0] + " " + string.Join(" ", command.Skip(1)));
+                    }
                     else if (msg.Length == 0)
                     {
-                        SendBytes("000");
+                        Clients.SendBytes("000");
                     }
                     else
                     {
-                        SendBytes("001");
+                        Clients.SendBytes("001");
                     }
                 }
                 

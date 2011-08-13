@@ -16,10 +16,7 @@ namespace SimpleLiveClient
 
         public static void SendBytes(string input)
         {
-            Console.WriteLine(input);
-            //clientStream.Write(bfer, 0, bfer.Length);
             byte[] cmd = encoder.GetBytes(input);
-            Console.WriteLine(encoder.GetString(cmd,0,cmd.Length));
             clientStream.Write(cmd, 0, cmd.Length);
         }
         static void Main(string[] args)
@@ -29,17 +26,17 @@ namespace SimpleLiveClient
                 bool hasauth = false;
                 bool haspass = false;
                 retryserver:
-                Console.Write("Server:");
+                Console.Write("Server: ");
                 string server = Console.ReadLine();
                 if (server == "")
                     goto retryserver;
                 retrynick:
-                Console.Write("Nick:");
+                Console.Write("Nick: ");
                 string nick = Console.ReadLine();
                 if (nick == "")
                     goto retrynick;
                 
-                Console.Write("Password(If any):");
+                Console.Write("Password(If any): ");
                 string pass = Console.ReadLine();
                 if (pass != "")
                     haspass = true;
@@ -77,13 +74,12 @@ namespace SimpleLiveClient
                             default:
                                 System.Console.WriteLine("Unknown command.");
                                 goto retrycmd;
-                                break;
                         }
                     }
                     else
                     {
                         
-                        SendBytes(bfr);
+                        SendBytes(nick + " " + bfr);
                     }
                     clientStream.Flush();
                     //Console.WriteLine("OK");
@@ -115,9 +111,11 @@ namespace SimpleLiveClient
                             Console.WriteLine("(003) You have been authenticated!");
                             hasauth = true;
                             break;
-
+                        case "004":
+                            Console.WriteLine("<" + msg[1] + "> " + string.Join(" ", msg.Skip(2)));
+                            break;
                         default:
-                            Console.WriteLine("Unknown Responce From Server:");
+                            Console.WriteLine("Unknown Response From Server:");
                             Console.WriteLine(msg[0]);
                             break;
 
