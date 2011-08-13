@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_26CE5777B48443ED936914924CAFAD36"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -41,6 +47,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_26CE5777B48443ED936914924CAFAD36"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -209,6 +221,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -528,6 +548,20 @@
             "Target" = "8:_FEA3FCDE2D4B4D39B4C4A5961C541DA7"
             "Folder" = "8:_FEA3FCDE2D4B4D39B4C4A5961C541DA7"
             "WorkingFolder" = "8:_FEA3FCDE2D4B4D39B4C4A5961C541DA7"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_731B1F462C7E4767A062685E44C09EB9"
+            {
+            "Name" = "8:CSharpBot Control Client"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
+            "Folder" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
+            "WorkingFolder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
             "Icon" = "8:"
             "Feature" = "8:"
             }
@@ -958,6 +992,34 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0B3FDC203FA547029D66F5D9EF6BE1D9"
+            {
+            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\x86\\Release\\ControlClient.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{CD555BAC-2046-4445-998E-71042D10C664}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26CE5777B48443ED936914924CAFAD36"
             {
             "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\CSharpBot\\CSBc.exe"
