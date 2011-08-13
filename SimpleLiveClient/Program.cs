@@ -13,28 +13,54 @@ namespace SimpleLiveClient
         public static NetworkStream clientStream;
         public static ASCIIEncoding encoder = new ASCIIEncoding();
         public static string input;
-        
+
+        public static void SendBytes(string input)
+        {
+            //clientStream.Write(bfer, 0, bfer.Length);
+            byte[] cmd = System.Text.Encoding.ASCII.GetBytes(input);
+            clientStream.Write(cmd, 0, cmd.Length);
+        }
         static void Main(string[] args)
         {
             try
             {
                 Console.Write("Server:");
                 string server = Console.ReadLine();
+                Console.Write("Nick:");
+                string nick = Console.ReadLine();
+                Console.Write("Pass:");
+                string pass = Console.ReadLine();
                 client.Connect(server, 3000);
                 // client.Connect(serverEndPoint);
                 Console.WriteLine();
                 clientStream = client.GetStream();
 
-                Console.Write('>');
                 input = Console.ReadLine();
                 int bytesRead;
                 byte[] message = new byte[4096];
-                while (input != "END")
+                while (input.ToLower() != "/quit")
                 {
 
                     byte[] buffer = encoder.GetBytes(input);
-
-                    clientStream.Write(buffer, 0, buffer.Length);
+                    string bfr = buffer.ToString();
+                    if (bfr.StartsWith("/"))
+                    {
+                        string[] bffr = bfr.Split('/');
+                        string[] param = bffr[1].Split(' ');
+                        switch (bffr[1].ToLower())
+                        {
+                            case "join":
+                                SendBytes("JOIN " + nick);
+                                break;
+                            case "cmd":
+                                SendBytes("*" + string.Join(" ", bffr.Skip(2)));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        SendBytes(bfr);
+                    }
                     clientStream.Flush();
                     //Console.WriteLine("OK");
                     
@@ -49,24 +75,26 @@ namespace SimpleLiveClient
                         break;
                     }
                     string decodedMessage = encoder.GetString(message, 0, bytesRead);
-               
-                    if (decodedMessage == "OK")
+                    string[] msg = decodedMessage.Split(' ');
+                    switch (msg[0])
                     {
-                        Console.WriteLine("OK");
+                        case "000":
+                            return;
+                        case "001":
+                            Console.WriteLine("(001) Message Sent!");
+                            break;
+                        case "002":
+                            Console.WriteLine("(002) " + msg[1] + " joined the party line.");
+                            break;
                     }
-                    else if (decodedMessage == "END")
-                    {
-                        Environment.Exit(0);
-                    }
-                    else { }
-                    Console.Write('>');
                     input = Console.ReadLine();
                 }
                 client.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Environment.Exit(0);
+                //Environment.Exit(0);
+                return;
             }
         }
     }

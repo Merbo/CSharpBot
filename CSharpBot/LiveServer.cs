@@ -22,6 +22,13 @@ namespace CSharpBot
             this.listenThread.Start();
         }
 
+        void SendBytes(string input)
+        {
+            TcpClient tcpClient = (TcpClient)client;
+            NetworkStream clientStream = tcpClient.GetStream();
+            clientStream.Write(encoder.GetBytes(input), 0, input.Length);
+        }
+
         private void ListenForClients()
         {
             this.tcpListener.Start();
@@ -69,23 +76,31 @@ namespace CSharpBot
                 //message has successfully been received
                
              //   Console.WriteLine(encoder.GetString(message, 0, bytesRead));
-                if (hasauth)
+                string msg = message.ToString();
+                if (hasauth && msg.StartsWith("*"))
                 {
-                    ls.RunScript(encoder.GetString(message, 0, bytesRead));
+                    ls.RunScript(encoder.GetString(message, 1, bytesRead));
                 }
                 else
                 {
-                    if (encoder.GetString(message, 0, bytesRead) == password)
+                    string[] command = encoder.GetString(message, 0, bytesRead).Split(' ');
+                    switch (command[0].ToLower())
                     {
-                        clientStream.Write(encoder.GetBytes("OK"), 0, 2);
+                        case "join":
+                            SendBytes("002 " + command[1]);
+                            break;
+                    }
+                    if (msg == password)
+                    {
+                        SendBytes("001");
                         hasauth = true;
                     }
-                    else
+                    else if (msg.Length == 0)
                     {
-                        clientStream.Write(encoder.GetBytes("END"), 0, 3);
+                        SendBytes("000");
                     }
                 }
-                clientStream.Write(encoder.GetBytes("OK"), 0, 2);
+                SendBytes("001");
             }
 
            // tcpClient.Close();

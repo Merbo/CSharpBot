@@ -150,11 +150,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotOpDB.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>BotOpDB.dbml</DependentUpon>
-    </Compile>
+    <Compile Include="BotOpDB.designer.cs" />
     <Compile Include="ControlWindow.cs">
       <SubType>Form</SubType>
     </Compile>

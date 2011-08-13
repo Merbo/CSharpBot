@@ -38,7 +38,7 @@ namespace CSharpBot
 
             Console.WriteLine("Bot is now running.");
             server = new LiveServer();
-            server.password = "PASSWORD"; //ICEDREAM PLEASE HELP ME WITH THE CONFIG!
+            server.password = "pswd"; //ICEDREAM PLEASE HELP ME WITH THE CONFIG!
             Console.WriteLine("Server is now running.");
             Console.WriteLine();
             
