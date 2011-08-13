@@ -55,7 +55,7 @@ namespace CSharpBot
             int level = 0;
             foreach (var c in q)
             {                          //Statements in here only executed if match found
-                level = c.AccessLevel.Value;
+                level = c.AccessLevel;
 
             }
             return level;

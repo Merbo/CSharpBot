@@ -57,6 +57,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x86'">
     <OutputPath>bin\x86\CSharpBot\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LiveClient-Debug|x86'">
+    <OutputPath>bin\x86\LiveClient-Debug\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />

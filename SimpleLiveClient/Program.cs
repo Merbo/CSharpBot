@@ -16,25 +16,38 @@ namespace SimpleLiveClient
 
         public static void SendBytes(string input)
         {
+            Console.WriteLine(input);
             //clientStream.Write(bfer, 0, bfer.Length);
-            byte[] cmd = System.Text.Encoding.ASCII.GetBytes(input);
+            byte[] cmd = encoder.GetBytes(input);
+            Console.WriteLine(encoder.GetString(cmd,0,cmd.Length));
             clientStream.Write(cmd, 0, cmd.Length);
         }
         static void Main(string[] args)
         {
             try
             {
+                bool hasauth = false;
+                bool haspass = false;
+                retryserver:
                 Console.Write("Server:");
                 string server = Console.ReadLine();
+                if (server == "")
+                    goto retryserver;
+                retrynick:
                 Console.Write("Nick:");
                 string nick = Console.ReadLine();
-                Console.Write("Pass:");
+                if (nick == "")
+                    goto retrynick;
+                
+                Console.Write("Password(If any):");
                 string pass = Console.ReadLine();
+                if (pass != "")
+                    haspass = true;
                 client.Connect(server, 3000);
                 // client.Connect(serverEndPoint);
                 Console.WriteLine();
                 clientStream = client.GetStream();
-
+                retrycmd:
                 input = Console.ReadLine();
                 int bytesRead;
                 byte[] message = new byte[4096];
@@ -42,7 +55,7 @@ namespace SimpleLiveClient
                 {
 
                     byte[] buffer = encoder.GetBytes(input);
-                    string bfr = buffer.ToString();
+                    string bfr = encoder.GetString(buffer);
                     if (bfr.StartsWith("/"))
                     {
                         string[] bffr = bfr.Split('/');
@@ -52,13 +65,24 @@ namespace SimpleLiveClient
                             case "join":
                                 SendBytes("JOIN " + nick);
                                 break;
+                            case "auth":
+                                if (haspass && !hasauth)
+                                {
+                                    SendBytes(pass);
+                                }
+                                break;
                             case "cmd":
                                 SendBytes("*" + string.Join(" ", bffr.Skip(2)));
+                                break;
+                            default:
+                                System.Console.WriteLine("Unknown command.");
+                                goto retrycmd;
                                 break;
                         }
                     }
                     else
                     {
+                        
                         SendBytes(bfr);
                     }
                     clientStream.Flush();
@@ -86,6 +110,17 @@ namespace SimpleLiveClient
                         case "002":
                             Console.WriteLine("(002) " + msg[1] + " joined the party line.");
                             break;
+
+                        case "003":
+                            Console.WriteLine("(003) You have been authenticated!");
+                            hasauth = true;
+                            break;
+
+                        default:
+                            Console.WriteLine("Unknown Responce From Server:");
+                            Console.WriteLine(msg[0]);
+                            break;
+
                     }
                     input = Console.ReadLine();
                 }

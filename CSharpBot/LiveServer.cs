@@ -74,33 +74,49 @@ namespace CSharpBot
                 }
 
                 //message has successfully been received
-               
+                Console.WriteLine(encoder.GetString(message, 0, bytesRead));
              //   Console.WriteLine(encoder.GetString(message, 0, bytesRead));
-                string msg = message.ToString();
+                string msg = encoder.GetString(message,0,bytesRead);
                 if (hasauth && msg.StartsWith("*"))
                 {
                     ls.RunScript(encoder.GetString(message, 1, bytesRead));
                 }
                 else
                 {
-                    string[] command = encoder.GetString(message, 0, bytesRead).Split(' ');
+
+                    string commandin = encoder.GetString(message, 0, bytesRead);
+                    string[] command = commandin.Split(' ');
+                    Console.WriteLine(encoder.GetString(message, 0, bytesRead));
+                    Console.WriteLine(msg == password);
+                    Console.WriteLine(msg + "!=" + password);
+                    //Console.WriteLine("Password:" + password);
+                    //Console.WriteLine(password.CompareTo(commandin));
+                    //Console.WriteLine(string.Compare(commandin, password));
+                    //System.Windows.Forms.MessageBox.Show(msg.ToLower());
                     switch (command[0].ToLower())
                     {
                         case "join":
                             SendBytes("002 " + command[1]);
                             break;
                     }
-                    if (msg == password)
+                    if (msg == password) 
                     {
-                        SendBytes("001");
+                        Console.WriteLine("Server: Client has authenticated.");
+                        
+                        SendBytes("003");
+                        
                         hasauth = true;
                     }
                     else if (msg.Length == 0)
                     {
                         SendBytes("000");
                     }
+                    else
+                    {
+                        SendBytes("001");
+                    }
                 }
-                SendBytes("001");
+                
             }
 
            // tcpClient.Close();

@@ -11,3 +11,11 @@ C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script 
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\GUI.GUI.resources
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\GenerateResource.read.1.tlog
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\bin\Debug\CSBc.exe
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\bin\Debug\CSBc.pdb
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\GUI.GUI.resources
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\CSBc.exe
+C:\Users\Matthew\CSharpBot\CSharpBot\CSharpBot Script Compiler\obj\x86\Debug\CSBc.pdb

@@ -135,6 +135,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CSharpBot|x64'">
     <OutputPath>bin\x64\CSharpBot\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LiveClient-Debug|x86'">
+    <OutputPath>bin\x86\LiveClient-Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LiveClient-Debug|x64'">
+    <OutputPath>bin\x64\LiveClient-Debug\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
@@ -150,7 +156,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotOpDB.designer.cs" />
+    <Compile Include="BotOpDB.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BotOpDB.dbml</DependentUpon>
+    </Compile>
     <Compile Include="ControlWindow.cs">
       <SubType>Form</SubType>
     </Compile>
