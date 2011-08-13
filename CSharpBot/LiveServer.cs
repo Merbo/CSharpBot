@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Net.Sockets;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Net;
 using System.Linq;
@@ -9,14 +11,22 @@ namespace CSharpBot
 {
     public class Clients
     {
-        LiveServer LiveServer = new LiveServer();
-        string[] clients;
+        internal LiveServer LiveServer;
+
+        public Clients(LiveServer theserver)
+        {
+            this.LiveServer = theserver;
+        }
+
+        List<string> clients = new List<string>();
+
         public void AddClient(string client)
         {
-            clients[clients.Length] = client;
+            clients.Add(client);
         }
         public void DelClient(string client)
         {
+            /*
             for (int i = 0; i < clients.Length; i++)
             {
                 if (clients[i] == client)
@@ -27,6 +37,8 @@ namespace CSharpBot
                     }
                 }
             }
+             */
+            clients.Remove(client);
         }
         public void SendBytes(string input)
         {
@@ -38,15 +50,17 @@ namespace CSharpBot
 
     public class LiveServer
     {
-        Clients Clients = new Clients();
+        Clients Clients;
         private TcpListener tcpListener;
         private Thread listenThread;
-        public TcpClient client;
+        internal TcpClient client;
         LiveScript ls = new LiveScript();
-        public string password;
+        public string Password;
+
         public ASCIIEncoding encoder = new ASCIIEncoding();
 
         public LiveServer() {
+            this.Clients = new Clients(this);
             this.tcpListener = new TcpListener(IPAddress.Any, 3000);
             this.listenThread = new Thread(new ThreadStart(ListenForClients));
             this.listenThread.Start();
@@ -54,6 +68,7 @@ namespace CSharpBot
 
         private void ListenForClients()
         {
+            this.tcpListener.Stop(); // Stop if active
             this.tcpListener.Start();
 
             while (true)
@@ -64,6 +79,7 @@ namespace CSharpBot
                 //create a thread to handle communication 
                 //with connected client
                 Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
+                clientThread.IsBackground = true; // make it work in background, so other clients may connect, too.
                 clientThread.Start(client);
             }
         }
@@ -122,7 +138,7 @@ namespace CSharpBot
                             Clients.SendBytes("002 " + command[1]);
                             break;
                     }
-                    if (msg == password) 
+                    if (msg == Password) 
                     {
                         Console.WriteLine("Server: Client has authenticated.");
                         
