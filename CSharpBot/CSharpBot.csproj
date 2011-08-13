@@ -141,6 +141,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LiveClient-Debug|x64'">
     <OutputPath>bin\x64\LiveClient-Debug\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Client|x86'">
+    <OutputPath>bin\x86\Client\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Client|x64'">
+    <OutputPath>bin\x64\Client\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />

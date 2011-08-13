@@ -13,12 +13,11 @@ namespace SimpleLiveClient
         public static NetworkStream clientStream;
         public static ASCIIEncoding encoder = new ASCIIEncoding();
         public static string input;
+        public static string nick;
+        public static string server;
+        public static string pass;
 
-        public static void SendBytes(string input)
-        {
-            byte[] cmd = encoder.GetBytes(input);
-            clientStream.Write(cmd, 0, cmd.Length);
-        }
+
         static void Main(string[] args)
         {
             try
@@ -27,17 +26,16 @@ namespace SimpleLiveClient
                 bool haspass = false;
                 retryserver:
                 Console.Write("Server: ");
-                string server = Console.ReadLine();
+                server = Console.ReadLine();
                 if (server == "")
                     goto retryserver;
                 retrynick:
                 Console.Write("Nick: ");
-                string nick = Console.ReadLine();
+                nick = Console.ReadLine();
                 if (nick == "")
                     goto retrynick;
-                
                 Console.Write("Password(If any): ");
-                string pass = Console.ReadLine();
+                pass = Console.ReadLine();
                 if (pass != "")
                     haspass = true;
                 client.Connect(server, 3000);
@@ -78,20 +76,19 @@ namespace SimpleLiveClient
                     }
                     else
                     {
-                        
-                        SendBytes(nick + " " + bfr);
+                        SendBytes(bfr);
                     }
                     clientStream.Flush();
-                    //Console.WriteLine("OK");
                     
                     try
                     {
                         //blocks until a client sends a message
                         bytesRead = clientStream.Read(message, 0, 4096);
                     }
-                    catch
+                    catch (Exception e)
                     {
                         //a socket error has occured
+                        Console.WriteLine(e.ToString());
                         break;
                     }
                     string decodedMessage = encoder.GetString(message, 0, bytesRead);
@@ -118,7 +115,6 @@ namespace SimpleLiveClient
                             Console.WriteLine("Unknown Response From Server:");
                             Console.WriteLine(msg[0]);
                             break;
-
                     }
                     input = Console.ReadLine();
                 }
@@ -129,6 +125,11 @@ namespace SimpleLiveClient
                 //Environment.Exit(0);
                 return;
             }
+        }
+        public static void SendBytes(string input)
+        {
+            byte[] bytes = encoder.GetBytes(nick + " " + input);
+            clientStream.Write(bytes, 0, bytes.Length);
         }
     }
 }

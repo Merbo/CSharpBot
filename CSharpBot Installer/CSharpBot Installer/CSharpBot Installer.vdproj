@@ -95,6 +95,22 @@
                 }
             }
         }
+        "Client"
+        {
+        "DisplayName" = "8:Client"
+        "IsDebugOnly" = "11:FALSE"
+        "IsReleaseOnly" = "11:FALSE"
+        "OutputFilename" = "8:Client\\CSharpBot Installer.msi"
+        "PackageFilesAs" = "3:2"
+        "PackageFileSize" = "3:-2147483648"
+        "CabType" = "3:1"
+        "Compression" = "3:2"
+        "SignOutput" = "11:FALSE"
+        "CertificateFile" = "8:"
+        "PrivateKeyFile" = "8:"
+        "TimeStampServer" = "8:"
+        "InstallerBootstrapper" = "3:2"
+        }
         "Compiler"
         {
         "DisplayName" = "8:Compiler"
@@ -417,7 +433,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{B17308FA-5A41-43B9-B0E5-AC1F202C33C4}"
+        "PackageCode" = "8:{60A73A07-8BB4-4D44-AD06-352427DBD02E}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -994,7 +1010,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0B3FDC203FA547029D66F5D9EF6BE1D9"
             {
-            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\x86\\Release\\ControlClient.exe"
+            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\x86\\Debug\\ControlClient.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
@@ -1022,7 +1038,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26CE5777B48443ED936914924CAFAD36"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\CSharpBot\\CSBc.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Debug\\CSBc.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B48650C5737045A186DF72BAAB785801"
@@ -1050,7 +1066,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\CSharpBot\\CSharpBot.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Debug\\CSharpBot.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"

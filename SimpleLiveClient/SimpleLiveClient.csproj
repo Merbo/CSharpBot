@@ -48,6 +48,12 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\LiveClient-Debug\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Client|x86'">
+    <OutputPath>bin\x86\Client\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Client|AnyCPU'">
+    <OutputPath>bin\Client\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />

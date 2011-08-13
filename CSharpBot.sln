@@ -19,6 +19,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		All|x64 = All|x64
 		All|x86 = All|x86
+		Client|x64 = Client|x64
+		Client|x86 = Client|x86
 		Compiler|x64 = Compiler|x64
 		Compiler|x86 = Compiler|x86
 		CSharpBot|x64 = CSharpBot|x64
@@ -37,12 +39,13 @@ Global
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.All|x64.Build.0 = Release|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.All|x86.ActiveCfg = Release|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.All|x86.Build.0 = Release|x86
+		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Client|x64.ActiveCfg = Client|x64
+		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Client|x86.ActiveCfg = Client|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Compiler|x64.ActiveCfg = Compiler|x64
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Compiler|x86.ActiveCfg = Compiler|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.CSharpBot|x64.ActiveCfg = CSharpBot|x64
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.CSharpBot|x64.Build.0 = CSharpBot|x64
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.CSharpBot|x86.ActiveCfg = CSharpBot|x86
-		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.CSharpBot|x86.Build.0 = CSharpBot|x86
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x64.ActiveCfg = Debug|x64
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x64.Build.0 = Debug|x64
 		{163DA8BC-726B-4FDB-A78E-CCDC0D7D1431}.Debug|x86.ActiveCfg = Debug|x86
@@ -61,6 +64,8 @@ Global
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.All|x64.Build.0 = Release
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.All|x86.ActiveCfg = Release
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.All|x86.Build.0 = Release
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Client|x64.ActiveCfg = Client
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Client|x86.ActiveCfg = Client
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Compiler|x64.ActiveCfg = Compiler
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Compiler|x86.ActiveCfg = Compiler
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.CSharpBot|x64.ActiveCfg = CSharpBot
@@ -71,6 +76,7 @@ Global
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Debug|x86.Build.0 = Debug
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Debug-all|x64.ActiveCfg = Debug
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Debug-all|x86.ActiveCfg = Debug
+		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Debug-all|x86.Build.0 = Debug
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Installer|x64.ActiveCfg = Installer
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Installer|x64.Build.0 = Installer
 		{2C4F7267-9DE4-4836-96C0-F069CD4DEA37}.Installer|x86.ActiveCfg = Installer
@@ -83,6 +89,8 @@ Global
 		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.All|x64.Build.0 = Release|x86
 		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.All|x86.ActiveCfg = Release|x86
 		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.All|x86.Build.0 = Release|x86
+		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.Client|x64.ActiveCfg = Client|x86
+		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.Client|x86.ActiveCfg = Client|x86
 		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.Compiler|x64.ActiveCfg = Compiler|x86
 		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.Compiler|x64.Build.0 = Compiler|x86
 		{844E0B03-FE30-4D1B-8B20-4FEEA56A2BA1}.Compiler|x86.ActiveCfg = Compiler|x86
@@ -104,6 +112,10 @@ Global
 		{CD555BAC-2046-4445-998E-71042D10C664}.All|x64.ActiveCfg = Release|x86
 		{CD555BAC-2046-4445-998E-71042D10C664}.All|x86.ActiveCfg = Release|x86
 		{CD555BAC-2046-4445-998E-71042D10C664}.All|x86.Build.0 = Release|x86
+		{CD555BAC-2046-4445-998E-71042D10C664}.Client|x64.ActiveCfg = Client|Any CPU
+		{CD555BAC-2046-4445-998E-71042D10C664}.Client|x64.Build.0 = Client|Any CPU
+		{CD555BAC-2046-4445-998E-71042D10C664}.Client|x86.ActiveCfg = Client|x86
+		{CD555BAC-2046-4445-998E-71042D10C664}.Client|x86.Build.0 = Client|x86
 		{CD555BAC-2046-4445-998E-71042D10C664}.Compiler|x64.ActiveCfg = Release|x86
 		{CD555BAC-2046-4445-998E-71042D10C664}.Compiler|x86.ActiveCfg = Release|x86
 		{CD555BAC-2046-4445-998E-71042D10C664}.Compiler|x86.Build.0 = Release|x86

@@ -18,7 +18,8 @@ namespace CSharpBot
             this.LiveServer = theserver;
         }
 
-        List<string> clients = new List<string>();
+        public List<string> clients = new List<string>();
+        public List<string> Admins = new List<string>();
 
         public void AddClient(string client)
         {
@@ -26,19 +27,15 @@ namespace CSharpBot
         }
         public void DelClient(string client)
         {
-            /*
-            for (int i = 0; i < clients.Length; i++)
-            {
-                if (clients[i] == client)
-                {
-                    for (int x = i; x < clients.Length; x++)
-                    {
-                        clients[x] = clients[x + 1];    
-                    }
-                }
-            }
-             */
             clients.Remove(client);
+        }
+        public void AddAdmin(string admin)
+        {
+            Admins.Add(admin);
+        }
+        public void DelAdmin(string admin)
+        {
+            Admins.Remove(admin);
         }
         public void SendBytes(string input)
         {
@@ -68,6 +65,7 @@ namespace CSharpBot
 
         private void ListenForClients()
         {
+
             this.tcpListener.Stop(); // Stop if active
             this.tcpListener.Start();
 
@@ -90,7 +88,6 @@ namespace CSharpBot
 
             byte[] message = new byte[4096];
             int bytesRead;
-            bool hasauth = false;
             while (true)
             {
                 bytesRead = 0;
@@ -111,14 +108,17 @@ namespace CSharpBot
                     //the client has disconnected from the server
                     break;
                 }
-
                 //message has successfully been received
                 Console.WriteLine(encoder.GetString(message, 0, bytesRead));
-             //   Console.WriteLine(encoder.GetString(message, 0, bytesRead));
-                string msg = encoder.GetString(message,0,bytesRead);
-                if (hasauth && msg.StartsWith("*"))
+                //Console.WriteLine(encoder.GetString(message, 0, bytesRead));
+                string msg = encoder.GetString(message, 0, bytesRead);
+                string[] cmd = msg.Split(' ');
+                if (cmd.Length > 1)
                 {
-                    ls.RunScript(encoder.GetString(message, 1, bytesRead));
+                    if (Clients.Admins.Contains(cmd[0].ToString()) && cmd[1].ToString().StartsWith("*"))
+                    {
+                        ls.RunScript(encoder.GetString(message, cmd[0].ToString().Length + 1, bytesRead));
+                    }
                 }
                 else
                 {
@@ -126,31 +126,22 @@ namespace CSharpBot
                     string commandin = encoder.GetString(message, 0, bytesRead);
                     string[] command = commandin.Split(' ');
                     Console.WriteLine("LiveServer activity: " + commandin);
-                    //Console.WriteLine(msg == password);
-                    //Console.WriteLine(msg + "!=" + password);
-                    //Console.WriteLine("Password:" + password);
-                    //Console.WriteLine(password.CompareTo(commandin));
-                    //Console.WriteLine(string.Compare(commandin, password));
-                    //System.Windows.Forms.MessageBox.Show(msg.ToLower());
-                    switch (command[0].ToLower())
+                    switch (command[1].ToLower())
                     {
                         case "join":
                             Clients.SendBytes("002 " + command[1]);
                             break;
+                        case "pass":
+                            Console.WriteLine("Server: Client has authenticated.");
+                            Clients.SendBytes("003");
+                            Clients.AddAdmin(command[0]);
+                            break;
                     }
-                    if (msg == Password) 
-                    {
-                        Console.WriteLine("Server: Client has authenticated.");
-                        
-                        Clients.SendBytes("003");
-                        
-                        hasauth = true;
-                    }
-                    else if (msg.Length > 0)
+                    if (command.Length > 2)
                     {
                         Clients.SendBytes("004 " + command[0] + " " + string.Join(" ", command.Skip(1)));
                     }
-                    else if (msg.Length == 0)
+                    else if (command.Length == 0)
                     {
                         Clients.SendBytes("000");
                     }
