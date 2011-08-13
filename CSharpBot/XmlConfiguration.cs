@@ -134,6 +134,31 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// The internal server's password
+        /// </summary>
+        public string LiveserverPassword
+        {
+            get
+            {
+                try
+                {
+                    return GetChildByName("liveserver").Attributes["password"].Value;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (LiveserverPassword == null) // No password attribute
+                    GetChildByName("liveserver").Attributes.Append(ConfigFile.OwnerDocument.CreateAttribute("password"));
+                if ((GetChildByName("liveserver").Attributes["password"].Value = value) == null) // To be removed
+                    GetChildByName("liveserver").Attributes.Remove(GetChildByName("liveserver").Attributes["password"]);
+            }
+        }
+
+        /// <summary>
         /// The NickServ account
         /// </summary>
         public string NickServAccount
@@ -190,7 +215,7 @@ namespace CSharpBot
                     {
                         ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement("filelogging"));
                         GetChildByName("filelogging").Attributes.Append(ConfigFile.OwnerDocument.CreateAttribute("path"));
-                        GetChildByName("filelogging").Attributes["path"].Value = "CSharpBot.log";
+                        Logfile = "CSharpBot.log";
                     }
                 }
                 else
@@ -281,15 +306,16 @@ namespace CSharpBot
             Configuration.AppendChild(Configuration.CreateElement("csharpbot")); // root node
 
             // child nodes of document
-            CreateElement("prefix");
+            CreateElement("prefix").InnerText = ".";
             CreateElement("ownerhostmask");
-            CreateElement("port");
-            CreateElement("nickname");
+            CreateElement("port").InnerText = "6667";
+            CreateElement("nickname").InnerText = "CSharpBot";
             CreateElement("serverpassword");
             CreateElement("nickserv");
-            CreateElement("server");
-            CreateElement("realname");
-            CreateElement("channel");
+            CreateElement("server").InnerText = "irc.merbosmagic.co.cc";
+            CreateElement("realname").InnerText = "CSharpBot";
+            CreateElement("channel").InnerText = "#CSharpBot";
+            CreateElement("liveserver");
         }
 
         /// <summary>

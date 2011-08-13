@@ -18,7 +18,7 @@ namespace CSharpBot
         public static CSharpBot bot;
         public string currentchan;
         public static ControlWindow cwin = new ControlWindow();
-        public static LiveServer server;
+
         /// <summary>
         /// Our entry point for execution.
         /// </summary>
@@ -29,17 +29,16 @@ namespace CSharpBot
             Console.WriteLine("CSharpBot v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
             Console.WriteLine("\t(c) Merbo August 3, 2011-Present");
             Console.WriteLine("\t(c) Icedream August 5, 2011-Present");
-            Console.WriteLine("\t(c) peapodamus August 7 2011-Present");
+            Console.WriteLine("\t(c) peapodamus August 7, 2011-Present");
             Console.WriteLine();
 
+            // The bot itself
             bot = new CSharpBot();
             bot.ParseArguments(args);
             bot.Run();
 
+
             Console.WriteLine("Bot is now running.");
-            server = new LiveServer();
-            server.password = "pswd"; //ICEDREAM PLEASE HELP ME WITH THE CONFIG!
-            Console.WriteLine("Server is now running.");
             Console.WriteLine();
             
             Application.EnableVisualStyles();
@@ -60,9 +59,10 @@ namespace CSharpBot
             get { return botThread.IsAlive; }
         }
         Thread botThread;
+        LiveServer server;
 
         // Message of the day
-        List<string> motdlines;
+        List<string> motdlines = new List<string>();
         public string MOTDText
         {
             get { return string.Join("\n", MOTDLines); }
@@ -70,6 +70,31 @@ namespace CSharpBot
         public string[] MOTDLines
         {
             get { return motdlines.ToArray(); }
+        }
+
+        public bool IsLiveserverAcknowledged()
+        {
+            return config.ConfigFile.SelectNodes("child::liveserver").Count > 0;
+        }
+        public bool IsLiveserverConfigured()
+        {
+            if (!IsLiveserverAcknowledged())
+                return false;
+            try
+            {
+                return config.ConfigFile.SelectNodes("child::liveserver")[0].Attributes["password"] != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public void StartLiveserver()
+        {
+            server = new LiveServer();
+            server.Password = config.LiveserverPassword;
+            Console.WriteLine("Server is now running.");
         }
 
         NetworkStream stream;
@@ -174,25 +199,29 @@ namespace CSharpBot
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("=== First Use Configuration ===");
-            Console.WriteLine("");
             Console.ResetColor();
+            Console.WriteLine("");
 
             // The SERVER
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Server: ");
+            Console.Write("Server [Default: " + config.Server + "]: ");
             Console.ForegroundColor = ConsoleColor.White;
-            config.Server = Console.ReadLine();
+            string servinput = Console.ReadLine();
+            config.Server = servinput.Trim() != "" ? servinput : config.Server;
 
             // The PORT
-            Console.ForegroundColor = ConsoleColor.Cyan;
             int port = -1;
-            while (port < 0 || port > 0xffff)
+            bool validNumber = false;
+            while (port < 0 || port > 0xffff || !validNumber)
             {
-                Console.Write("Port: ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Port [Default: " + config.Port.ToString() + "]: ");
 
                 // Errors?
                 Console.ForegroundColor = ConsoleColor.White;
-                bool validNumber = int.TryParse(Console.ReadLine(), out port);
+                string portinp;
+                validNumber = int.TryParse(portinp = Console.ReadLine(), out port);
+                if (portinp.Trim() == "") { port = config.Port; validNumber = true; }
                 Console.ForegroundColor = ConsoleColor.Red;
                 if (!validNumber)
                     Console.WriteLine("Sorry, but this is an invalid port number!");
@@ -205,9 +234,10 @@ namespace CSharpBot
 
             // The NICKname
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Nick: ");
+            Console.Write("Nick [Default: " + config.Nickname + "]: ");
             Console.ForegroundColor = ConsoleColor.White;
-            config.Nickname = Console.ReadLine();
+            string nickinput = Console.ReadLine();
+            config.Nickname = nickinput.Trim() != "" ? Console.ReadLine() : config.Nickname;
 
             // The server password
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -228,13 +258,15 @@ namespace CSharpBot
             config.NickServPassword = Console.ReadLine();
 
             // The CHANNEL
+            string chaninput;
             while (!config.Channel.StartsWith("#"))
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Channel: ");
+                Console.Write("Channel [Default: " + config.Channel + "]: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                config.Channel = Console.ReadLine();
+                chaninput = Console.ReadLine();
                 Console.ForegroundColor = ConsoleColor.Red;
+                config.Channel = chaninput.Trim() != "" ? chaninput : config.Channel;
                 if (!config.Channel.StartsWith("#"))
                     Console.WriteLine("Sorry, but channel names always begin with #!");
             }
@@ -248,12 +280,21 @@ namespace CSharpBot
                 config.OwnerHostMask = Console.ReadLine();
                 try
                 {
-                    HostmaskRegex = new Regex(config.OwnerHostMask = "^" + config.OwnerHostMask.Replace(".", "\\.").Replace("*", ".+") + "$");
-                    if (DebuggingEnabled == true)
+                    if (config.OwnerHostMask.Trim() == "")
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("(debug) Parsed Regex: " + HostmaskRegex);
-                        Console.ResetColor();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("You need to enter a hostmask.");
+
+                    }
+                    else
+                    {
+                        HostmaskRegex = new Regex(config.OwnerHostMask = "^" + config.OwnerHostMask.Replace(".", "\\.").Replace("*", ".+") + "$");
+                        if (DebuggingEnabled == true)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("(debug) Parsed Regex: " + HostmaskRegex);
+                            Console.ResetColor();
+                        }
                     }
                 }
                 catch (Exception n)
@@ -268,9 +309,12 @@ namespace CSharpBot
             while (config.Prefix.Length < 1)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Command Prefix (e.g. in '!kick' it is '!'): ");
+                Console.Write("Command Prefix (e.g. in '!kick' it is '!') [Default: " + config.Prefix + "]: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                config.Prefix = Console.ReadKey().KeyChar.ToString();
+                string prefinp = Console.ReadKey().KeyChar.ToString();
+                if (prefinp == "")
+                    prefinp = config.Prefix;
+                config.Prefix = prefinp;
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine();
                 if (config.Prefix.Length < 1)
@@ -278,7 +322,7 @@ namespace CSharpBot
 
             }
 
-                //enable logging?
+        //enable logging?
         retrylogging:
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Enable logging? ([Y]es/[N]o) ");
@@ -305,6 +349,40 @@ namespace CSharpBot
                 Console.WriteLine("You must specify Yes or No!");
                 goto retrylogging;
             }
+            Console.WriteLine();
+
+            // LIVESERVER CONFIGURATION
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("=== Liveserver Configuration ===");
+            Console.ResetColor();
+            Console.WriteLine("");
+
+        retryserver:
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Enable server? ([Y]es/[N]o) ");
+            Console.ForegroundColor = ConsoleColor.White;
+            yn = Console.ReadKey();
+            Console.WriteLine();
+            if (yn.Key == ConsoleKey.Y)
+            {
+                config.EnableFileLogging = true;
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Password? ");
+                Console.ForegroundColor = ConsoleColor.White;
+                config.LiveserverPassword = Console.ReadLine();
+            }
+            else if (yn.Key == ConsoleKey.N)
+            {
+                config.LiveserverPassword = null;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You must specify Yes or No!");
+                goto retryserver;
+            }
+
             // Finishing configuration...
             Console.ResetColor();
             Console.WriteLine();
@@ -372,18 +450,12 @@ namespace CSharpBot
 
         public void Run()
         {
-            if (Thread.CurrentThread.IsBackground == false)
-            {
-                // Make this thread do not block the main thread
-                botThread = new Thread(new ThreadStart(Run));
-                botThread.IsBackground = true;
-                botThread.Start();
-                return;
-            }
-            this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
-            this.Kicked += new KickedHandler(CSharpBot_Kicked);
+            string inputline;
+
         start: // This is the point at which the bot restarts on errors
-            check = new Botop();
+            if (!File.Exists(XmlFileName))
+                Thread.CurrentThread.IsBackground = false;
+
             if (ProgramRestart == true)
             {
                 Console.WriteLine("");
@@ -391,40 +463,74 @@ namespace CSharpBot
                 ProgramRestart = false;
             }
 
-            config = new XmlConfiguration();
-
-            string inputline;
-
-            // Configuration
-            if (!File.Exists(XmlFileName))
+            if (Thread.CurrentThread.IsBackground == false)
             {
-                DoFirstUseSetup();
+                config = new XmlConfiguration();
+                check = new Botop();
+
+
+
+                // Configuration
+                if (!File.Exists(XmlFileName))
+                {
+                    DoFirstUseSetup();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Loading configuration...");
+                    try
+                    {
+                        config.Load(XmlFileName);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Configuration has NOT been loaded. Please check if the configuration is valid and try again.");
+                        if (DebuggingEnabled == true)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            Console.WriteLine(e.ToString());
+                            Console.WriteLine(e.StackTrace);
+                            Console.ForegroundColor = ConsoleColor.DarkCyan;
+                            Console.WriteLine(e.Message);
+                        }
+                        Console.WriteLine("Enter something to exit.");
+                        Console.ReadKey();
+                        return;
+                    }
+                }
+
+                // Make this thread do not block the main thread
+                botThread = new Thread(new ThreadStart(Run));
+                botThread.IsBackground = true;
+                botThread.Start();
+                return;
+            }
+
+            // Liveserver
+            if (!IsLiveserverAcknowledged())
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("WARNING: CSharpBot has now the ability to be accessed over the implemented \"LiveServer\".");
+                Console.WriteLine("You'll need to reset the configuration to use the server.");
+                Console.WriteLine();
+            }
+            if (!IsLiveserverConfigured())
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Liveserver disabled.");
+                Console.ResetColor();
+                Console.WriteLine();
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("Loading configuration...");
-                try
-                {
-                    config.Load(XmlFileName);
-                }
-                catch (Exception e)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Configuration has NOT been loaded. Please check if the configuration is valid and try again.");
-                    if (DebuggingEnabled == true)
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine(e.ToString());
-                        Console.WriteLine(e.StackTrace);
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        Console.WriteLine(e.Message);
-                    }
-                    Console.WriteLine("Enter something to exit.");
-                    Console.ReadKey();
-                    return;
-                }
+                StartLiveserver();
+                Console.WriteLine("Liveserver started.");
             }
+
+            this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
+            this.Kicked += new KickedHandler(CSharpBot_Kicked);
 
             // IRC
             try
@@ -1300,6 +1406,10 @@ namespace CSharpBot
                 Console.ForegroundColor = ConsoleColor.Red;
                 Functions.Log("Private messaging is not available, since we need to identify ourself successfully.");
                 Console.ForegroundColor = ConsoleColor.Yellow;
+            }
+            else if (reply.ReplyCode == IrcReplyCode.RPL_MOTD)
+            {
+                motdlines.Add(reply.Message);
             }
             else if (reply.ReplyCode == IrcReplyCode.RPL_ENDOFMOTD)
             {
