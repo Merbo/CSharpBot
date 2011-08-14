@@ -70,7 +70,7 @@ namespace SimpleLiveClient
                                 SendBytes("*" + string.Join(" ", bffr.Skip(2)));
                                 break;
                             default:
-                                System.Console.WriteLine("Unknown command.");
+                                Console.WriteLine("Unknown command.");
                                 goto retrycmd;
                         }
                     }
