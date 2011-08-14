@@ -8,3 +8,5 @@ C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\obj\x86\Debug\ControlClient.exe
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\obj\x86\Debug\ControlClient.pdb
+D:\Projects\CSharpBot\SimpleLiveClient\obj\x86\Debug\ControlClient.exe
+D:\Projects\CSharpBot\SimpleLiveClient\obj\x86\Debug\ControlClient.pdb
