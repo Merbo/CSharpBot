@@ -312,7 +312,7 @@ namespace CSharpBot
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Command Prefix (e.g. in '!kick' it is '!') [Default: " + config.Prefix + "]: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                string prefinp = Console.ReadKey().KeyChar.ToString();
+                prefinp = Console.ReadKey().KeyChar.ToString();
                 if (prefinp == "")
                     prefinp = config.Prefix;
                 config.Prefix = prefinp;
