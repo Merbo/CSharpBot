@@ -97,9 +97,16 @@ namespace CSharpBot
                     //blocks until a client sends a message
                     bytesRead = clientStream.Read(message, 0, 4096);
                 }
-                catch
+                catch (System.IO.IOException)
+                {
+                    //Do nothing, a user disconnected from the server.    
+                }
+                catch (Exception e)
                 {
                     //a socket error has occured
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(e.ToString() + "\r\n");
+                    Console.ResetColor();
                     break;
                 }
 
@@ -109,7 +116,13 @@ namespace CSharpBot
                     break;
                 }
                 //message has successfully been received
-                Console.WriteLine(encoder.GetString(message, 0, bytesRead));
+                if (CSharpBot.bot.DebuggingEnabled)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Server Activity: " + encoder.GetString(message, 0, bytesRead));
+                    Console.ResetColor();
+                }
+                    
                 //Console.WriteLine(encoder.GetString(message, 0, bytesRead));
                 string msg = encoder.GetString(message, 0, bytesRead);
                 string[] cmd = msg.Split(' ');

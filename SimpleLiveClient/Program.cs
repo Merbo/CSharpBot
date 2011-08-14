@@ -48,7 +48,7 @@ namespace SimpleLiveClient
                 byte[] message = new byte[4096];
                 while (input.ToLower() != "/quit")
                 {
-
+                    bytesRead = 0;
                     byte[] buffer = encoder.GetBytes(input);
                     string bfr = encoder.GetString(buffer);
                     if (bfr.StartsWith("/"))
@@ -83,7 +83,8 @@ namespace SimpleLiveClient
                     try
                     {
                         //blocks until a client sends a message
-                        bytesRead = clientStream.Read(message, 0, 4096);
+                        if (clientStream.CanRead)
+                            bytesRead = clientStream.Read(message, 0, message.Length);
                     }
                     catch (Exception e)
                     {
