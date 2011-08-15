@@ -511,7 +511,7 @@ The guru meditation is:
         /// <summary>
         /// Asks the server to print out the server version
         /// </summary>
-        public void Version(string target)
+        public void Version()
         {
             WriteData("VERSION");
         }

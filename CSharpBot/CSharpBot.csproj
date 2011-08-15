@@ -167,6 +167,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BotOpDB.dbml</DependentUpon>
     </Compile>
+    <Compile Include="CMDServer.cs" />
     <Compile Include="ControlWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,7 +182,6 @@
     <Compile Include="IrcNumericReplyLine.cs" />
     <Compile Include="IrcReplyCodes.cs" />
     <Compile Include="LiveScript.cs" />
-    <Compile Include="LiveServer.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

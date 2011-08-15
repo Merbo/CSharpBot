@@ -59,7 +59,6 @@ namespace CSharpBot
             get { return botThread.IsAlive; }
         }
         Thread botThread;
-        LiveServer server;
 
         // Message of the day
         List<string> motdlines = new List<string>();
@@ -70,31 +69,6 @@ namespace CSharpBot
         public string[] MOTDLines
         {
             get { return motdlines.ToArray(); }
-        }
-
-        public bool IsLiveserverAcknowledged()
-        {
-            return config.ConfigFile.SelectNodes("child::liveserver").Count > 0;
-        }
-        public bool IsLiveserverConfigured()
-        {
-            if (!IsLiveserverAcknowledged())
-                return false;
-            try
-            {
-                return config.ConfigFile.SelectNodes("child::liveserver")[0].Attributes["password"] != null;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public void StartLiveserver()
-        {
-            server = new LiveServer();
-            server.Password = config.LiveserverPassword;
-            Console.WriteLine("Server is now running.");
         }
 
         NetworkStream stream;
