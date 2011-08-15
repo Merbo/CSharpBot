@@ -1,0 +1,14 @@
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\BotOpDB.sdf
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSBConfig.exe
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSBConfig.pdb
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSharpBot.exe
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\WizardControls.dll
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSharpBot.xml
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\WizardControls.pdb
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\CSBConfig.CSBConfigWizard.resources
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\CSBConfig.Properties.Resources.resources
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\CSBConfig.exe
+C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\CSBConfig.pdb
