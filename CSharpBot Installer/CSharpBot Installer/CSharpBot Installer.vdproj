@@ -64,19 +64,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FB73B9097AEC42C39B223D87E466BE8F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_11B600E169119D7A42953CCF23D151C4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BF5DA370388383A3A3A261EB90DD9AB7"
+        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -88,7 +76,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
+        "OwnerKey" = "8:_BF5DA370388383A3A3A261EB90DD9AB7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_11B600E169119D7A42953CCF23D151C4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FB73B9097AEC42C39B223D87E466BE8F"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -358,6 +358,20 @@
     {
         "CustomAction"
         {
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_15692D1CFACA42748F33895219EFDAC5"
+            {
+            "Name" = "8:Configure CSharpBot"
+            "Condition" = "8:"
+            "Object" = "8:_FB73B9097AEC42C39B223D87E466BE8F"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:--install"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_FCC982B3_E92D_4456_A4A0_35343BF1BC33"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -388,11 +402,6 @@
             "AssemblyAsmDisplayName" = "8:WizardControls, Version=1.0.4244.30768, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_11B600E169119D7A42953CCF23D151C4"
-                    {
-                    "Name" = "8:WizardControls.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:WizardControls.dll"
             "TargetName" = "8:"
@@ -439,11 +448,6 @@
             "AssemblyAsmDisplayName" = "8:CSharpBot, Version=1.2.4244.30777, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_BF5DA370388383A3A3A261EB90DD9AB7"
-                    {
-                    "Name" = "8:CSharpBot.exe"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:CSharpBot.exe"
             "TargetName" = "8:"
