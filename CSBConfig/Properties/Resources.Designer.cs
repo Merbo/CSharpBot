@@ -88,6 +88,13 @@ namespace CSBConfig.Properties {
             }
         }
         
+        public static System.Drawing.Bitmap liveserverlogo {
+            get {
+                object obj = ResourceManager.GetObject("liveserverlogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         public static System.Drawing.Bitmap loginlogo {
             get {
                 object obj = ResourceManager.GetObject("loginlogo", resourceCulture);
@@ -119,6 +126,13 @@ namespace CSBConfig.Properties {
         public static System.Drawing.Bitmap standardsetupicon {
             get {
                 object obj = ResourceManager.GetObject("standardsetupicon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap summarylogo {
+            get {
+                object obj = ResourceManager.GetObject("summarylogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

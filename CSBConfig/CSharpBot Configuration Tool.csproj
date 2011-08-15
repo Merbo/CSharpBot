@@ -129,6 +129,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="1313356762_application-x-executable-script.ico" />
+    <None Include="Resources\1313423411_script.png" />
+    <None Include="Resources\1313423325_network 2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
