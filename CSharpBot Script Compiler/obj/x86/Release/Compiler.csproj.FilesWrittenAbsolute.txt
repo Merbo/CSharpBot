@@ -1,3 +1,0 @@
-/home/carl/sources/csb/CSharpBot/CSharpBot Script Compiler/obj/x86/Release/GUI.GUI.resources
-/home/carl/sources/csb/CSharpBot/CSharpBot Script Compiler/bin/Release/CSBc.exe
-/home/carl/sources/csb/CSharpBot/CSharpBot Script Compiler/obj/x86/Release/CSBc.exe
