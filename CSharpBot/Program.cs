@@ -608,7 +608,6 @@ namespace CSharpBot
                                 Functions.Log(msg.SourceNickname + " issued " + prefix + msg.BotCommandName + " with " + msg.BotCommandParams.Count() + " parameters.");
                                 switch(msg.BotCommandName.ToLower())
                                 {
-                                    // TODO: Edit to "switch" (easier structure, you know ;) ) - Icedream
                                     case "test":
                                         Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
                                         break;

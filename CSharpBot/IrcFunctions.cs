@@ -10,8 +10,6 @@ namespace CSharpBot
 {
     public class IrcFunctions
     {
-        // TODO: Implement more functions :-)
-
         CSharpBot CSharpBot;
 
         public IrcFunctions(CSharpBot bot)
@@ -201,9 +199,8 @@ namespace CSharpBot
                 Console.Clear();
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.Write(@"THE CONNECTION TO THE SERVER WAS LOST!
-The connection to the server
-Was Lost.
-The geru meditation is:
+The connection to the server was lost.
+The guru meditation is:
 
 " + x.Message);
 
@@ -314,13 +311,32 @@ The geru meditation is:
             }
         }
 
+        /// <summary>
+        /// Sends ctcp data to someone.
+        /// </summary>
+        /// <param name="nickname">Target nickname</param>
+        /// <param name="data">Data to send via CTCP</param>
         public void SendCTCP(string nickname, string data)
         {
             WriteData("PRIVMSG " + nickname + " :\x01" + data + "\x01");
         }
 
 
+        /// <summary>
+        /// Sends ctcp reply data to someone.
+        /// </summary>
+        /// <param name="nickname">Target nickname</param>
+        /// <param name="data">Data to send via CTCP</param>
+        public void SendCTCPReply(string nickname, string data)
+        {
+            WriteData("NOTICE " + nickname + " :\x01" + data + "\x01");
+        }
 
+        /// <summary>
+        /// Validates an executable if it is usable in CSharpBot.
+        /// </summary>
+        /// <param name="fileName">The executable to check.</param>
+        /// <returns>Boolean</returns>
         public bool CheckEXE(string fileName)
         {
             // read the bytes from the application exe file
@@ -343,6 +359,174 @@ The geru meditation is:
                 return false;
             }
         }
+
+        /// <summary>
+        /// Lets the bot login as an operator. Also known as O-line.
+        /// </summary>
+        /// <param name="operuser">Oper-Username</param>
+        /// <param name="operpass">Oper-Password</param>
+        public void Oper(string operuser, string operpass)
+        {
+            WriteData("OPER " + operuser + " " + operpass);
+        }
+
+        /// <summary>
+        /// Lets the bot login as a service
+        /// </summary>
+        /// <param name="nickname">Nickname of service</param>
+        /// <param name="distribution">The filter for which users the service is visible.
+        /// Examples: To allow all, just use "*". If you just want to allow German users, use "*.de".</param>
+        /// <param name="info">Some info about the service</param>
+        public void Service(string nickname, string distribution, string info)
+        {
+            WriteData("SERVICE " + nickname + " * " + distribution + " 0 0 :" + info);
+        }
+
+        /// <summary>
+        /// [Only available to operators] Disconnect server link
+        /// </summary>
+        /// <param name="server">Server</param>
+        /// <param name="comment">Comment</param>
+        public void Squit(string server, string comment = "Forced disconnect")
+        {
+            WriteData("SQUIT " + server + " :" + comment);
+        }
+
+        /// <summary>
+        /// Lets the server list all visible names in specific channels
+        /// </summary>
+        /// <param name="channels">The channels</param>
+        public void Names(params string[] channels)
+        {
+            WriteData("NAMES " + string.Join(",", channels));
+        }
+
+        /// <summary>
+        /// Lets the server list all visible names and their channels
+        /// </summary>
+        public void Names()
+        {
+            WriteData("NAMES");
+        }
+
+        /// <summary>
+        /// Asks the server to list all channels and their topics
+        /// </summary>
+        public void List()
+        {
+            WriteData("LIST");
+        }
+
+        /// <summary>
+        /// Asks the server to list specific channels and their topics
+        /// </summary>
+        public void List(params string[] channels)
+        {
+            WriteData("LIST " + string.Join(",", channels));
+        }
+
+        /// <summary>
+        /// Lets the bot invite someone into a channel
+        /// </summary>
+        /// <param name="who">Who?</param>
+        /// <param name="channel">From which channel?</param>
+        public void Invite(string who, string channel)
+        {
+            WriteData("INVITE " + who + " " + channel);
+        }
+
+        /// <summary>
+        /// Kick someone from a channel
+        /// </summary>
+        /// <param name="who">Who?</param>
+        /// <param name="channel">From which channel?</param>
+        public void Kick(string who, string channel)
+        {
+            WriteData("KICK " + who + " " + channel);
+        }
+
+        /// <summary>
+        /// Kick someone from a channel with a reason
+        /// </summary>
+        /// <param name="who">Who?</param>
+        /// <param name="channel">From which channel?</param>
+        /// <param name="reason">Because of what?</param>
+        public void Kick(string who, string channel, string reason)
+        {
+            WriteData("KICK " + who + " " + channel + " :" + reason);
+        }
+
+        /// <summary>
+        /// Asks the server to print out its MOTD.
+        /// </summary>
+        public void MOTD()
+        {
+            WriteData("MOTD");
+        }
+
+        /// <summary>
+        /// Asks the server to print out another server's MOTD.
+        /// </summary>
+        public void Motd(string server)
+        {
+            WriteData("MOTD " + server);
+        }
+
+        /// <summary>
+        /// Asks the server to print out statistics about the size of the network
+        /// </summary>
+        /// <param name="mask"></param>
+        public void Lusers()
+        {
+            WriteData("LUSERS");
+        }
+
+        /// <summary>
+        /// Asks the server to print out statistics about the size of the network by a given mask
+        /// </summary>
+        /// <param name="mask">The mask</param>
+        public void Lusers(string mask)
+        {
+            WriteData("LUSERS " + mask);
+        }
+
+        /// <summary>
+        /// Asks the server to print out statistics about the size of a server by a given mask
+        /// </summary>
+        /// <param name="mask">The mask</param>
+        public void Lusers(string mask, string target)
+        {
+            WriteData("LUSERS " + mask + " " + target);
+        }
+
+        /// <summary>
+        /// Asks the server to print out the server version of another server
+        /// </summary>
+        /// <param name="target">The target server</param>
+        public void Version(string target)
+        {
+            WriteData("VERSION " + target);
+        }
+
+        /// <summary>
+        /// Asks the server to print out the server version
+        /// </summary>
+        public void Version(string target)
+        {
+            WriteData("VERSION");
+        }
+
+        /// <summary>
+        /// Asks the server to print out statistics
+        /// </summary>
+        // TODO: Implement the other variations of STATS command.
+        public void Stats()
+        {
+            WriteData("STATS");
+        }
+
+        // TODO: Implement BAN command
+        // TODO: Implement the other RFC2812 commands. (http://www.faqs.org/rfcs/rfc2812.html)
     }
 }
 //From hereby on, we post quotes of funny IRC as a sort of source code easter egg.

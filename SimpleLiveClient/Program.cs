@@ -22,7 +22,7 @@ namespace SimpleLiveClient
         {
             try
             {
-                bool hasauth = false;
+                bool hasauth = false; // I don't know if we still need this
                 bool haspass = false;
                 retryserver:
                 Console.Write("Server: ");
@@ -38,53 +38,62 @@ namespace SimpleLiveClient
                 pass = Console.ReadLine();
                 if (pass != "")
                     haspass = true;
+                Console.WriteLine();
+                Console.WriteLine("Connecting to " + server + "...");
                 client.Connect(server, 3000);
+                Console.WriteLine("Connection was " + (client.Connected ? "" : "not ") + "successful!");
                 // client.Connect(serverEndPoint);
                 Console.WriteLine();
                 clientStream = client.GetStream();
-                retrycmd:
-                input = Console.ReadLine();
+                Console.WriteLine("Setting nickname...");
+                input = "/nick";
+
                 int bytesRead;
-                byte[] message = new byte[4096];
+                byte[] message = new byte[2048];
                 while (input.ToLower() != "/quit")
                 {
                     bytesRead = 0;
                     byte[] buffer = encoder.GetBytes(input);
                     string bfr = encoder.GetString(buffer);
-                    if (bfr.StartsWith("/"))
+                    
+                    if (bfr.StartsWith("/")) // user command
                     {
-                        string[] bffr = bfr.Split('/');
-                        string[] param = bffr[1].Split(' ');
-                        switch (bffr[1].ToLower())
+                        string[] spl = bfr.Substring(1).Split(' ');
+                        string command = spl[0].ToUpper();
+                        string[] param = spl.Skip(1).ToArray();
+
+                        
+                        switch (command)
                         {
-                            case "join":
-                                SendBytes("JOIN " + nick);
+                            case "CMD":
+                                command = "*" + param[0];
+                                param = param.Skip(1).ToArray();
                                 break;
-                            case "auth":
-                                if (haspass && !hasauth)
-                                {
-                                    SendBytes(pass);
-                                }
+                            case "AUTH":
+                            case "PASS":
+                                param = new string[] { pass };
+                                command = "PASS";
                                 break;
-                            case "cmd":
-                                SendBytes("*" + string.Join(" ", bffr.Skip(2)));
+                            case "NICK":
+                                param = new string[] { nick };
                                 break;
-                            default:
-                                Console.WriteLine("Unknown command.");
-                                goto retrycmd;
+                            //default: // This may be a message?
+                            //    param = (command + " " + string.Join(" ", param)).Split(' ');
+                            //    command = "MSG";
+                            //    break;
                         }
+
+                        bfr = command + " " + string.Join(" ", param);
+                        //Console.WriteLine("client>" + bfr);
                     }
-                    else
-                    {
-                        SendBytes(bfr);
-                    }
+                    SendBytes(bfr);
                     clientStream.Flush();
                     
                     try
                     {
                         //blocks until a client sends a message
                         if (clientStream.CanRead)
-                            bytesRead = clientStream.Read(message, 0, 4096);
+                            bytesRead = clientStream.Read(message, 0, 2048);
                     }
                     catch (Exception e)
                     {
@@ -104,20 +113,53 @@ namespace SimpleLiveClient
                         case "002":
                             Console.WriteLine("(002) " + msg[1] + " joined the party line.");
                             break;
-
                         case "003":
                             Console.WriteLine("(003) You have been authenticated!");
                             hasauth = true;
                             break;
                         case "004":
-                            Console.WriteLine("<" + msg[1] + "> " + string.Join(" ", msg.Skip(2)));
+                            Console.WriteLine("(004) <" + msg[1] + "> " + string.Join(" ", msg.Skip(2)));
+                            break;
+                        case "005":
+                            Console.WriteLine("(005) Nickname successfully set.");
+                            break;
+                        case "006":
+                            Console.WriteLine("(006) Missing arguments.");
+                            break;
+                        case "007":
+                            Console.WriteLine("(007) Too much arguments.");
+                            break;
+                        case "008":
+                            Console.WriteLine("(008) Invalid arguments.");
+                            break;
+                        case "009":
+                            Console.WriteLine("(009) You need to set your nickname first."); // THIS SHOULD NEVER APPEAR. Would be silly. If you don't know, think deeply.
+                            break;
+                        case "010":
+                            Console.WriteLine("(010) Invalid password.");
+                            break;
+                        case "011":
+                            Console.WriteLine("(011) Huh? (Sending messages works with \"/msg your text\")");
+                            break;
+                        case "012":
+                            Console.WriteLine("(012) Permission denied. You're not allowed to do this.");
+                            break;
+                        case "020":
+                            Console.WriteLine("(020) Livescript executed.");
+                            break;
+                        case "021":
+                            Console.WriteLine("(021) Livescript failed.");
                             break;
                         default:
-                            Console.WriteLine("Unknown Response From Server:");
+                            Console.WriteLine("(???) Unknown response from server:");
                             Console.WriteLine(msg[0]);
                             break;
                     }
+
+                retrycmd:
+                    Console.Write("client>");
                     input = Console.ReadLine();
+                    if (input.Trim() == "") goto retrycmd;
                 }
                 client.Close();
             }
@@ -129,7 +171,10 @@ namespace SimpleLiveClient
         }
         public static void SendBytes(string input)
         {
-            byte[] bytes = encoder.GetBytes(nick + " " + input);
+            byte[] bytes = encoder.GetBytes(
+                //nick + " " +
+                input
+                );
             clientStream.Write(bytes, 0, bytes.Length);
         }
     }

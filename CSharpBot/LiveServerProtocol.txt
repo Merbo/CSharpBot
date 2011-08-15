@@ -1,0 +1,40 @@
+﻿LIVESERVER PROTOCOL
+===================
+
+Connection: TCP
+Port: 3000
+
+--
+Syntax of a line sent by a user:
+	COMMAND [Arg1 [Arg2 [Arg3 [...]]]]
+
+Syntax of a line sent by a server:
+	Replycode [Arg1 [Arg2 [...]]]
+
+--
+COMMANDS:
+
+[ToDo]
+
+--
+REPLIES:
+
+000			All ok.
+
+003			Your password has been approved
+005			Your nickname has been successfully set
+009			You need to set your nickname first
+010			Invalid password
+012			Your not allowed to do this
+
+001			Message sent
+002 Nickname		"Nickname" joined the party line
+004 Nickname Msg...	Message by Nickname with content "Msg..."
+
+006			Missing arguments
+007			Too much arguments
+008			Invalid arguments
+011			Unknown command
+
+020			Livescript has been executed
+021			Livescript execution failed
