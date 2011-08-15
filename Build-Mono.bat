@@ -1,3 +1,2 @@
 @echo off
-xbuild CSharpBot.sln
-pause
+cmd /k xbuild CSharpBot.sln
