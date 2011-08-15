@@ -46,13 +46,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
+        "OwnerKey" = "8:_26CE5777B48443ED936914924CAFAD36"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_26CE5777B48443ED936914924CAFAD36"
+        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -64,9 +64,9 @@
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:FALSE"
         "OutputFilename" = "8:CSharpBot\\CSharpBot Installer.msi"
-        "PackageFilesAs" = "3:2"
-        "PackageFileSize" = "3:-2147483648"
-        "CabType" = "3:1"
+        "PackageFilesAs" = "3:3"
+        "PackageFileSize" = "3:262144"
+        "CabType" = "3:2"
         "Compression" = "3:2"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
@@ -117,6 +117,19 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
             }
         }
         "Compiler"
@@ -454,7 +467,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{4CDE728D-18DF-420D-9DCC-E58DD34F4290}"
+        "PackageCode" = "8:{D6141355-7305-446E-A287-3E84484B0C19}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -649,7 +662,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_772C41B648B0453CB19FCCFD6357A958"
                     {
                     "Sequence" = "3:200"
-                    "DisplayName" = "8:Installationsordner"
+                    "DisplayName" = "8:Installation Folder"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminFolderDlg.wid"
@@ -671,7 +684,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_C35C5DA64A644DEAA032B8A9826989B2"
                     {
                     "Sequence" = "3:110"
-                    "DisplayName" = "8:Willkommen"
+                    "DisplayName" = "8:Welcome"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminWelcomeDlg.wid"
@@ -719,7 +732,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_DE9379089D0F4E79BF27C34979329BD2"
                     {
                     "Sequence" = "3:300"
-                    "DisplayName" = "8:Installation bestätigen"
+                    "DisplayName" = "8:Confirm Installation"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminConfirmDlg.wid"
@@ -750,7 +763,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_233A3D2D071047B5B6E7AB868A7245D1"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Status"
+                    "DisplayName" = "8:Progress"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminProgressDlg.wid"
@@ -794,7 +807,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_11B1287B14EF405ABFAD2CD7B39597F6"
                     {
                     "Sequence" = "3:200"
-                    "DisplayName" = "8:Installationsordner"
+                    "DisplayName" = "8:Installation Folder"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdFolderDlg.wid"
@@ -829,7 +842,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_2AF6E3A344BC4052B0301624D246948B"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Willkommen"
+                    "DisplayName" = "8:Welcome"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdWelcomeDlg.wid"
@@ -877,7 +890,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_FF073D0B68C6490F90152F16FBC85591"
                     {
                     "Sequence" = "3:300"
-                    "DisplayName" = "8:Installation bestätigen"
+                    "DisplayName" = "8:Confirm Installation"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdConfirmDlg.wid"
@@ -908,7 +921,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_3FBB318DC0E5499D8A6FF6D761C64842"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Status"
+                    "DisplayName" = "8:Progress"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdProgressDlg.wid"
@@ -958,7 +971,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_F2DB984475A242DDBB9B4C63B2769692"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Fertig"
+                    "DisplayName" = "8:Finished"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdAdminFinishedDlg.wid"
@@ -989,7 +1002,7 @@
                     "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_3F1166A415834306A0344FD4D388598C"
                     {
                     "Sequence" = "3:100"
-                    "DisplayName" = "8:Fertig"
+                    "DisplayName" = "8:Finished"
                     "UseDynamicProperties" = "11:TRUE"
                     "IsDependency" = "11:FALSE"
                     "SourcePath" = "8:<VsdDialogDir>\\VsdFinishedDlg.wid"
@@ -1031,7 +1044,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0B3FDC203FA547029D66F5D9EF6BE1D9"
             {
-            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\x86\\Debug\\ControlClient.exe"
+            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\x86\\Release\\ControlClient.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
@@ -1059,7 +1072,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26CE5777B48443ED936914924CAFAD36"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Debug\\CSBc.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\CSharpBot\\CSBc.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B48650C5737045A186DF72BAAB785801"
@@ -1087,7 +1100,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Debug\\CSharpBot.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\CSharpBot\\CSharpBot.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
