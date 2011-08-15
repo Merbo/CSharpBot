@@ -117,18 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Liveserver is a new feature in CSharpBot which allows "Liveclients" to remote-control and program the bot.
+To use the bot, check "Enable Liveserver" and enter a password. Otherwise, just leave the box empty and click "Next &gt;".
+
+Note: You need to hold port 7000 open for it.</value>
+  </data>
   <data name="label2.Text" xml:space="preserve">
     <value>You have installed CSharpBot successfully into your system. Now it's time for configuration, but that won't be very complicated.
 
 This wizard should help you configuring the bot easily to join your favourite network.
 
 Click "Next &gt;" to continue.</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Liveserver is a new feature in CSharpBot which allows "Liveclients" to remote-control and program the bot.
-To use the bot, check "Enable Liveserver" and enter a password. Otherwise, just leave the box empty and click "Next &gt;".
-
-Note: You need to hold port 7000 open for it.</value>
   </data>
   <data name="label6.Text" xml:space="preserve">
     <value>Congratulations, you are now able to use CSharpBot in your favourite network. You may now start the bot by using the start menu and searching for "MerbosMagic" &gt; "CSharpBot".

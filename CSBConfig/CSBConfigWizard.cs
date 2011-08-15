@@ -305,6 +305,25 @@ namespace CSBConfig
             this.Close();
         }
 
+        private void twoLinedInputField5_ValueChanged(object sender, EventArgs e)
+        {
+            config.ServerPassword = twoLinedInputField5.InputValue;
+        }
+
+        private void twoLinedInputField8_ValueChanged(object sender, EventArgs e)
+        {
+            if ((config.Prefix = twoLinedInputField8.InputValue).Length < 1)
+            {
+                twoLinedInputField8.Focus();
+                MessageBox.Show("You need to enter a prefix!");
+            }
+        }
+
+        private void twoLinedInputField9_ValueChanged(object sender, EventArgs e)
+        {
+            config.LiveserverPassword = twoLinedInputField9.InputValue;
+        }
+
        
     }
 }

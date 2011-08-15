@@ -1,6 +1,0 @@
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\bin\x86\CSharpBot\CSBc.exe
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\CSharpBot\ResolveAssemblyReference.cache
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\CSharpBot\GUI.GUI.resources
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\CSharpBot\GenerateResource.read.1.tlog
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\CSharpBot\GenerateResource.write.1.tlog
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSharpBot Script Compiler\obj\x86\CSharpBot\CSBc.exe

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 namespace CSBConfig.WizardControls
 {
+    [DefaultEvent("ValueChanged")]
     public partial class SimpleInputField : UserControl
     {
         public SimpleInputField()

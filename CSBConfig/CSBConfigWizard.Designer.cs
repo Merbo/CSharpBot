@@ -265,6 +265,7 @@
             this.twoLinedInputField2.TabIndex = 4;
             this.twoLinedInputField2.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField2.UseSystemPasswordChar = false;
+            this.twoLinedInputField2.ValueChanged += new System.EventHandler(this.twoLinedInputField2_Load);
             this.twoLinedInputField2.Load += new System.EventHandler(this.twoLinedInputField2_Load);
             // 
             // simpleInputField2
@@ -279,6 +280,7 @@
             this.simpleInputField2.TabIndex = 2;
             this.simpleInputField2.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.simpleInputField2.UseSystemPasswordChar = false;
+            this.simpleInputField2.ValueChanged += new System.EventHandler(this.simpleInputField2_Load);
             this.simpleInputField2.Load += new System.EventHandler(this.simpleInputField2_Load);
             // 
             // simpleInputField1
@@ -306,7 +308,7 @@
             this.wizardHeader1.MaximumSize = new System.Drawing.Size(1000000000, 72);
             this.wizardHeader1.MinimumSize = new System.Drawing.Size(0, 72);
             this.wizardHeader1.Name = "wizardHeader1";
-            this.wizardHeader1.Size = new System.Drawing.Size(482, 72);
+            this.wizardHeader1.Size = new System.Drawing.Size(487, 72);
             this.wizardHeader1.TabIndex = 0;
             // 
             // tabPage3
@@ -334,6 +336,7 @@
             this.twoLinedInputField1.TabIndex = 4;
             this.twoLinedInputField1.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField1.UseSystemPasswordChar = false;
+            this.twoLinedInputField1.ValueChanged += new System.EventHandler(this.twoLinedInputField1_Load);
             this.twoLinedInputField1.Load += new System.EventHandler(this.twoLinedInputField1_Load);
             // 
             // twoLinedInputField5
@@ -348,6 +351,7 @@
             this.twoLinedInputField5.TabIndex = 3;
             this.twoLinedInputField5.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField5.UseSystemPasswordChar = true;
+            this.twoLinedInputField5.ValueChanged += new System.EventHandler(this.twoLinedInputField5_ValueChanged);
             // 
             // twoLinedInputField3
             // 
@@ -361,6 +365,7 @@
             this.twoLinedInputField3.TabIndex = 1;
             this.twoLinedInputField3.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField3.UseSystemPasswordChar = false;
+            this.twoLinedInputField3.ValueChanged += new System.EventHandler(this.twoLinedInputField3_Load);
             this.twoLinedInputField3.Load += new System.EventHandler(this.twoLinedInputField3_Load);
             // 
             // wizardHeader2
@@ -374,7 +379,7 @@
             this.wizardHeader2.MaximumSize = new System.Drawing.Size(1000000000, 72);
             this.wizardHeader2.MinimumSize = new System.Drawing.Size(0, 72);
             this.wizardHeader2.Name = "wizardHeader2";
-            this.wizardHeader2.Size = new System.Drawing.Size(482, 72);
+            this.wizardHeader2.Size = new System.Drawing.Size(487, 72);
             this.wizardHeader2.TabIndex = 0;
             // 
             // tabPage4
@@ -424,6 +429,7 @@
             this.twoLinedInputField7.TabIndex = 4;
             this.twoLinedInputField7.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField7.UseSystemPasswordChar = true;
+            this.twoLinedInputField7.ValueChanged += new System.EventHandler(this.twoLinedInputField7_Load);
             this.twoLinedInputField7.Load += new System.EventHandler(this.twoLinedInputField7_Load);
             // 
             // twoLinedInputField6
@@ -438,6 +444,7 @@
             this.twoLinedInputField6.TabIndex = 3;
             this.twoLinedInputField6.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField6.UseSystemPasswordChar = false;
+            this.twoLinedInputField6.ValueChanged += new System.EventHandler(this.twoLinedInputField6_Load);
             this.twoLinedInputField6.Load += new System.EventHandler(this.twoLinedInputField6_Load);
             // 
             // wizardHeader3
@@ -451,7 +458,7 @@
             this.wizardHeader3.MaximumSize = new System.Drawing.Size(1000000000, 72);
             this.wizardHeader3.MinimumSize = new System.Drawing.Size(0, 72);
             this.wizardHeader3.Name = "wizardHeader3";
-            this.wizardHeader3.Size = new System.Drawing.Size(482, 72);
+            this.wizardHeader3.Size = new System.Drawing.Size(487, 72);
             this.wizardHeader3.TabIndex = 0;
             // 
             // tabPage5
@@ -480,6 +487,7 @@
             this.twoLinedInputField8.TabIndex = 4;
             this.twoLinedInputField8.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField8.UseSystemPasswordChar = false;
+            this.twoLinedInputField8.ValueChanged += new System.EventHandler(this.twoLinedInputField8_ValueChanged);
             // 
             // twoLinedInputField4
             // 
@@ -493,6 +501,7 @@
             this.twoLinedInputField4.TabIndex = 3;
             this.twoLinedInputField4.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField4.UseSystemPasswordChar = false;
+            this.twoLinedInputField4.ValueChanged += new System.EventHandler(this.twoLinedInputField4_Load);
             this.twoLinedInputField4.Load += new System.EventHandler(this.twoLinedInputField4_Load);
             // 
             // simpleInputField3
@@ -507,6 +516,7 @@
             this.simpleInputField3.TabIndex = 2;
             this.simpleInputField3.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.simpleInputField3.UseSystemPasswordChar = false;
+            this.simpleInputField3.ValueChanged += new System.EventHandler(this.simpleInputField3_Load);
             this.simpleInputField3.Load += new System.EventHandler(this.simpleInputField3_Load);
             // 
             // checkBox2
@@ -533,7 +543,7 @@
             this.wizardHeader4.MaximumSize = new System.Drawing.Size(1000000000, 72);
             this.wizardHeader4.MinimumSize = new System.Drawing.Size(0, 72);
             this.wizardHeader4.Name = "wizardHeader4";
-            this.wizardHeader4.Size = new System.Drawing.Size(482, 72);
+            this.wizardHeader4.Size = new System.Drawing.Size(487, 72);
             this.wizardHeader4.TabIndex = 0;
             // 
             // tabPage6
@@ -583,6 +593,7 @@
             this.twoLinedInputField9.TabIndex = 0;
             this.twoLinedInputField9.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.twoLinedInputField9.UseSystemPasswordChar = true;
+            this.twoLinedInputField9.ValueChanged += new System.EventHandler(this.twoLinedInputField9_ValueChanged);
             // 
             // label3
             // 
@@ -597,13 +608,13 @@
             this.wizardHeader5.BackColor = System.Drawing.Color.White;
             this.wizardHeader5.Dock = System.Windows.Forms.DockStyle.Top;
             this.wizardHeader5.HeaderDescription = "You may enable and configure the new Liveserver here.";
-            this.wizardHeader5.HeaderImage = null;
+            this.wizardHeader5.HeaderImage = global::CSBConfig.Properties.Resources.liveserverlogo;
             this.wizardHeader5.HeaderTitle = "Liveserver configuration";
             this.wizardHeader5.Location = new System.Drawing.Point(0, 0);
             this.wizardHeader5.MaximumSize = new System.Drawing.Size(1000000000, 72);
             this.wizardHeader5.MinimumSize = new System.Drawing.Size(0, 72);
             this.wizardHeader5.Name = "wizardHeader5";
-            this.wizardHeader5.Size = new System.Drawing.Size(482, 72);
+            this.wizardHeader5.Size = new System.Drawing.Size(487, 72);
             this.wizardHeader5.TabIndex = 0;
             // 
             // tabPage7
@@ -625,7 +636,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(482, 279);
+            this.textBox1.Size = new System.Drawing.Size(487, 269);
             this.textBox1.TabIndex = 1;
             this.textBox1.Layout += new System.Windows.Forms.LayoutEventHandler(this.textBox1_Layout);
             this.textBox1.Validated += new System.EventHandler(this.textBox1_Validated);
@@ -635,13 +646,13 @@
             this.wizardHeader6.BackColor = System.Drawing.Color.White;
             this.wizardHeader6.Dock = System.Windows.Forms.DockStyle.Top;
             this.wizardHeader6.HeaderDescription = "Please check the summary and confirm by clicking on \"Next >\".";
-            this.wizardHeader6.HeaderImage = null;
+            this.wizardHeader6.HeaderImage = global::CSBConfig.Properties.Resources.summarylogo;
             this.wizardHeader6.HeaderTitle = "Summary";
             this.wizardHeader6.Location = new System.Drawing.Point(0, 0);
             this.wizardHeader6.MaximumSize = new System.Drawing.Size(1000000000, 72);
             this.wizardHeader6.MinimumSize = new System.Drawing.Size(0, 72);
             this.wizardHeader6.Name = "wizardHeader6";
-            this.wizardHeader6.Size = new System.Drawing.Size(482, 72);
+            this.wizardHeader6.Size = new System.Drawing.Size(487, 72);
             this.wizardHeader6.TabIndex = 0;
             // 
             // tabPage8
@@ -720,7 +731,7 @@
             this.aoPage1.PageImage = global::CSBConfig.Properties.Resources.ok_big;
             this.aoPage1.PageTitle = "Configuration was successful!";
             this.aoPage1.PageTitleFont = new System.Drawing.Font("Segoe UI", 14F);
-            this.aoPage1.Size = new System.Drawing.Size(482, 351);
+            this.aoPage1.Size = new System.Drawing.Size(487, 341);
             this.aoPage1.TabIndex = 0;
             // 
             // tabPage10
@@ -752,7 +763,7 @@
             this.aoPage2.PageImage = global::CSBConfig.Properties.Resources.error_big;
             this.aoPage2.PageTitle = "Configuration failed!";
             this.aoPage2.PageTitleFont = new System.Drawing.Font("Segoe UI", 14F);
-            this.aoPage2.Size = new System.Drawing.Size(482, 351);
+            this.aoPage2.Size = new System.Drawing.Size(487, 341);
             this.aoPage2.TabIndex = 0;
             // 
             // configWorker

@@ -237,7 +237,7 @@ namespace CSharpBot
             Console.Write("Nick [Default: " + config.Nickname + "]: ");
             Console.ForegroundColor = ConsoleColor.White;
             string nickinput = Console.ReadLine();
-            config.Nickname = nickinput.Trim() != "" ? Console.ReadLine() : config.Nickname;
+            config.Nickname = nickinput.Trim() != "" ? nickinput : config.Nickname;
 
             // The server password
             Console.ForegroundColor = ConsoleColor.Cyan;

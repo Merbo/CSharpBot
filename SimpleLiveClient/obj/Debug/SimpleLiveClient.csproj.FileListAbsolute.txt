@@ -1,5 +1,0 @@
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\bin\Debug\ControlClient.exe
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\bin\Debug\ControlClient.pdb
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\obj\Debug\ControlClient.exe
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\SimpleLiveClient\obj\Debug\ControlClient.pdb
