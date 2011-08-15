@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace CSBConfig.WizardControls
 {
+    [DefaultEvent("ValueChanged")]
     public partial class TwoLinedInputField : UserControl
     {
         public TwoLinedInputField()
