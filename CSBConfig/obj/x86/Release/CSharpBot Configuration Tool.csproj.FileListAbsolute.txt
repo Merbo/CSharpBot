@@ -3,7 +3,6 @@ C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Rel
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSBConfig.pdb
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSharpBot.exe
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\WizardControls.dll
-C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\CSharpBot.xml
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\bin\Release\WizardControls.pdb
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\ResolveAssemblyReference.cache
 C:\Users\Merbo\Documents\Visual Studio 2010\Projects\CSharpBot\CSBConfig\obj\x86\Release\CSBConfig.CSBConfigWizard.resources

@@ -84,7 +84,7 @@ namespace SimpleLiveClient
                     {
                         //blocks until a client sends a message
                         if (clientStream.CanRead)
-                            bytesRead = clientStream.Read(message, 0, message.Length);
+                            bytesRead = clientStream.Read(message, 0, 4096);
                     }
                     catch (Exception e)
                     {
