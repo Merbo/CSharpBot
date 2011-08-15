@@ -1,0 +1,11 @@
+D:\Projects\CSharpBot\WizardControls\bin\Debug\WizardControls.dll
+D:\Projects\CSharpBot\WizardControls\bin\Debug\WizardControls.pdb
+D:\Projects\CSharpBot\WizardControls\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\CSharpBot\WizardControls\obj\Debug\CSBConfig.WizardControls.AOPage.resources
+D:\Projects\CSharpBot\WizardControls\obj\Debug\CSBConfig.WizardControls.SimpleInputField.resources
+D:\Projects\CSharpBot\WizardControls\obj\Debug\CSBConfig.WizardControls.TwoLinedInputField.resources
+D:\Projects\CSharpBot\WizardControls\obj\Debug\CSBConfig.WizardControls.WizardHeader.resources
+D:\Projects\CSharpBot\WizardControls\obj\Debug\GenerateResource.read.1.tlog
+D:\Projects\CSharpBot\WizardControls\obj\Debug\GenerateResource.write.1.tlog
+D:\Projects\CSharpBot\WizardControls\obj\Debug\WizardControls.dll
+D:\Projects\CSharpBot\WizardControls\obj\Debug\WizardControls.pdb

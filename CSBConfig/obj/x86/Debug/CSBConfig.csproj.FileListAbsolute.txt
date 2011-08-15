@@ -1,0 +1,14 @@
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\CSBConfig.exe
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\CSBConfig.pdb
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\WizardControls.dll
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\WizardControls.pdb
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\CSBConfig.Properties.Resources.resources
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\GenerateResource.read.1.tlog
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\GenerateResource.write.1.tlog
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\CSBConfig.exe
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\CSBConfig.pdb
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\BotOpDB.sdf
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\CSharpBot.exe
+D:\Projects\CSharpBot\CSBConfig\bin\Debug\CSharpBot.pdb
+D:\Projects\CSharpBot\CSBConfig\obj\x86\Debug\CSBConfig.CSBConfigWizard.resources

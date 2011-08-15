@@ -1,0 +1,12 @@
+<csharpbot>
+  <prefix>.</prefix>
+  <ownerhostmask>^.+!.+@.+$</ownerhostmask>
+  <port>6667</port>
+  <nickname>CSharpBot</nickname>
+  <serverpassword />
+  <nickserv password="" accountname="" />
+  <server>irc.merbosmagic.co.cc</server>
+  <realname>CSharpBot</realname>
+  <channel>#CSharpBot</channel>
+  <liveserver />
+</csharpbot>

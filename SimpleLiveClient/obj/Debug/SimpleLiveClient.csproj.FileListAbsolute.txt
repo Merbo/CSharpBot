@@ -1,0 +1,5 @@
+D:\Projects\CSharpBot\SimpleLiveClient\bin\Debug\ControlClient.exe
+D:\Projects\CSharpBot\SimpleLiveClient\bin\Debug\ControlClient.pdb
+D:\Projects\CSharpBot\SimpleLiveClient\obj\Debug\ResolveAssemblyReference.cache
+D:\Projects\CSharpBot\SimpleLiveClient\obj\Debug\ControlClient.exe
+D:\Projects\CSharpBot\SimpleLiveClient\obj\Debug\ControlClient.pdb

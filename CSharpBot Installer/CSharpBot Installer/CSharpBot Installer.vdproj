@@ -27,6 +27,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_382477EE083E48939C057FC7F1E05765"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_66BFF451838CCB8C79947377D8FBABD8"
+        "OwnerKey" = "8:_382477EE083E48939C057FC7F1E05765"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8043BAEBA06A49C3BF90CD80E93154EA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -39,6 +51,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C91AD8352EC5BF52CDD44E251BCAB388"
+        "OwnerKey" = "8:_382477EE083E48939C057FC7F1E05765"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8043BAEBA06A49C3BF90CD80E93154EA"
         "MsmSig" = "8:_UNDEFINED"
@@ -46,13 +64,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
+        "OwnerKey" = "8:_C91AD8352EC5BF52CDD44E251BCAB388"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_66BFF451838CCB8C79947377D8FBABD8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_382477EE083E48939C057FC7F1E05765"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_26CE5777B48443ED936914924CAFAD36"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -117,6 +153,19 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
             }
         }
         "Compiler"
@@ -332,6 +381,37 @@
         }
         "File"
         {
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_66BFF451838CCB8C79947377D8FBABD8"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:CSharpBot, Version=1.2.4243.40673, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_66BFF451838CCB8C79947377D8FBABD8"
+                    {
+                    "Name" = "8:CSharpBot.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:CSharpBot.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_967A11F2929E4736B5B348EE975E9EC2"
             {
             "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\samples\\readme.txt"
@@ -350,6 +430,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C91AD8352EC5BF52CDD44E251BCAB388"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:WizardControls, Version=1.0.4243.40673, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_C91AD8352EC5BF52CDD44E251BCAB388"
+                    {
+                    "Name" = "8:WizardControls.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:WizardControls.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
         }
@@ -390,6 +501,17 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_FE4EEECCF13640A5A42E551584ADEA1E"
+                    {
+                    "Name" = "8:MerbosMagic"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_12D78FC1F1F74CE983B8EE54EFEAF323"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_B2ED188C8B5D485BB6A4EE36E586C778"
@@ -454,7 +576,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:CSharpBot"
         "ProductCode" = "8:{AF960452-82B1-4015-8FDF-D72EA0916829}"
-        "PackageCode" = "8:{4CDE728D-18DF-420D-9DCC-E58DD34F4290}"
+        "PackageCode" = "8:{E683A614-B0D6-4B95-B3B2-5419B2A4CBA2}"
         "UpgradeCode" = "8:{AB45C60E-F4B8-4739-9B98-1C458429FE9A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -597,7 +719,7 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_0B3FDC203FA547029D66F5D9EF6BE1D9"
-            "Folder" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
+            "Folder" = "8:_FE4EEECCF13640A5A42E551584ADEA1E"
             "WorkingFolder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
             "Icon" = "8:"
             "Feature" = "8:"
@@ -611,8 +733,22 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
-            "Folder" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
+            "Folder" = "8:_FE4EEECCF13640A5A42E551584ADEA1E"
             "WorkingFolder" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_886466C2C6E7448FA76923965A80C486"
+            {
+            "Name" = "8:CSharpBot Configuration Tool"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_382477EE083E48939C057FC7F1E05765"
+            "Folder" = "8:_FE4EEECCF13640A5A42E551584ADEA1E"
+            "WorkingFolder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
             "Icon" = "8:"
             "Feature" = "8:"
             }
@@ -625,7 +761,7 @@
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
             "Target" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
-            "Folder" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
+            "Folder" = "8:_FE4EEECCF13640A5A42E551584ADEA1E"
             "WorkingFolder" = "8:_5E9CFC2213E345BCA6C5168D4E4EFB99"
             "Icon" = "8:"
             "Feature" = "8:"
@@ -1031,7 +1167,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0B3FDC203FA547029D66F5D9EF6BE1D9"
             {
-            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\x86\\Debug\\ControlClient.exe"
+            "SourcePath" = "8:..\\..\\SimpleLiveClient\\obj\\Client\\ControlClient.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
@@ -1059,7 +1195,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26CE5777B48443ED936914924CAFAD36"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Debug\\CSBc.exe"
+            "SourcePath" = "8:..\\..\\CSharpBot Script Compiler\\obj\\x86\\Installer\\CSBc.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B48650C5737045A186DF72BAAB785801"
@@ -1085,15 +1221,43 @@
                 {
                 }
             }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_382477EE083E48939C057FC7F1E05765"
             {
-            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Debug\\CSharpBot.exe"
+            "SourcePath" = "8:..\\..\\CSBConfig\\obj\\x86\\Release\\CSBConfig.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{BAD8BE18-7F99-4CCE-B659-40303D7D47F7}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8043BAEBA06A49C3BF90CD80E93154EA"
+            {
+            "SourcePath" = "8:..\\..\\CSharpBot\\obj\\x86\\Installer\\CSharpBot.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B2ED188C8B5D485BB6A4EE36E586C778"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:FALSE"
             "ReadOnly" = "11:FALSE"
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
