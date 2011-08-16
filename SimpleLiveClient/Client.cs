@@ -60,7 +60,7 @@ namespace Client
              * 5: Setup**
              * 6: Plain old Console.WriteLine
              * (*: Only runs if 'Debug' evaluates to true)
-             * (**: Only meant for use at the beginning setup configuration. 
+             * (**: Only meant for use at the beginning setup configuration.) 
             */
             Functions.Log(data, level);
         }
