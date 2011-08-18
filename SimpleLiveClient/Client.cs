@@ -42,6 +42,26 @@ namespace Client
 
         static void Log(string data, int level = 6)
         {
+            /*
+             * <> Means necessary parameter
+             * [] Means optional parameter
+             * 
+             * Syntax: Log(<string>, [int])
+             * 
+             * Action: Writes <string> to the console, also can use presets based off of simple tasks, via use of [int]
+             * 
+             * By default, this will simply do a white console.WriteLine of <string>.
+             * However, [int] can be:
+             * 0: Error
+             * 1: Warning
+             * 2: Notice
+             * 3: Debug*
+             * 4: Log*
+             * 5: Setup**
+             * 6: Plain old Console.WriteLine
+             * (*: Only runs if 'Debug' evaluates to true)
+             * (**: Only meant for use at the beginning setup configuration.) 
+            */
             Functions.Log(data, level);
         }
 

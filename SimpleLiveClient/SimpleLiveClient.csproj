@@ -34,7 +34,6 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <DocumentationFile>bin\Release\ControlClient.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'LiveClient-Debug|x86'">
     <OutputPath>bin\x86\LiveClient-Debug\</OutputPath>
