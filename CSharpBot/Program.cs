@@ -17,6 +17,7 @@ namespace CSharpBot
     {
         public static CSharpBot bot;
         public string currentchan;
+        public static LiveServer server;
         public static ControlWindow cwin = new ControlWindow();
 
         /// <summary>
@@ -39,8 +40,11 @@ namespace CSharpBot
 
 
             Console.WriteLine("Bot is now running.");
-            Console.WriteLine();
             
+            server = new LiveServer();
+            Console.WriteLine();
+            Console.WriteLine("Server is now running.");
+            Console.WriteLine();
             Application.EnableVisualStyles();
             Application.Run(cwin);
         }
@@ -484,7 +488,7 @@ namespace CSharpBot
             }
 
             // Liveserver
-            if (!IsLiveserverAcknowledged())
+           /* if (!IsLiveserverAcknowledged())
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("WARNING: CSharpBot has now the ability to be accessed over the implemented \"LiveServer\".");
@@ -502,8 +506,7 @@ namespace CSharpBot
             {
                 StartLiveserver();
                 Console.WriteLine("Liveserver started.");
-            }
-
+            }*/
             this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
             this.Kicked += new KickedHandler(CSharpBot_Kicked);
 

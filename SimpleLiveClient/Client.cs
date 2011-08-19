@@ -1,10 +1,14 @@
 ﻿using System;
-using System.Net;
-using System.IO;
-using System.Text;
-using System.Net.Sockets;
-using System.Threading;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Net;
+using System.Threading;
+using System.Text.RegularExpressions;
+using System.Net.Sockets;
+using System.IO;
+using System.Xml;
+using System.Diagnostics;
 using Client;
 
 namespace Client
@@ -65,6 +69,28 @@ namespace Client
             Functions.Log(data, level);
         }
 
+        
+        public static void listenForData() {
+            
+            Console.WriteLine("Listen thread started");
+            
+            while (true)
+            {
+                try
+                {
+                    string data = read(reader);
+                    //Console.WriteLine("Got data!");
+                    //Console.WriteLine(data);
+                    Console.WriteLine(data);
+                    
+                }
+                catch
+                {
+                    //Console.WriteLine("ERR!");
+                    break;
+                }
+            }
+        }
         static void Main(string[] args)
         {
             //process args.
@@ -122,6 +148,7 @@ namespace Client
                 NetworkStream stream = socket.GetStream();
                 reader = new StreamReader(stream);
                 writer = new StreamWriter(stream);
+                Thread thr = new Thread(new ThreadStart(listenForData));
                 Log("Logging in...");
                 write("NICK " + nick);
                 if (pass != "")
@@ -129,13 +156,14 @@ namespace Client
                     Log("Sending password...");
                     write("PASS " + pass);
                 }
-                string input = Console.ReadLine().ToLower();
+                thr.Start();
+                string input = "";
                 while (!input.Equals("/quit"))
                 {
-                    string data = read(reader);
-                    if (data.StartsWith("/"))
+                    input = Console.ReadLine().ToLower();
+                    if (input.StartsWith("/"))
                     {
-                        string[] split = data.Split(' ');
+                        string[] split = input.Split(' ');
                         string[] cmd = split[0].Split('/');
                         string aftercommand = string.Join(" ", split.Skip(1));
                         switch (cmd[1])
@@ -151,6 +179,7 @@ namespace Client
                                 break;
                             case "quit":
                                 write("QUIT " + aftercommand);
+                                thr.Abort();
                                 break;
                             default:
                                 Log("You cant just create your own commands!", 1);

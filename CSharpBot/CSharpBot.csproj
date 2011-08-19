@@ -182,6 +182,7 @@
     <Compile Include="IrcNumericReplyLine.cs" />
     <Compile Include="IrcReplyCodes.cs" />
     <Compile Include="LiveScript.cs" />
+    <Compile Include="LiveServer.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
