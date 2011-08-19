@@ -39,25 +39,25 @@ namespace Client
             try
             {
                 writer.WriteLine(Client.nick + " " + data);
-                Console.WriteLine("-->  " + data);
+                //Console.WriteLine("-->  " + data);
                 writer.Flush();
             }
-            catch
+            catch(Exception e)
             {
-                Console.WriteLine("Error!");
+                Console.WriteLine("Error writing: " + e.Message);
             }
         }
         public static void write(string data)
         {
             try
             {
-                Client.writer.WriteLine(Client.nick + " " + data);
-                Console.WriteLine("--> " + data);
+                Client.writer.WriteLine(data);
+                //Console.WriteLine("--> " + data);
                 Client.writer.Flush();
             }
-            catch
+            catch (Exception e)
             {
-                Console.WriteLine("Error!");
+                Console.WriteLine("Error writing: " + e.Message);
             }
         }
     }

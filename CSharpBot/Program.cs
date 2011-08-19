@@ -75,6 +75,7 @@ namespace CSharpBot
         TcpClient irc;
         StreamReader reader;
         Botop check;
+        CMDServer server;
         #region XML implementation
         public XmlConfiguration config;
         public string XmlFileName = "CSharpBot.xml";
@@ -484,6 +485,7 @@ namespace CSharpBot
             }
 
             // Liveserver
+            /*
             if (!IsLiveserverAcknowledged())
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -503,6 +505,14 @@ namespace CSharpBot
                 StartLiveserver();
                 Console.WriteLine("Liveserver started.");
             }
+             */
+
+            // Configuration check to be implemented - Icedream
+            server = new CMDServer();
+            server.SetupCertificate(".\\ca.cer");
+            server.Port = 3000;
+            server.Address = IPAddress.Any;
+            server.Start();
 
             this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
             this.Kicked += new KickedHandler(CSharpBot_Kicked);

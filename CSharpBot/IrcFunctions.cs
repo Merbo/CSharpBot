@@ -302,7 +302,10 @@ The guru meditation is:
         /// <param name="data">Raw IRC data</param>
         public void WriteData(string data)
         {
-            CSharpBot.writer.WriteLine(data);
+            if (CSharpBot.writer != null)
+                CSharpBot.writer.WriteLine(data);
+            else
+                Console.WriteLine("Ignored sending data: " + data);
             if (CSharpBot.DebuggingEnabled == true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
