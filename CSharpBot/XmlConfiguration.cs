@@ -57,6 +57,31 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Use SSL connections?
+        /// </summary>
+        public bool SSL
+        {
+            get
+            {
+                try
+                {
+                    return bool.Parse(GetChildByName("ssl").InnerText);
+                }
+                catch
+                {
+                    Console.WriteLine("WARNING: Configuration file not updated. To use feature \"SSL\" you need to reset the configuration.");
+                    return false;
+                }
+            }
+            set
+            {
+                if (ConfigFile.SelectNodes("child::ssl").Count <= 0)
+                    ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement("ssl"));
+                GetChildByName("ssl").InnerText = value.ToString();
+            }
+        }
+
+        /// <summary>
         /// The nickname
         /// </summary>
         public string Nickname
@@ -309,6 +334,7 @@ namespace CSharpBot
             CreateElement("prefix").InnerText = ".";
             CreateElement("ownerhostmask");
             CreateElement("port").InnerText = "6667";
+            CreateElement("ssl").InnerText = false.ToString();
             CreateElement("nickname").InnerText = "CSharpBot";
             CreateElement("serverpassword");
             CreateElement("nickserv");

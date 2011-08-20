@@ -222,12 +222,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="CSharpBot_TemporaryKey.pfx" />
-    <None Include="id_rsa">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="id_rsa.pub">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="BotOpDB.sdf">

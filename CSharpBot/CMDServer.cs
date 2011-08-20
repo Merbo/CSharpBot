@@ -77,16 +77,18 @@ namespace CSharpBot
         /// <param name="file">Certificate file (X.509 CRT)</param>
         public void SetupCertificate(string file)
         {
-            Console.WriteLine("[CMDServer] Loading " + file + " as a certificate...");
+            /*
+            //Console.WriteLine("[CMDServer] Loading " + file + " as a certificate...");
             serverCertificate = X509Certificate.CreateFromCertFile(file);
             if (serverCertificate == null)
                 Console.WriteLine("[CMDServer] WARNING: Certificate not loaded. Please check if the file is a valid certificate!");
             else {
-                Console.WriteLine("[CMDServer] Certificate has been loaded.");
-                Console.WriteLine("[CMDServer] Issued by: " + serverCertificate.Issuer);
-                Console.WriteLine("[CMDServer] Distinguished name: " + serverCertificate.Subject);
-                Console.WriteLine("[CMDServer] Expires on: " + serverCertificate.GetExpirationDateString());
+                //Console.WriteLine("[CMDServer] Certificate has been loaded.");
+                //Console.WriteLine("[CMDServer] Issued by: " + serverCertificate.Issuer);
+                //Console.WriteLine("[CMDServer] Distinguished name: " + serverCertificate.Subject);
+                //Console.WriteLine("[CMDServer] Expires on: " + serverCertificate.GetExpirationDateString());
             }
+             */
         }
 
         /// <summary>

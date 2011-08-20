@@ -11,6 +11,9 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
 namespace CSharpBot
 {
     public class CSharpBot
@@ -49,6 +52,8 @@ namespace CSharpBot
         public Regex HostmaskRegex;
 
         public StreamWriter writer;
+
+        private SslStream ssl;
 
         public bool DebuggingEnabled = false;
         public bool ProgramRestart = false;
@@ -207,6 +212,37 @@ namespace CSharpBot
             }
             config.Port = port;
 
+            bool answeredssl = false;
+            while (!answeredssl)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Use SSL ([Y]es/[N]o) [Default: " + (config.SSL ? "Yes" : "No") + "]: ");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                ConsoleKeyInfo inf = Console.ReadKey();
+                Console.WriteLine();
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                if (inf.Key == ConsoleKey.Y)
+                {
+                    answeredssl = true;
+                    config.SSL = true;
+                }
+                else if (inf.Key == ConsoleKey.N)
+                {
+                    answeredssl = true;
+                    config.SSL = false;
+                }
+                else if (inf.Key == ConsoleKey.Enter)
+                {
+                    answeredssl = true;
+                }
+                else
+                {
+                    Console.WriteLine("Please say Yes or No (or just press enter to leave default).");
+                }
+            }
+
             // The NICKname
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Nick [Default: " + config.Nickname + "]: ");
@@ -287,8 +323,9 @@ namespace CSharpBot
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Command Prefix (e.g. in '!kick' it is '!') [Default: " + config.Prefix + "]: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                prefinp = Console.ReadKey().KeyChar.ToString();
-                if (prefinp == "")
+                ConsoleKeyInfo key;
+                prefinp = (key = Console.ReadKey()).KeyChar.ToString();
+                if (key.Key == ConsoleKey.Enter)
                     prefinp = config.Prefix;
                 config.Prefix = prefinp;
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -378,6 +415,32 @@ namespace CSharpBot
                 return;
             }
         }
+        
+        private bool CheckCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors error)
+        {
+            Functions.Log("(Certificate) Issuer: " + certificate.Issuer);
+            Functions.Log("(Certificate) Subject: " + certificate.Subject);
+            Functions.Log("(Certificate) Key algorithm: " + certificate.GetKeyAlgorithm());
+            // TODO: Implement SSL Certificate Chain checks
+            if (error == SslPolicyErrors.RemoteCertificateNameMismatch)
+            {
+                Functions.Log("(Certificate) ERROR: Certificate's name mismatches the server's name");
+                return false;
+            }
+            else
+                if (error == SslPolicyErrors.RemoteCertificateNotAvailable)
+                {
+                    Functions.Log("(Certificate) ERROR: Certificate not available.");
+                    return false;
+                }
+                else if (error == SslPolicyErrors.RemoteCertificateChainErrors)
+                {
+                    Functions.Log("(Certificate) ERROR: Certificate chain error.");
+                    return false;
+                }
+            Functions.Log("(Certificate) Certificate approved");
+            return true;
+        }
 
         public void Connect()
         {
@@ -393,9 +456,24 @@ namespace CSharpBot
                 ProgramRestart = true;
             }
 
-            stream = irc.GetStream();
-            reader = new StreamReader(stream);
-            writer = new StreamWriter(stream);
+            ssl = null;
+            stream = null;
+
+            if (config.SSL)
+            {
+                ssl = new SslStream(irc.GetStream(), false, new RemoteCertificateValidationCallback(CheckCertificate), null);
+                Functions.Log("SSL connection established. Negotiating...");
+                ssl.AuthenticateAsClient(config.Server);
+                reader = new StreamReader(ssl);
+                writer = new StreamWriter(ssl);
+            }
+            else
+            {
+                stream = irc.GetStream();
+                reader = new StreamReader(stream);
+                writer = new StreamWriter(stream);
+            }
+
             writer.AutoFlush = true;
         }
 
@@ -741,26 +819,16 @@ namespace CSharpBot
                                     case "die":
                                         if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            string message;
-                                            if (cmd.Length > 4)
+                                            if (msg.BotCommandParams.Length == 0)
                                             {
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + msg.BotCommandParams);
-                                                //Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
-                                             //   this.Shutdown(string.Join(" ", cmd.Skip(5).ToArray()));
-                                                message = string.Join(" ", cmd.Skip(5).ToArray());
-                                                this.Shutdown(message);
-                                                
-                                
+                                                this.Shutdown();
                                             }
                                             else
                                             {
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
-                                                //Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
-                                               message="I shot myself because " + msg.SourceNickname + " told me to.";
-                                               this.Shutdown(message);
+                                                this.Shutdown(string.Join(" ", msg.BotCommandParams));
                                             }
                                     
-                                            }
+                                        }
                                         
                                         else
                                         {
