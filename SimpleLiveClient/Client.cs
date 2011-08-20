@@ -1,164 +1,316 @@
 ﻿using System;
 using System.Net;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
-using System.Net.Sockets;
-using System.Threading;
 using System.Linq;
+using System.Net.Sockets;
+using System.Net.Security; // SSL connections FTW :D
+using System.Threading;
 using Client;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Client
 {
     public class Client
     {
         public static string server, nick, pass;
-        public static int port;
+        public static int port
+        {
+            get;
+
+            set;
+        }
+
+        public static bool IsAuthenticated
+        { get; set; }
 
         // Setting up socket, reader & writer   
-        public static TcpClient socket;
-        public static StreamReader reader;
-        public static StreamWriter writer;
+        private static TcpClient socket;
+        private static NetworkStream stream;
+        //private static SslStream sslsock;
+        //public static bool UseSSL = true; // Commented out since it doesn't currently make sense.
+        private static StreamReader stdread;
+        //private static StreamReader sslread;
+        private static StreamWriter stdwrite;
+        //private static StreamWriter sslwrite;
 
-        //Tells us whether we are debugging - only enabled via arguement --debug
-        public static bool Debug;
+        public static StreamReader reader
+        {
+            get
+            {
+                //if (!UseSSL)
+                //{
+                if (stdread == null) stdread = new StreamReader(stream);
+                return stdread;
+                //}
+                //else
+                //{
+                //    if (sslwrite == null) sslread = new StreamReader(sslsock);
+                //    return sslread;
+                //}
+            }
+        }
+        public static StreamWriter writer
+        {
+            get
+            {
+                //if (!UseSSL)
+                //{
+                if (stdwrite == null) stdwrite = new StreamWriter(stream);
+                return stdwrite;
+                //}
+                //else
+                //{
+                //    if (sslwrite == null) sslwrite = new StreamWriter(sslsock);
+                //    return sslwrite;
+                //}
+            }
+        }
 
-        //Creating aliases for our functions :)
+        // There are 'shortcuts' for our functions :)
         static string read()
         {
             return Functions.read();
         }
-        static string read(StreamReader r)
+        static string read(StreamReader reader)
         {
-            return Functions.read(r);
+            return Functions.read(reader);
         }
         static void write(string data)
         {
             Functions.write(data);
         }
-        static void write(string data, StreamWriter r)
+        static void write(string data, StreamWriter writer)
         {
-            Functions.write(data, r);
+            Functions.write(data, writer);
         }
 
-        static void Log(string data, int level = 6)
+        static void ReadLoop(object o)
         {
-            /*
-             * <> Means necessary parameter
-             * [] Means optional parameter
-             * 
-             * Syntax: Log(<string>, [int])
-             * 
-             * Action: Writes <string> to the console, also can use presets based off of simple tasks, via use of [int]
-             * 
-             * By default, this will simply do a white console.WriteLine of <string>.
-             * However, [int] can be:
-             * 0: Error
-             * 1: Warning
-             * 2: Notice
-             * 3: Debug*
-             * 4: Log*
-             * 5: Setup**
-             * 6: Plain old Console.WriteLine
-             * (*: Only runs if 'Debug' evaluates to true)
-             * (**: Only meant for use at the beginning setup configuration.) 
-            */
-            Functions.Log(data, level);
+            try
+            {
+                while (stream.CanRead)
+                {
+                    string line = reader.ReadLine();
+
+                    string[] split1 = line.Split(' '); // split for arguments
+                    string replytype = split1[0].ToUpper(); // command
+                    split1 = split1.Skip(1).ToArray();
+                    List<string> arguments = new List<string>();
+                    for (int i = 0; i < split1.Length; i++)
+                    {
+                        if (split1[i].StartsWith(":")) // Last argument with spaces
+                        {
+                            arguments.Add(string.Join(" ", split1.Skip(i)).Substring(1));
+                            break;
+                        }
+                        else arguments.Add(split1[i]);
+                    }
+                    split1 = null; // unload unneeded array
+
+                    switch (replytype)
+                    {
+                        case "OK":
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Success: " + arguments.Last());
+                            Console.ResetColor();
+                            break;
+
+                        case "ERROR":
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.Write("Error: ");
+                            string errortype = arguments[0];
+                            arguments = arguments.Skip(1).ToList();
+                            switch (errortype)
+                            {
+                                case "NICKMISS":
+                                    Console.WriteLine("You need to enter your nickname first."); // This should never appear!
+                                    break;
+                                case "NICKINV":
+                                    Console.WriteLine("Invalid nickname: " + arguments.Last());
+                                    break;
+                                case "AUTHFAIL":
+                                    Console.WriteLine("Your login failed: " + arguments.Last());
+                                    break;
+                                case "AUTHMISS":
+                                    Console.WriteLine("Permission denied - you need to authenticate first.");
+                                    break;
+                                case "LSFAIL":
+                                    Console.WriteLine("LiveScript execution failed.");
+                                    break;
+                                case "INTERNAL":
+                                    Console.WriteLine("Internal server error: " + arguments.Last());
+                                    break;
+                                case "NOTIMPL":
+                                    Console.WriteLine("Function " + arguments[0] + " is not implemented!");
+                                    break;
+                                default:
+                                    Console.WriteLine(string.Join(" ", arguments.ToArray()) + ")");
+                                    break;
+                            }
+                            Console.ResetColor();
+                            break;
+
+                        case "MSG":
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("<" + arguments[0] + "> " + arguments.Last());
+                            break;
+
+                        case "PING":
+                            writer.WriteLine("PONG");
+                            break;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("[read error]");
+            }
         }
+
+        // The following method is invoked by the RemoteCertificateValidationDelegate.
+        /*
+        public static bool ValidateServerCertificate(
+              object sender,
+              X509Certificate certificate,
+              X509Chain chain,
+              SslPolicyErrors sslPolicyErrors)
+        {
+            Console.WriteLine("[SSL] Policy errors: " + sslPolicyErrors.ToString());
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            Console.WriteLine("[SSL] WARNING: Policy errors: {0}", sslPolicyErrors);
+
+            // Do not allow this client to communicate with unauthenticated servers.
+            return true; // Testing
+        }
+         */
 
         static void Main(string[] args)
         {
-            //process args.
-            foreach (string arg in args)
-            {
-                string[] parameters = arg.Split('=');
-                string name = parameters[0].ToLower();
-                string value = string.Join("=", parameters.Skip(1).ToArray());
-                switch (name)
-                {
-                    case "-d":
-                    case "--debug":
-                        Debug = true;
-                        continue;
-                }
-            }
+            Thread readThread = new Thread(new ParameterizedThreadStart(ReadLoop));
+            readThread.IsBackground = true;
 
-
-            tryserver:
-            Log("Server: ", 5);
+        tryserver:
+            Console.Write("Server: ");
             server = Console.ReadLine();
             if (server == "")
                 goto tryserver;
-            tryport:
-            Log("Port: ", 5);
+
+        tryport:
+            Console.Write("Port: ");
             string tmp = Console.ReadLine();
-            if (int.TryParse(tmp, out port))
+            int x = 0;
+            if (int.TryParse(tmp, out x))
             {
+                port = x;
                 if (port > 0 && port < 65535)
                 {
                 }
                 else
                 {
-                    Log("Invalid port.", 0);
+                    Console.WriteLine("Invalid port.");
                     goto tryport;
                 }
             }
             else
             {
-                Log("Invalid Port.", 0);
+                Console.WriteLine("Invalid Port.");
                 goto tryport;
             }
-            trynick:
-            Log("Nick: ", 5);
+
+        trynick:
+            Console.Write("Nick: ");
             nick = Console.ReadLine();
             if (nick == "")
                 goto trynick;
-            Log("Pass (if given): ", 5);
+
+        trypass:
+            Console.Write("Pass (if given): ");
             pass = Console.ReadLine();
+            if (pass == "")
+                goto trypass;
+
+            Console.Clear();
+
+
+
             try
             {
+                Console.Write("Connecting... ");
                 socket = new TcpClient(server, port);
                 socket.ReceiveBufferSize = 1024;
-                Console.WriteLine("Connected :D");
-                NetworkStream stream = socket.GetStream();
-                reader = new StreamReader(stream);
-                writer = new StreamWriter(stream);
-                Log("Logging in...");
+                Console.WriteLine("OK! :D");
+
+
+                stream = socket.GetStream();
+                readThread.Start();
+
+                // Setting up SSL
+                //Console.Write("Authenticating... ");
+                //try
+                //{
+                //sslsock = new System.Net.Security.SslStream(stream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+                //sslsock.AuthenticateAsClient("ICEDREAM-I5");
+                //Console.WriteLine("OK!");
+                //}
+                //catch
+                //{
+                //Console.WriteLine("FAILED!");
+                //}
+
+                Console.Write("Logging in... ");
                 write("NICK " + nick);
                 if (pass != "")
-                {
-                    Log("Sending password...");
                     write("PASS " + pass);
-                }
-                string input = Console.ReadLine().ToLower();
-                while (!input.Equals("/quit"))
+                Console.WriteLine("Data sent!");
+                Console.WriteLine();
+                string data = "";
+                Thread.Sleep(800);
+                while (!data.ToLower().Equals("/quit"))
                 {
-                    string data = read(reader);
-                    if (data.StartsWith("/"))
+                    Thread.Sleep(200);
+                    Console.Write("cmd>");
+                    data = Console.ReadLine();
+                    if (data.StartsWith("/") && stream.CanWrite)
                     {
+                        // Why don't we just use a simple command conversion?
+                        string[] arguments = data.Substring(1).Split(' '); // "/a b c d e f g" => "a","b","c","d","e","f","g"
+                        string command = arguments[0].ToUpper(); // "A"
+                        arguments = arguments.Skip(1).ToArray(); // "b","c","d", ...
+
+                        switch (command)
+                        {
+                            case "SAY":
+                                command = "MSG";
+                                break;
+                        }
+
+                        string argline = string.Join(" ", arguments); // "b c d e f g"
+                        write(command + " " + argline);
+
+                        /*
                         string[] split = data.Split(' ');
                         string[] cmd = split[0].Split('/');
-                        string aftercommand = string.Join(" ", split.Skip(1));
                         switch (cmd[1])
                         {
                             case "say":
-                                write("PRIVMSG " + input);
+                                write("MSG " + input);
                                 break;
-                            case "nick":
-                                write("NICK " + aftercommand);
+                            case "logout":
+                                write("LOGOUT");
                                 break;
-                            case "kill":
-                                write("KILL " + aftercommand);
-                                break;
-                            case "quit":
-                                write("QUIT " + aftercommand);
-                                break;
-                            default:
-                                Log("You cant just create your own commands!", 1);
+                            case "help":
+                                write("HELP");
                                 break;
                         }
+                         */
                     }
                     else
-                        write(input);
+                        write("MSG " + data);
                 }
                 reader.Close();
                 writer.Close();
@@ -166,10 +318,10 @@ namespace Client
             }
             catch
             {
-                Log("Failed to connect", 0);
+                Console.WriteLine("Failed to connect :(");
             }
-            Log("Terminating...", 3);
-            Console.ReadKey();
         }
+
+
     }
 }

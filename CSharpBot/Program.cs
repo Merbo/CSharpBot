@@ -11,6 +11,9 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Diagnostics;
 
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
 namespace CSharpBot
 {
     public class CSharpBot
@@ -40,7 +43,7 @@ namespace CSharpBot
 
             Console.WriteLine("Bot is now running.");
             Console.WriteLine();
-            
+
             Application.EnableVisualStyles();
             Application.Run(cwin);
         }
@@ -49,6 +52,8 @@ namespace CSharpBot
         public Regex HostmaskRegex;
 
         public StreamWriter writer;
+
+        private SslStream ssl;
 
         public bool DebuggingEnabled = false;
         public bool ProgramRestart = false;
@@ -75,6 +80,7 @@ namespace CSharpBot
         TcpClient irc;
         StreamReader reader;
         Botop check;
+        CMDServer server;
         #region XML implementation
         public XmlConfiguration config;
         public string XmlFileName = "CSharpBot.xml";
@@ -106,7 +112,7 @@ namespace CSharpBot
             get { return config.EnableFileLogging; }
             set { config.EnableFileLogging = value; }
         }
-        #endregion   
+        #endregion
 
         public DateTime startupTime = DateTime.Now;
         private IrcFunctions _functionsCached;
@@ -206,6 +212,45 @@ namespace CSharpBot
             }
             config.Port = port;
 
+            bool answeredssl = false;
+            while (!answeredssl)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("Use SSL ([Y]es/[N]o/[S]tartTLS) [Default: " + (config.SSL ? "Yes" : (config.StartTLS ? "StartTLS" : "No")) + "]: ");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                ConsoleKeyInfo inf = Console.ReadKey();
+                Console.WriteLine();
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                if (inf.Key == ConsoleKey.Y)
+                {
+                    answeredssl = true;
+                    config.SSL = true;
+                    config.StartTLS = false;
+                }
+                else if (inf.Key == ConsoleKey.N)
+                {
+                    answeredssl = true;
+                    config.SSL = false;
+                    config.StartTLS = false;
+                }
+                else if (inf.Key == ConsoleKey.S)
+                {
+                    answeredssl = true;
+                    config.SSL = false;
+                    config.StartTLS = true;
+                }
+                else if (inf.Key == ConsoleKey.Enter)
+                {
+                    answeredssl = true;
+                }
+                else
+                {
+                    Console.WriteLine("Please say Yes or No (or just press enter to leave default).");
+                }
+            }
+
             // The NICKname
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Nick [Default: " + config.Nickname + "]: ");
@@ -286,8 +331,9 @@ namespace CSharpBot
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("Command Prefix (e.g. in '!kick' it is '!') [Default: " + config.Prefix + "]: ");
                 Console.ForegroundColor = ConsoleColor.White;
-                prefinp = Console.ReadKey().KeyChar.ToString();
-                if (prefinp == "")
+                ConsoleKeyInfo key;
+                prefinp = (key = Console.ReadKey()).KeyChar.ToString();
+                if (key.Key == ConsoleKey.Enter)
                     prefinp = config.Prefix;
                 config.Prefix = prefinp;
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -378,6 +424,98 @@ namespace CSharpBot
             }
         }
 
+        private bool CheckCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors error)
+        {
+            // Printing SSL certificate details
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Functions.Log("(Certificate) Issuer: " + certificate.Issuer);
+            Functions.Log("(Certificate) Subject: " + certificate.Subject);
+            Functions.Log("(Certificate) Key algorithm: " + certificate.GetKeyAlgorithm());
+            Console.ForegroundColor = ConsoleColor.White;
+#endif
+
+            // Checking SSL certificate itself
+            if (error == SslPolicyErrors.RemoteCertificateNameMismatch)
+            {
+                Functions.Log("(Certificate) ERROR: Certificate's name mismatches the server's name");
+                return false;
+            }
+            else
+                if (error == SslPolicyErrors.RemoteCertificateNotAvailable)
+                {
+                    Functions.Log("(Certificate) ERROR: Certificate not available.");
+                    return false;
+                }
+                else if (error == SslPolicyErrors.RemoteCertificateChainErrors)
+                {
+                    Functions.Log("(Certificate) ERROR: Certificate chain error.");
+                    return false;
+                }
+
+            // Checking chain elements of certificate
+            foreach (X509ChainElement chel in chain.ChainElements)
+            {
+                if(chel.Information != null)
+                    if(chel.Information.Trim() != "")
+                        Functions.Log("(Certificate) Chain error information: " + chel.Information);
+                foreach (X509ChainStatus status in chel.ChainElementStatus)
+                {
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Yellow;
+                    Functions.Log("(Certificate) Chain element status flags set: " + status.Status.ToString());
+            Console.ForegroundColor = ConsoleColor.White;
+#endif
+                    if (status.StatusInformation != null)
+                        if (status.StatusInformation.Trim() != "")
+                            Functions.Log("(Certificate) Status info: " + status.StatusInformation.Trim());
+                    if (status.Status == X509ChainStatusFlags.RevocationStatusUnknown)
+                        Functions.Log("(Certificate) WARNING: Could not validate if certificate has been revoked.");
+                    if (status.Status == X509ChainStatusFlags.Revoked)
+                    {
+                        Functions.Log("(Certificate) ERROR: Certificate has been revoked.");
+                        return false;
+                    }
+                    if (status.Status == X509ChainStatusFlags.NotTimeValid)
+                        Functions.Log("(Certificate) WARNING: Certificate has invalid time entries.");
+                    if (status.Status == X509ChainStatusFlags.NotTimeNested)
+                        Functions.Log("(Certificate) WARNING: Certificate has unnested time entries.");
+                    if (status.Status == X509ChainStatusFlags.NotSignatureValid)
+                    {
+                        Functions.Log("(Certificate) ERROR: Invalid signature.");
+                        return false;
+                    }
+                    if (status.Status == X509ChainStatusFlags.HasNotPermittedNameConstraint)
+                    {
+                        Functions.Log("(Certificate) ERROR: Certificate has non-permitted name constraint.");
+                        return false;
+                    }
+                    if (status.Status == X509ChainStatusFlags.CtlNotValidForUsage)
+                    {
+                        Functions.Log("(Certificate) WARNING: Certificate Trust List not valid for usage on this certificate.");
+                    }
+                    if (status.Status == X509ChainStatusFlags.CtlNotTimeValid)
+                    {
+                        Functions.Log("(Certificate) WARNING: Certificate Trust List has invalid time entries.");
+                    }
+                    if (status.Status == X509ChainStatusFlags.CtlNotSignatureValid)
+                    {
+                        Functions.Log("(Certificate) WARNING: Certificate Trust List contains invalid signature.");
+                    }
+                    if (status.Status == X509ChainStatusFlags.UntrustedRoot)
+                    {
+                        Functions.Log("(Certificate) Untrusted root certificate. This may be a self-signed certificated, but the server connection may also be faked. Be warned!");
+                    }
+                }
+            }
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Functions.Log("(Certificate) Certificate approved");
+            Console.ForegroundColor = ConsoleColor.White;
+#endif
+            return true;
+        }
+
         public void Connect()
         {
             Console.ForegroundColor = ConsoleColor.White;
@@ -392,10 +530,39 @@ namespace CSharpBot
                 ProgramRestart = true;
             }
 
-            stream = irc.GetStream();
-            reader = new StreamReader(stream);
-            writer = new StreamWriter(stream);
-            writer.AutoFlush = true;
+            ssl = null;
+            stream = null;
+
+                stream = irc.GetStream();
+                reader = new StreamReader(stream);
+                writer = new StreamWriter(stream);
+
+                if (config.SSL)
+                {
+                    Functions.Log("Forcing SSL.");
+                    ssl = new SslStream(stream, false, new RemoteCertificateValidationCallback(CheckCertificate), null);
+                    Functions.Log("Negotiating...");
+                    ssl.AuthenticateAsClient(config.Server);
+                    reader = new StreamReader(ssl);
+                    writer = new StreamWriter(ssl);
+                }
+
+                writer.AutoFlush = true;
+
+                if (config.StartTLS)
+                    Functions.Raw("CAP LS");
+
+
+            Functions.Log("Logging in...");
+            Functions.User(config.Nickname, config.Realname);
+            Functions.Nick(config.Nickname);
+
+            string inputline = "";
+
+            if(config.ServerPassword != "")
+                Functions.Pass(config.ServerPassword);
+
+
         }
 
         public void ParseArguments(string[] args)
@@ -417,7 +584,7 @@ namespace CSharpBot
                         continue;
                     case "-f":
                     case "--config-file":
-                        XmlFileName = value;                       
+                        XmlFileName = value;
                         continue;
                 }
             }
@@ -484,6 +651,7 @@ namespace CSharpBot
             }
 
             // Liveserver
+            /*
             if (!IsLiveserverAcknowledged())
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -503,6 +671,14 @@ namespace CSharpBot
                 StartLiveserver();
                 Console.WriteLine("Liveserver started.");
             }
+             */
+
+            // Configuration check to be implemented - Icedream
+            server = new CMDServer();
+            server.SetupCertificate(".\\ca.cer");
+            server.Port = 3000;
+            server.Address = IPAddress.Any;
+            server.Start();
 
             this.NumericReplyReceived += new NumericReplyReceivedHandler(CSharpBot_NumericReplyReceived);
             this.Kicked += new KickedHandler(CSharpBot_Kicked);
@@ -513,9 +689,6 @@ namespace CSharpBot
                 Console.WriteLine();
                 Connect();
 
-                Functions.Log("Logging in...");
-                Functions.User(config.Nickname, config.Realname);
-                Functions.Nick(config.Nickname);
                 string whoistarget;
                 int replycode;
                 while ((inputline = reader.ReadLine()) != null)
@@ -549,6 +722,56 @@ namespace CSharpBot
                         this.OnNumericReplyReceived(reply);
                     }
 
+                    // Capabilities
+                    else if (cmd[1].Equals("CAP"))
+                    {
+                        if (cmd[3].Equals("LS"))
+                        {
+                            Functions.Log("Received capabitilites list.");
+                            string[] capabilities = string.Join(" ", cmd.Skip(4).ToArray()).Substring(1).ToLower().Split(' ');
+                            
+                            if (capabilities.Contains("tls") && config.StartTLS)
+                            {
+                                Functions.Log("Trying STARTTLS...");
+                                Functions.WriteData("STARTTLS");
+                                while (true)
+                                {
+                                    inputline = reader.ReadLine();
+                                    try
+                                    {
+                                        IrcNumericReplyLine reply = new IrcNumericReplyLine(inputline);
+                                        if (reply.ReplyCode == IrcReplyCode.RPL_STARTTLSSUCCESSFUL)
+                                        {
+                                            Functions.Log("StartTLS successful. Switching to SSL...");
+                                            ssl = new SslStream(stream, false, new RemoteCertificateValidationCallback(CheckCertificate), null);
+                                            Functions.Log("Negotiating...");
+                                            ssl.AuthenticateAsClient(config.Server);
+                                            Functions.WriteData("CAP END");
+                                            reader = new StreamReader(ssl);
+                                            writer = new StreamWriter(ssl);
+                                        }
+                                        else if (reply.ReplyCode == IrcReplyCode.ERR_STARTTLSFAILED)
+                                        {
+                                            Functions.Log("StartTLS initialization failed server-side. Disconnecting...");
+                                            Shutdown("StartTLS failed", false);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            
+                            if (capabilities.Contains("identify-msg"))
+                            {
+                                Console.WriteLine("Server supports IDENTIFY message, but it is currently not implemented in the bot.");
+                            }
+
+                            Functions.WriteData("CAP END");
+                        }
+                    }
+
                     // Kick
                     else if (cmd[1].Equals("KICK"))
                     {
@@ -580,7 +803,7 @@ namespace CSharpBot
 
                                 // Execute commands
                                 Functions.Log(msg.SourceNickname + " issued " + prefix + msg.BotCommandName + " with " + msg.BotCommandParams.Count() + " parameters.");
-                                switch(msg.BotCommandName.ToLower())
+                                switch (msg.BotCommandName.ToLower())
                                 {
                                     case "test":
                                         Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I think your test works ;-)");
@@ -595,23 +818,26 @@ namespace CSharpBot
 
                                             if (cmd.Length > 5)
                                             {
-                                               try
+                                                try
                                                 {
-                                                    add.AddBotOp(cmd[4],Convert.ToInt32(cmd[5]));
+                                                    add.AddBotOp(cmd[4], Convert.ToInt32(cmd[5]));
                                                     Functions.PrivateMessage(msg.Target, "Done!");
-                                                }catch(Exception){
-                                                    Functions.PrivateMessage(msg.Target, "I'm Sorry, " + msg.SourceNickname + ", but I'm afraid I can't do that.");
-                                                  if (add.isBotOp(cmd[4])){
-                                                      Functions.PrivateMessage(msg.Target, "The user is already in the DB.");
                                                 }
-                                                  try
-                                                  {
-                                                      Convert.ToInt32(cmd[5]);
-                                                  }
-                                                  catch (Exception)
-                                                  {
-                                                      Functions.PrivateMessage(msg.Target, "The Access Level Number Is Invalid.");
-                                                  }
+                                                catch (Exception)
+                                                {
+                                                    Functions.PrivateMessage(msg.Target, "I'm Sorry, " + msg.SourceNickname + ", but I'm afraid I can't do that.");
+                                                    if (add.isBotOp(cmd[4]))
+                                                    {
+                                                        Functions.PrivateMessage(msg.Target, "The user is already in the DB.");
+                                                    }
+                                                    try
+                                                    {
+                                                        Convert.ToInt32(cmd[5]);
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        Functions.PrivateMessage(msg.Target, "The Access Level Number Is Invalid.");
+                                                    }
 
 
                                                 }
@@ -620,7 +846,7 @@ namespace CSharpBot
                                             {
                                                 add.AddBotOp(cmd[4]);
                                                 Functions.PrivateMessage(msg.Target, "Done!");
-                                            } 
+                                            }
                                         }
                                         else
                                         {
@@ -637,7 +863,8 @@ namespace CSharpBot
                                             {
                                                 try
                                                 {
-                                                    if (!add.SetLevel(cmd[4], Convert.ToInt32(cmd[5]))) {
+                                                    if (!add.SetLevel(cmd[4], Convert.ToInt32(cmd[5])))
+                                                    {
                                                         throw new IrcException("NO SUCH NICK");
                                                     }
                                                     Functions.PrivateMessage(msg.Target, "Done!");
@@ -662,7 +889,7 @@ namespace CSharpBot
 
                                                 }
                                             }
-                                           
+
                                         }
                                         else
                                         {
@@ -694,10 +921,10 @@ namespace CSharpBot
                                         Functions.PrivateMessage(msg.Target, "The answer is: " + (test.isBotOp(msg.SourceNickname) ? "Yes!" : "No!"));
                                         if (test.isBotOp(msg.SourceNickname))
                                         {
-                                            
-                                       Functions.PrivateMessage(msg.Target, "You are a level " + test.GetLevel(msg.SourceNickname).ToString() + " BotOP");
+
+                                            Functions.PrivateMessage(msg.Target, "You are a level " + test.GetLevel(msg.SourceNickname).ToString() + " BotOP");
                                         }
- 
+
                                         break;
                                     case "uptime":
                                         TimeSpan ts = DateTime.Now - startupTime;
@@ -731,27 +958,17 @@ namespace CSharpBot
                                     case "die":
                                         if (Functions.IsOwner(msg.SourceHostmask))
                                         {
-                                            string message;
-                                            if (cmd.Length > 4)
+                                            if (msg.BotCommandParams.Length == 0)
                                             {
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die " + msg.BotCommandParams);
-                                                //Functions.Quit(string.Join(" ", cmd.Skip(5).ToArray()));
-                                             //   this.Shutdown(string.Join(" ", cmd.Skip(5).ToArray()));
-                                                message = string.Join(" ", cmd.Skip(5).ToArray());
-                                                this.Shutdown(message);
-                                                
-                                
+                                                this.Shutdown();
                                             }
                                             else
                                             {
-                                                Functions.Log(msg.SourceNickname + " issued " + prefix + "die");
-                                                //Functions.Quit("I shot myself because " + msg.SourceNickname + " told me to.");
-                                               message="I shot myself because " + msg.SourceNickname + " told me to.";
-                                               this.Shutdown(message);
+                                                this.Shutdown(string.Join(" ", msg.BotCommandParams));
                                             }
-                                    
-                                            }
-                                        
+
+                                        }
+
                                         else
                                         {
                                             Functions.Log(msg.SourceNickname + " attempted to use " + prefix + "die");
@@ -773,7 +990,7 @@ namespace CSharpBot
                                         }
                                         break;
                                     case "raw":
-                                        if ((Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname) ) && (check.GetLevel(msg.SourceNickname) >= 4) )
+                                        if ((Functions.IsOwner(msg.SourceHostmask) | check.isBotOp(msg.SourceNickname)) && (check.GetLevel(msg.SourceNickname) >= 4))
                                         {
                                             if (msg.BotCommandParams.Length > 0)
                                                 Functions.Raw(string.Join(" ", msg.BotCommandParams));
@@ -791,7 +1008,7 @@ namespace CSharpBot
                                         else if (cmd[4] == "list")
                                         {
                                             Regex search = new Regex("^(.*)$");
-                                            if(cmd.Length > 5)
+                                            if (cmd.Length > 5)
                                                 search = new Regex(!cmd[5].StartsWith("regex:") ? "(" + cmd[5].Replace(".", "\\.") + ")" : cmd[5].Substring(6));
                                             foreach (XmlNode node in config.ConfigFile.ChildNodes)
                                             {
@@ -822,21 +1039,27 @@ namespace CSharpBot
                                         {
                                             string[] nodes = msg.BotCommandParams[1].Split('.');
                                             XmlNodeList xmlnodes = config.ConfigFile.SelectNodes("child::" + nodes[0]);
-                                            if(xmlnodes.Count == 0)
+                                            if (xmlnodes.Count == 0)
                                             {
                                                 Functions.Notice(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[0] + "\x02 could not be found.");
-                                            } else {
-                                                if(nodes.Length > 1)
+                                            }
+                                            else
+                                            {
+                                                if (nodes.Length > 1)
                                                 {
                                                     xmlnodes = xmlnodes[0].SelectNodes("child::" + nodes[1]);
-                                                    if(xmlnodes.Count == 0)
+                                                    if (xmlnodes.Count == 0)
                                                     {
                                                         Functions.Notice(msg.SourceNickname, "Sorry, but configuration node \x02" + nodes[1] + "\x02 (in " + nodes[0] + ") could not be found.");
-                                                    } else {
+                                                    }
+                                                    else
+                                                    {
                                                         xmlnodes[0].InnerText = msg.BotCommandParams[2];
                                                         Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration edited. You may need to restart the bot to apply.");
                                                     }
-                                                } else {
+                                                }
+                                                else
+                                                {
                                                     xmlnodes[0].InnerText = msg.BotCommandParams[2];
                                                     Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": Configuration edited. Restart to apply.");
                                                 }
@@ -985,7 +1208,7 @@ namespace CSharpBot
                                     case "kick":
                                         if (cmd.Length > 4)
                                         {
-                                           
+
                                             if (Functions.IsOwner(msg.SourceHostmask) | (check.isBotOp(msg.SourceNickname) && (check.GetLevel(msg.SourceNickname) >= 3)))
                                             {
                                                 if (cmd.Length > 5)
@@ -1124,33 +1347,39 @@ namespace CSharpBot
                                             {
                                                 if (cmd.Length > 4)
                                                 {
-                                                  //  if (cmd[4].StartsWith("\"") && cmd.Last().EndsWith("\""))
+                                                    //  if (cmd[4].StartsWith("\"") && cmd.Last().EndsWith("\""))
                                                     //    start.FileName = string.Join(" ", cmd.Skip(4)).Remove('"');
-                                                   // else
-                                                        start.FileName = String.Join(" ", cmd.Skip(4).ToArray());
+                                                    // else
+                                                    start.FileName = String.Join(" ", cmd.Skip(4).ToArray());
                                                     start.UseShellExecute = false;
                                                     start.RedirectStandardOutput = true;
-                                                    bool ok=false;
-                                                    try{
-                                                        ok=Functions.CheckEXE(start.FileName);
-                                                    }catch (Exception){
-                                                        ok=false;
-                                                    }
-                                                    if (ok){
-                                                    using (Process process = Process.Start(start))
+                                                    bool ok = false;
+                                                    try
                                                     {
-                                                        using (StreamReader sreader = process.StandardOutput)
+                                                        ok = Functions.CheckEXE(start.FileName);
+                                                    }
+                                                    catch (Exception)
+                                                    {
+                                                        ok = false;
+                                                    }
+                                                    if (ok)
+                                                    {
+                                                        using (Process process = Process.Start(start))
                                                         {
-                                                            string output = sreader.ReadToEnd();
-                                                            cwin.textBox3.Text = output;
-                                                            string[] split = cwin.textBox3.Text.Split('\n');
-                                                            foreach (string s in split)
+                                                            using (StreamReader sreader = process.StandardOutput)
                                                             {
-                                                                Functions.PrivateMessage(msg.Target, s);
+                                                                string output = sreader.ReadToEnd();
+                                                                cwin.textBox3.Text = output;
+                                                                string[] split = cwin.textBox3.Text.Split('\n');
+                                                                foreach (string s in split)
+                                                                {
+                                                                    Functions.PrivateMessage(msg.Target, s);
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                    }else{
+                                                    else
+                                                    {
                                                         Functions.PrivateMessage(msg.Target, msg.SourceNickname + ": I'm sorry, but the file you have attempted to run is not a valid CSB executable.");
                                                     }
                                                 }
@@ -1198,44 +1427,39 @@ namespace CSharpBot
                                 }
                                 if (Regex.Match(msg.BotCommandName, "^(g|d)(voice|bot|halfop|op|admin|protect|owner)$").Success)
                                 {
-
-                                    //if (msg.BotCommandName.StartsWith("g"))
-                                    //{
                                     string pre = msg.BotCommandName.StartsWith("g") ? "+" : "-";
-                                        string cdmode = msg.BotCommandName.ToLower();
-                                        if (Functions.IsOwner(msg.SourceHostmask))
+                                    string cdmode = msg.BotCommandName.ToLower();
+                                    if (Functions.IsOwner(msg.SourceHostmask))
+                                    {
+                                        if (msg.BotCommandParams.Length > 0)
                                         {
-                                            if (msg.BotCommandParams.Length > 0)
+                                            cdmode = cdmode.Substring(1);
+                                            if (cdmode.Equals("voice"))
                                             {
-                                                cdmode = cdmode.Substring(1);
-                                                if (cdmode.Equals("voice"))
-                                                {
-                                                    Functions.Mode(msg.Target, pre + "v " + msg.BotCommandParams[0]);
-                                                }
-                                                else if (cdmode.Equals("bot"))
-                                                {
-                                                    Functions.Mode(msg.Target, pre + "V " + msg.BotCommandParams[0]);
-                                                }
-                                                else if (cdmode.Equals("halfop"))
-                                                {
-                                                    Functions.Mode(msg.Target, pre + "h " + msg.BotCommandParams[0]);
-                                                }
-                                                else if (cdmode.Equals("op"))
-                                                {
-                                                    Functions.Mode(msg.Target, pre + "o " + msg.BotCommandParams[0]);
-                                                }
-                                                else if (cdmode.Equals(Regex.Match(cdmode, "^(admin|protect)$").Value))
-                                                {
-                                                    Functions.Mode(msg.Target, pre + "a " + msg.BotCommandParams[0]);
-                                                }
-                                                else if (cdmode.Equals("owner"))
-                                                {
-                                                    Functions.Mode(msg.Target, pre + "q " + msg.BotCommandParams[0]);
-                                                }
+                                                Functions.Mode(msg.Target, pre + "v " + msg.BotCommandParams[0]);
+                                            }
+                                            else if (cdmode.Equals("bot"))
+                                            {
+                                                Functions.Mode(msg.Target, pre + "V " + msg.BotCommandParams[0]);
+                                            }
+                                            else if (cdmode.Equals("halfop"))
+                                            {
+                                                Functions.Mode(msg.Target, pre + "h " + msg.BotCommandParams[0]);
+                                            }
+                                            else if (cdmode.Equals("op"))
+                                            {
+                                                Functions.Mode(msg.Target, pre + "o " + msg.BotCommandParams[0]);
+                                            }
+                                            else if (cdmode.Equals(Regex.Match(cdmode, "^(admin|protect)$").Value))
+                                            {
+                                                Functions.Mode(msg.Target, pre + "a " + msg.BotCommandParams[0]);
+                                            }
+                                            else if (cdmode.Equals("owner"))
+                                            {
+                                                Functions.Mode(msg.Target, pre + "q " + msg.BotCommandParams[0]);
                                             }
                                         }
-                                    //}
-
+                                    }
                                 }
                                 if (msg.Message.StartsWith("GTFO "))
                                 {
@@ -1260,17 +1484,17 @@ namespace CSharpBot
                         #region NOTICE
                         else if (msg.MessageType == IrcMessageType.Notice)
                         {
-
-                            if (msg.SourceNickname == "NickServ")
+                            //Console.WriteLine("Notice from " + msg.SourceNickname + " to " + msg.Target + ": " + msg.Message);
+                            
+                            if (msg.SourceNickname.ToUpper() == "NICKSERV")
                                 Functions.Log("NickServ info: " + msg.Message);
 
-                            else
-                            {
-                                if (msg.SourceNickname == "NickServ")
-                                    Functions.Log("NickServ identification: " + string.Join(" ", cmd.Skip(3)).Substring(1));
-                                else
-                                    Functions.WriteData("NOTICE " + msg.SourceNickname + " :Sorry, but you need to contact me over a channel.");
-                            }
+                            if (msg.SourceNickname.ToUpper() == "CHANSERV")
+                                Functions.Log("ChanServ info: " + msg.Message);
+
+                            if (msg.Target.ToUpper() == "AUTH")
+                                Functions.Log("Auth message: " + msg.Message);
+
                         }
                         #endregion
                         #region CTCP Request
@@ -1333,12 +1557,12 @@ namespace CSharpBot
         /// <summary>
         /// Shuts the bot down
         /// </summary>
-        public void Shutdown(string text="Shutdown through GUI", bool alliswell = true)
+        public void Shutdown(string text = "Shutdown through GUI", bool alliswell = true)
         {
             if (alliswell) //If shutting down normally
             {
                 Functions.Quit(text);
-                
+
                 Environment.Exit(0); //Terminate All threads
             }
             else
@@ -1347,7 +1571,7 @@ namespace CSharpBot
             }
 
         }
-        
+
         /// <summary>
         /// Lets the bot join a channel
         /// </summary>

@@ -57,6 +57,56 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Use SSL connections?
+        /// </summary>
+        public bool SSL
+        {
+            get
+            {
+                try
+                {
+                    return bool.Parse(GetChildByName("ssl").InnerText);
+                }
+                catch
+                {
+                    Console.WriteLine("WARNING: Configuration file not updated. To use feature \"SSL\" you need to reset the configuration.");
+                    return false;
+                }
+            }
+            set
+            {
+                if (ConfigFile.SelectNodes("child::ssl").Count <= 0)
+                    ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement("ssl"));
+                GetChildByName("ssl").InnerText = value.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Try SSL connections by using STARTTLS?
+        /// </summary>
+        public bool StartTLS
+        {
+            get
+            {
+                try
+                {
+                    return bool.Parse(GetChildByName("starttls").InnerText);
+                }
+                catch
+                {
+                    Console.WriteLine("WARNING: Configuration file not updated. To use feature \"StartTLS\" you need to reset the configuration.");
+                    return false;
+                }
+            }
+            set
+            {
+                if (ConfigFile.SelectNodes("child::starttls").Count <= 0)
+                    ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement("starttls"));
+                GetChildByName("starttls").InnerText = value.ToString();
+            }
+        }
+
+        /// <summary>
         /// The nickname
         /// </summary>
         public string Nickname
@@ -231,7 +281,8 @@ namespace CSharpBot
         /// </summary>
         public string Logfile
         {
-            get {
+            get
+            {
                 if (EnableFileLogging)
                     return GetChildByName("filelogging").Attributes["path"].Value;
                 else
@@ -253,7 +304,7 @@ namespace CSharpBot
         {
             get { return Configuration.SelectNodes("csharpbot")[0]; }
         }
-        
+
         private string OriginalFilePath = "CSharpBot.xml";
 
         private XmlNode GetChildByName(string name)
@@ -309,6 +360,8 @@ namespace CSharpBot
             CreateElement("prefix").InnerText = ".";
             CreateElement("ownerhostmask");
             CreateElement("port").InnerText = "6667";
+            CreateElement("ssl").InnerText = false.ToString();
+            CreateElement("starttls").InnerText = true.ToString();
             CreateElement("nickname").InnerText = "CSharpBot";
             CreateElement("serverpassword");
             CreateElement("nickserv");

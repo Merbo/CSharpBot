@@ -161,7 +161,7 @@ namespace CSharpBot
         public void User(string username, string realname, bool invisible = false, bool getwallops = true)
         {
             string binary = "1" + (invisible ? "1" : "0") + (getwallops ? "1" : "0");
-            CSharpBot.writer.WriteLine("USER " + username + " " + Convert.ToUInt16(binary, 2).ToString() + " * :" + realname);
+            WriteData("USER " + username + " " + Convert.ToUInt16(binary, 2).ToString() + " * :" + realname);
         }
 
         /// <summary>
@@ -302,7 +302,10 @@ The guru meditation is:
         /// <param name="data">Raw IRC data</param>
         public void WriteData(string data)
         {
-            CSharpBot.writer.WriteLine(data);
+            if (CSharpBot.writer != null)
+                CSharpBot.writer.WriteLine(data);
+            else
+                Console.WriteLine("Ignored sending data: " + data);
             if (CSharpBot.DebuggingEnabled == true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;

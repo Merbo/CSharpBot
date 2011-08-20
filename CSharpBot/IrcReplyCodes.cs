@@ -220,7 +220,7 @@ namespace CSharpBot
         /// <remarks>This is a non-generic code</remarks>
         RPL_STATSHLINE = 244,
         /// <remarks>This is a non-generic code</remarks>
-        RPL_STATSSLINE = 245, // they did hopefully mean this, since RFC 2812 says, it's 244 also :-/
+        RPL_STATSSLINE = 245, // they did hopefully mean this, since RFC 2812 says, it's 244 also, but 245 isn't used (which is pretty senseless) :-/
         /// <remarks>This is a non-generic code</remarks>
         RPL_STATSPING = 246,
         /// <remarks>This is a non-generic code</remarks>
@@ -231,7 +231,12 @@ namespace CSharpBot
         /// <remarks>This is a non-generic code</remarks>
         ERR_NOSERVICEHOST = 492,
         /// <remarks>This is a non-generic code</remarks>
-        ERR_NEEDTOBEREGISTERED = 486
+        ERR_NEEDTOBEREGISTERED = 486,
 
+        /// <remarks>This is a non-standard code for StartTLS</remarks>
+        RPL_STARTTLSSUCCESSFUL = 670,
+        
+        /// <remarks>This is a non-standard code for StartTLS</remarks>
+        ERR_STARTTLSFAILED = 691
     }
 }

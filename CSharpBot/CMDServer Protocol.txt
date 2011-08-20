@@ -1,0 +1,84 @@
+﻿CMDSERVER PROTOCOL
+==================
+
+Connection: TCP + SSL3/TLS
+Port: 3000 (replacing the Liveserver)
+
+--
+Syntax of a line sent by a user:
+	COMMAND [Arg1 [Arg2 [Arg3 [...]]]]
+
+Syntax of a line sent by a server:
+	REPLYTYPE [REPLYNAME] [Arg1 [Arg2 [Arg3 [...]]]]
+
+--
+COMMANDS:
+
+[ToDo]
+
+--
+REPLY TYPES:
+
+ERROR	Indicates an error reply.
+OK		Indicates a success reply.
+MSG		Indicates a message.
+YES		Confirms a client-side question.
+NO		Negotiates a client-side question.
+PING	A ping check. You need to send back "PONG".
+
+--
+NOTE ABOUT ARGUMENTS:
+
+Arguments are split by a space letter (" "). If you want to give an argument
+which contains letters, you need to prefix it with ":".
+
+Example: :Bla bla bla
+
+Such arguments are always contained once in a line and are always the last
+argument.
+
+--
+ERROR REPLIES:
+
+Syntax: ERROR Name [Arg1 [Arg2 [...]]]
+
+NICKMISS	Nickname missing.
+NICKINV		Nickname invalid.
+
+AUTHMISS	You need to authenticate with a password.
+AUTHFAIL	Authentication failed. Your password is wrong.
+
+LSFAIL		LiveScript failed to execute. (Arg1 = Exception message by server)
+
+INTERNAL	Internal server error. (Arg1 = Exception message by server)
+
+NOTIMPL		This command is not implemented yet. (Arg1 = Command)
+NOTSUPP		This command is not supported. (Do we need this?) (Arg1 = Command)
+UNKNCMD		This command is unknown to the server. (Arg1 = Command)
+
+Example: Password wrong
+	Client sent:	PASS abcdefg!§%
+	Server sent:	ERROR AUTHFAIL
+
+Example: Nickname set twice
+	Client sent:	NICK a1
+	Server sent:	OK :Nickname has been set.
+
+--
+OK REPLIES
+
+Syntax: OK [Text]
+
+Example: Authentication succeeded.
+	Client sent:	PASS thisissecret
+	Server sent:	OK :You are now authenticated.
+
+--
+MSG REPLIES
+
+Syntax: MSG Nickname :Text
+
+Example:
+	Client sent:			MSG :Bla bla bla
+	Server sent:			OK :Message sent.
+	Server sent (to all):	MSG Client1 :Bla bla bla
