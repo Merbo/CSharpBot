@@ -42,7 +42,7 @@ namespace Client
                 //Console.WriteLine("-->  " + data);
                 writer.Flush();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Error writing: " + e.Message);
             }

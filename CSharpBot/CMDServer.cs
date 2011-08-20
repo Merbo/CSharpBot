@@ -255,7 +255,9 @@ namespace CSharpBot
                             break;
                     }
                 }
-            } catch(SocketException x) {
+            }
+            catch (SocketException x)
+            {
                 if (cl.Connected)
                 {
                     try

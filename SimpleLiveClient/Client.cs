@@ -42,8 +42,8 @@ namespace Client
             {
                 //if (!UseSSL)
                 //{
-                    if (stdread == null) stdread = new StreamReader(stream);
-                    return stdread;
+                if (stdread == null) stdread = new StreamReader(stream);
+                return stdread;
                 //}
                 //else
                 //{
@@ -58,8 +58,8 @@ namespace Client
             {
                 //if (!UseSSL)
                 //{
-                    if (stdwrite == null) stdwrite = new StreamWriter(stream);
-                    return stdwrite;
+                if (stdwrite == null) stdwrite = new StreamWriter(stream);
+                return stdwrite;
                 //}
                 //else
                 //{
@@ -194,13 +194,13 @@ namespace Client
             Thread readThread = new Thread(new ParameterizedThreadStart(ReadLoop));
             readThread.IsBackground = true;
 
-            tryserver:
+        tryserver:
             Console.Write("Server: ");
             server = Console.ReadLine();
             if (server == "")
                 goto tryserver;
 
-            tryport:
+        tryport:
             Console.Write("Port: ");
             string tmp = Console.ReadLine();
             int x = 0;
@@ -222,13 +222,13 @@ namespace Client
                 goto tryport;
             }
 
-            trynick:
+        trynick:
             Console.Write("Nick: ");
             nick = Console.ReadLine();
             if (nick == "")
                 goto trynick;
 
-            trypass:
+        trypass:
             Console.Write("Pass (if given): ");
             pass = Console.ReadLine();
             if (pass == "")
@@ -253,13 +253,13 @@ namespace Client
                 //Console.Write("Authenticating... ");
                 //try
                 //{
-                    //sslsock = new System.Net.Security.SslStream(stream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
-                    //sslsock.AuthenticateAsClient("ICEDREAM-I5");
-                    //Console.WriteLine("OK!");
+                //sslsock = new System.Net.Security.SslStream(stream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
+                //sslsock.AuthenticateAsClient("ICEDREAM-I5");
+                //Console.WriteLine("OK!");
                 //}
                 //catch
                 //{
-                    //Console.WriteLine("FAILED!");
+                //Console.WriteLine("FAILED!");
                 //}
 
                 Console.Write("Logging in... ");

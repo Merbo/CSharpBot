@@ -256,7 +256,8 @@ namespace CSharpBot
         /// </summary>
         public string Logfile
         {
-            get {
+            get
+            {
                 if (EnableFileLogging)
                     return GetChildByName("filelogging").Attributes["path"].Value;
                 else
@@ -278,7 +279,7 @@ namespace CSharpBot
         {
             get { return Configuration.SelectNodes("csharpbot")[0]; }
         }
-        
+
         private string OriginalFilePath = "CSharpBot.xml";
 
         private XmlNode GetChildByName(string name)
