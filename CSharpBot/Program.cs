@@ -418,10 +418,16 @@ namespace CSharpBot
 
         private bool CheckCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors error)
         {
+            // Printing SSL certificate details
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Functions.Log("(Certificate) Issuer: " + certificate.Issuer);
             Functions.Log("(Certificate) Subject: " + certificate.Subject);
             Functions.Log("(Certificate) Key algorithm: " + certificate.GetKeyAlgorithm());
-            // TODO: Implement SSL Certificate Chain checks
+            Console.ForegroundColor = ConsoleColor.White;
+#endif
+
+            // Checking SSL certificate itself
             if (error == SslPolicyErrors.RemoteCertificateNameMismatch)
             {
                 Functions.Log("(Certificate) ERROR: Certificate's name mismatches the server's name");
@@ -438,7 +444,67 @@ namespace CSharpBot
                     Functions.Log("(Certificate) ERROR: Certificate chain error.");
                     return false;
                 }
+
+            // Checking chain elements of certificate
+            foreach (X509ChainElement chel in chain.ChainElements)
+            {
+                if(chel.Information != null)
+                    if(chel.Information.Trim() != "")
+                        Functions.Log("(Certificate) Chain error information: " + chel.Information);
+                foreach (X509ChainStatus status in chel.ChainElementStatus)
+                {
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Yellow;
+                    Functions.Log("(Certificate) Chain element status flags set: " + status.Status.ToString());
+            Console.ForegroundColor = ConsoleColor.White;
+#endif
+                    if (status.StatusInformation != null)
+                        if (status.StatusInformation.Trim() != "")
+                            Functions.Log("(Certificate) Status info: " + status.StatusInformation.Trim());
+                    if (status.Status == X509ChainStatusFlags.RevocationStatusUnknown)
+                        Functions.Log("(Certificate) WARNING: Could not validate if certificate has been revoked.");
+                    if (status.Status == X509ChainStatusFlags.Revoked)
+                    {
+                        Functions.Log("(Certificate) ERROR: Certificate has been revoked.");
+                        return false;
+                    }
+                    if (status.Status == X509ChainStatusFlags.NotTimeValid)
+                        Functions.Log("(Certificate) WARNING: Certificate has invalid time entries.");
+                    if (status.Status == X509ChainStatusFlags.NotTimeNested)
+                        Functions.Log("(Certificate) WARNING: Certificate has unnested time entries.");
+                    if (status.Status == X509ChainStatusFlags.NotSignatureValid)
+                    {
+                        Functions.Log("(Certificate) ERROR: Invalid signature.");
+                        return false;
+                    }
+                    if (status.Status == X509ChainStatusFlags.HasNotPermittedNameConstraint)
+                    {
+                        Functions.Log("(Certificate) ERROR: Certificate has non-permitted name constraint.");
+                        return false;
+                    }
+                    if (status.Status == X509ChainStatusFlags.CtlNotValidForUsage)
+                    {
+                        Functions.Log("(Certificate) WARNING: Certificate Trust List not valid for usage on this certificate.");
+                    }
+                    if (status.Status == X509ChainStatusFlags.CtlNotTimeValid)
+                    {
+                        Functions.Log("(Certificate) WARNING: Certificate Trust List has invalid time entries.");
+                    }
+                    if (status.Status == X509ChainStatusFlags.CtlNotSignatureValid)
+                    {
+                        Functions.Log("(Certificate) WARNING: Certificate Trust List contains invalid signature.");
+                    }
+                    if (status.Status == X509ChainStatusFlags.UntrustedRoot)
+                    {
+                        Functions.Log("(Certificate) Untrusted root certificate. This may be a self-signed certificated, but the server connection may also be faked. Be warned!");
+                    }
+                }
+            }
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Functions.Log("(Certificate) Certificate approved");
+            Console.ForegroundColor = ConsoleColor.White;
+#endif
             return true;
         }
 
