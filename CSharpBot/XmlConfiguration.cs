@@ -82,6 +82,31 @@ namespace CSharpBot
         }
 
         /// <summary>
+        /// Try SSL connections by using STARTTLS?
+        /// </summary>
+        public bool StartTLS
+        {
+            get
+            {
+                try
+                {
+                    return bool.Parse(GetChildByName("starttls").InnerText);
+                }
+                catch
+                {
+                    Console.WriteLine("WARNING: Configuration file not updated. To use feature \"StartTLS\" you need to reset the configuration.");
+                    return false;
+                }
+            }
+            set
+            {
+                if (ConfigFile.SelectNodes("child::starttls").Count <= 0)
+                    ConfigFile.AppendChild(ConfigFile.OwnerDocument.CreateElement("starttls"));
+                GetChildByName("starttls").InnerText = value.ToString();
+            }
+        }
+
+        /// <summary>
         /// The nickname
         /// </summary>
         public string Nickname
@@ -336,6 +361,7 @@ namespace CSharpBot
             CreateElement("ownerhostmask");
             CreateElement("port").InnerText = "6667";
             CreateElement("ssl").InnerText = false.ToString();
+            CreateElement("starttls").InnerText = true.ToString();
             CreateElement("nickname").InnerText = "CSharpBot";
             CreateElement("serverpassword");
             CreateElement("nickserv");

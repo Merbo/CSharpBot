@@ -216,7 +216,7 @@ namespace CSharpBot
             while (!answeredssl)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Use SSL ([Y]es/[N]o) [Default: " + (config.SSL ? "Yes" : "No") + "]: ");
+                Console.Write("Use SSL ([Y]es/[N]o/[S]tartTLS) [Default: " + (config.SSL ? "Yes" : (config.StartTLS ? "StartTLS" : "No")) + "]: ");
 
                 Console.ForegroundColor = ConsoleColor.White;
                 ConsoleKeyInfo inf = Console.ReadKey();
@@ -227,11 +227,19 @@ namespace CSharpBot
                 {
                     answeredssl = true;
                     config.SSL = true;
+                    config.StartTLS = false;
                 }
                 else if (inf.Key == ConsoleKey.N)
                 {
                     answeredssl = true;
                     config.SSL = false;
+                    config.StartTLS = false;
+                }
+                else if (inf.Key == ConsoleKey.S)
+                {
+                    answeredssl = true;
+                    config.SSL = false;
+                    config.StartTLS = true;
                 }
                 else if (inf.Key == ConsoleKey.Enter)
                 {
@@ -525,22 +533,36 @@ namespace CSharpBot
             ssl = null;
             stream = null;
 
-            if (config.SSL)
-            {
-                ssl = new SslStream(irc.GetStream(), false, new RemoteCertificateValidationCallback(CheckCertificate), null);
-                Functions.Log("SSL connection established. Negotiating...");
-                ssl.AuthenticateAsClient(config.Server);
-                reader = new StreamReader(ssl);
-                writer = new StreamWriter(ssl);
-            }
-            else
-            {
                 stream = irc.GetStream();
                 reader = new StreamReader(stream);
                 writer = new StreamWriter(stream);
-            }
 
-            writer.AutoFlush = true;
+                if (config.SSL)
+                {
+                    Functions.Log("Forcing SSL.");
+                    ssl = new SslStream(stream, false, new RemoteCertificateValidationCallback(CheckCertificate), null);
+                    Functions.Log("Negotiating...");
+                    ssl.AuthenticateAsClient(config.Server);
+                    reader = new StreamReader(ssl);
+                    writer = new StreamWriter(ssl);
+                }
+
+                writer.AutoFlush = true;
+
+                if (config.StartTLS)
+                    Functions.Raw("CAP LS");
+
+
+            Functions.Log("Logging in...");
+            Functions.User(config.Nickname, config.Realname);
+            Functions.Nick(config.Nickname);
+
+            string inputline = "";
+
+            if(config.ServerPassword != "")
+                Functions.Pass(config.ServerPassword);
+
+
         }
 
         public void ParseArguments(string[] args)
@@ -667,9 +689,6 @@ namespace CSharpBot
                 Console.WriteLine();
                 Connect();
 
-                Functions.Log("Logging in...");
-                Functions.User(config.Nickname, config.Realname);
-                Functions.Nick(config.Nickname);
                 string whoistarget;
                 int replycode;
                 while ((inputline = reader.ReadLine()) != null)
@@ -701,6 +720,56 @@ namespace CSharpBot
                     {
                         IrcNumericReplyLine reply = new IrcNumericReplyLine(inputline);
                         this.OnNumericReplyReceived(reply);
+                    }
+
+                    // Capabilities
+                    else if (cmd[1].Equals("CAP"))
+                    {
+                        if (cmd[3].Equals("LS"))
+                        {
+                            Functions.Log("Received capabitilites list.");
+                            string[] capabilities = string.Join(" ", cmd.Skip(4).ToArray()).Substring(1).ToLower().Split(' ');
+                            
+                            if (capabilities.Contains("tls") && config.StartTLS)
+                            {
+                                Functions.Log("Trying STARTTLS...");
+                                Functions.WriteData("STARTTLS");
+                                while (true)
+                                {
+                                    inputline = reader.ReadLine();
+                                    try
+                                    {
+                                        IrcNumericReplyLine reply = new IrcNumericReplyLine(inputline);
+                                        if (reply.ReplyCode == IrcReplyCode.RPL_STARTTLSSUCCESSFUL)
+                                        {
+                                            Functions.Log("StartTLS successful. Switching to SSL...");
+                                            ssl = new SslStream(stream, false, new RemoteCertificateValidationCallback(CheckCertificate), null);
+                                            Functions.Log("Negotiating...");
+                                            ssl.AuthenticateAsClient(config.Server);
+                                            Functions.WriteData("CAP END");
+                                            reader = new StreamReader(ssl);
+                                            writer = new StreamWriter(ssl);
+                                        }
+                                        else if (reply.ReplyCode == IrcReplyCode.ERR_STARTTLSFAILED)
+                                        {
+                                            Functions.Log("StartTLS initialization failed server-side. Disconnecting...");
+                                            Shutdown("StartTLS failed", false);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            
+                            if (capabilities.Contains("identify-msg"))
+                            {
+                                Console.WriteLine("Server supports IDENTIFY message, but it is currently not implemented in the bot.");
+                            }
+
+                            Functions.WriteData("CAP END");
+                        }
                     }
 
                     // Kick
@@ -1358,9 +1427,6 @@ namespace CSharpBot
                                 }
                                 if (Regex.Match(msg.BotCommandName, "^(g|d)(voice|bot|halfop|op|admin|protect|owner)$").Success)
                                 {
-
-                                    //if (msg.BotCommandName.StartsWith("g"))
-                                    //{
                                     string pre = msg.BotCommandName.StartsWith("g") ? "+" : "-";
                                     string cdmode = msg.BotCommandName.ToLower();
                                     if (Functions.IsOwner(msg.SourceHostmask))
@@ -1394,8 +1460,6 @@ namespace CSharpBot
                                             }
                                         }
                                     }
-                                    //}
-
                                 }
                                 if (msg.Message.StartsWith("GTFO "))
                                 {
@@ -1420,17 +1484,17 @@ namespace CSharpBot
                         #region NOTICE
                         else if (msg.MessageType == IrcMessageType.Notice)
                         {
-
-                            if (msg.SourceNickname == "NickServ")
+                            //Console.WriteLine("Notice from " + msg.SourceNickname + " to " + msg.Target + ": " + msg.Message);
+                            
+                            if (msg.SourceNickname.ToUpper() == "NICKSERV")
                                 Functions.Log("NickServ info: " + msg.Message);
 
-                            else
-                            {
-                                if (msg.SourceNickname == "NickServ")
-                                    Functions.Log("NickServ identification: " + string.Join(" ", cmd.Skip(3)).Substring(1));
-                                else
-                                    Functions.WriteData("NOTICE " + msg.SourceNickname + " :Sorry, but you need to contact me over a channel.");
-                            }
+                            if (msg.SourceNickname.ToUpper() == "CHANSERV")
+                                Functions.Log("ChanServ info: " + msg.Message);
+
+                            if (msg.Target.ToUpper() == "AUTH")
+                                Functions.Log("Auth message: " + msg.Message);
+
                         }
                         #endregion
                         #region CTCP Request
