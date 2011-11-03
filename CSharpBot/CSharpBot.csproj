@@ -216,6 +216,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="BotOpDB.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>BotOpDB.designer.cs</LastGenOutput>

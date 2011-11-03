@@ -557,7 +557,7 @@ namespace CSharpBot
             Functions.User(config.Nickname, config.Realname);
             Functions.Nick(config.Nickname);
 
-            string inputline = "";
+            //string inputline = "";
 
             if(config.ServerPassword != "")
                 Functions.Pass(config.ServerPassword);

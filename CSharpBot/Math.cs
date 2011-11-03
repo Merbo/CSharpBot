@@ -20,8 +20,8 @@ namespace CSharpBot
             if (expr.IndexOfAny(ValidChars.ToArray()) == -1) {
                 return "Invalid expression. ";
             }
-            if (expr[0].EqualsAny(OperChars.ToArray()) ||
-                expr[expr.Length - 1].EqualsAny(OperChars.ToArray())) {
+            if (CharHelper.EqualsAny(expr[0], OperChars.ToArray()) ||
+                CharHelper.EqualsAny(expr[expr.Length - 1], OperChars.ToArray())) {
                 return "Invalid expression. ";
             }
 
@@ -96,10 +96,11 @@ namespace CSharpBot
                 int retVal = 0;
                 if (HasOpers) {
                     foreach (MathTerm t in _terms) {
-                        if (t.TermString.EqualsAny(new[] { "*", "/" })) {
+                        if (StringHelper.EqualsAny(t.TermString, new[] { "*", "/" })) {
                             retVal = MultDivide;
                         }
-                        if (t.TermString.EqualsAny(new[] { "+", "-" })) {
+                        if (StringHelper.EqualsAny(t.TermString, new[] { "+", "-" }))
+                        {
                             retVal = AddSubtract;
                         }
                     }
@@ -156,7 +157,7 @@ namespace CSharpBot
         private static List<MathTerm> getOperators(string expr) {
             var operTerms = new List<MathTerm>();
             foreach (char c in expr) {
-                if (c.EqualsAny(MathParser.OperChars.ToArray())) {
+                if (CharHelper.EqualsAny(c, MathParser.OperChars.ToArray())) {
                     operTerms.Add(new MathTerm(c.ToString()));
                 }
             }

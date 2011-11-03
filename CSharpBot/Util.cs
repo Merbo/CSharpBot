@@ -7,7 +7,8 @@ namespace CSharpBot
 {
     public static class StringHelper
     {
-        static public bool EqualsAny(this string sh, string[] sts) {
+        // FIXME: Mono is not able to handle "this" correctly. Error CS1110.
+        static public bool EqualsAny(/*this*/ string sh, string[] sts) {
             foreach (string s in sts) {
                 if (sh.Equals(s))
                     return true;
@@ -24,7 +25,8 @@ namespace CSharpBot
         /// </summary>
         /// <param name="ch">char to compare. </param>
         /// <param name="ca">char array to compare against. </param>
-        static public bool EqualsAny(this char ch, char[] ca) {
+        // FIXME: Mono is not able to handle "this" correctly. Error CS1110.
+        static public bool EqualsAny(/*this*/ char ch, char[] ca) {
             return ca.Any(ch.Equals);
         }
     }

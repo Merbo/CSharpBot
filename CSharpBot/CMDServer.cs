@@ -55,7 +55,7 @@ namespace CSharpBot
 
         private Thread serverThr;
 
-        X509Certificate serverCertificate;
+        //X509Certificate serverCertificate;
         public SslProtocols UseSslProtocol
         { get; set; }
 
